@@ -56,5 +56,22 @@ export default defineNuxtConfig({
   sourcemap: {
     client: false,
     server: true
-  }
+  },
+  nitro: {
+		routeRules: {
+			'/': {
+				proxy:`${import.meta.env.VITE_API_URL}`
+
+			},
+		},
+		// devProxy: {
+		// 	'/api': {
+		// 		target: '',
+		// 		changeOrigin: true,
+		// 		prependPath: true,
+		// 	},
+		// },
+		minify: true,
+		compressPublicAssets: true,
+	},
 })
