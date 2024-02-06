@@ -2,6 +2,17 @@
   definePageMeta({
     layout: 'auth',
   })
+
+  const authStore = useAuthStore()
+
+  const { access_token, loading } = storeToRefs(authStore)
+
+  const email = ref<string>('')
+  const password = ref<string>('')
+
+  const login = () => {
+    authStore.login(email.value, password.value)
+  }
 </script>
 <template>
   <div class="flex justify-between items-center h-screen overflow-y-hidden">
@@ -22,6 +33,7 @@
       <div>
         <label for="email1" class="block font-medium mb-2">Email</label>
         <InputText
+          v-model="email"
           id="email1"
           type="text"
           placeholder="Email address"
@@ -30,6 +42,7 @@
 
         <label for="password1" class="block font-medium mb-2">Password</label>
         <InputText
+          v-model="password"
           id="password1"
           type="password"
           placeholder="Password"
@@ -46,7 +59,14 @@
           >
         </div>
 
-        <Button @click="$router.push('/')" type="submit" label="Sign In" icon="pi pi-user" class="w-full"></Button>
+        <Button
+          @click="login()"
+          :loading="loading"
+          type="submit"
+          label="Sign In"
+          icon="pi pi-user"
+          class="w-full"
+        ></Button>
       </div>
     </div>
 
