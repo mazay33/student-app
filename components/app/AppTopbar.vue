@@ -5,6 +5,9 @@
   const outsideClickListener = ref(null)
   const topbarMenuActive = ref(false)
   const router = useRouter()
+  const authStore = useAuthStore()
+
+  const { user } = authStore
 
   onMounted(() => {
     bindOutsideClickListener()
@@ -81,19 +84,33 @@
     isUserMenuActive.value.toggle(event)
   }
 
-  const items = ref([
-    {
-      label: 'Profile',
-      icon: 'pi pi-user',
-    },
-    {
-      label: 'Logout',
-      icon: 'pi pi-sign-out',
-      command: () => {
-        router.push('/auth/login')
-      }
-    },
-  ])
+  const items = ref(
+    (user && [
+      {
+        label: 'Профиль',
+        icon: 'pi pi-user',
+        command: () => {
+          router.push('/profile')
+        },
+      },
+      {
+        label: 'Выйти',
+        icon: 'pi pi-sign-out',
+        command: () => {
+          useAuthStore().logout()
+          router.push('/auth/login')
+        },
+      },
+    ]) || [
+      {
+        label: 'Войти',
+        icon: 'pi pi-sign-in ',
+        command: () => {
+          router.push('/auth/login')
+        },
+      },
+    ]
+  )
 </script>
 
 <template>
@@ -121,10 +138,10 @@
         <i class="pi pi-user" />
         <span>Profile</span>
       </button>
-      <button class="p-link layout-topbar-button" @click="toggle">
+      <!-- <button class="p-link layout-topbar-button" @click="toggle">
         <i class="pi pi-cog" />
         <span>Settings</span>
-      </button>
+      </button> -->
     </div>
     <client-only>
       <OverlayPanel
@@ -137,7 +154,7 @@
       </OverlayPanel>
     </client-only>
 
-    <client-only>
+    <!-- <client-only>
       <OverlayPanel
         id="overlay_panel"
         ref="op"
@@ -215,7 +232,7 @@
           />
         </div>
       </OverlayPanel>
-    </client-only>
+    </client-only>-->
   </div>
 </template>
 

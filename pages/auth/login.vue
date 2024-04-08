@@ -5,7 +5,7 @@
 
   const authStore = useAuthStore()
 
-  const { access_token, loading } = storeToRefs(authStore)
+  const { isLoading } = storeToRefs(authStore)
 
   const email = ref<string>('')
   const password = ref<string>('')
@@ -18,16 +18,10 @@
   <div class="flex justify-between items-center h-screen overflow-y-hidden">
     <div class="w-full mx-auto md:w-1/3 p-6 md:p-8">
       <div class="mb-5">
-        <!-- <img
-          src="/images/blocks/logos/hyper.svg"
-          alt="Image"
-          height="50"
-          class="mb-3"
-        /> -->
         <div class="text-3xl font-medium mb-3">Welcome Back</div>
-        <span class="font-medium mr-2">Don't have an account?</span
-        ><a class="font-medium no-underline text-indigo-500 cursor-pointer"
-          >Create today!</a
+        <span class="font-medium mr-2">Already have an account?</span
+        ><nuxtLink to="/auth/registration" class="font-medium no-underline text-indigo-500 cursor-pointer"
+          >Create today!</nuxtLink
         >
       </div>
       <div>
@@ -49,10 +43,6 @@
           class="w-full mb-3"
         />
         <div class="flex align-items-center justify-content-between mb-6">
-          <div class="flex align-items-center">
-            <Checkbox id="rememberme1" :binary="true" class="mr-2"></Checkbox>
-            <label for="rememberme1">Remember me</label>
-          </div>
           <a
             class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
             >Forgot password?</a
@@ -61,7 +51,7 @@
 
         <Button
           @click="login()"
-          :loading="loading"
+          :loading="isLoading"
           type="submit"
           label="Sign In"
           icon="pi pi-user"

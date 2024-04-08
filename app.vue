@@ -1,7 +1,15 @@
 <script setup>
-useHead({
-  title: 'Nuxt 3 PrimeVue Starter'
-})
+  useHead({
+    title: 'Student App',
+  })
+
+  const authStore = useAuthStore()
+
+  const { getMe } = authStore
+
+  onBeforeMount(async () => {
+    await getMe()
+  })
 </script>
 
 <template>
@@ -10,6 +18,6 @@ useHead({
   </NuxtLayout>
 </template>
 
-<style lang='scss'>
-@import 'App.scss';
+<style lang="scss">
+  @import 'App.scss';
 </style>

@@ -1,47 +1,98 @@
-type Tokens = {
+import httpService from '~/services/httpService'
+import type FetchError from 'ofetch'
+import { ExpiringStorage } from '~/utils/ExpiringStorage'
+
+interface IAuthLoginResponse {
   access_token: string
   refresh_token: string
-  type: string
+  token_type: string
 }
 
-import { apiService } from '@/services/ApiService'
+interface IUser {
+  email: string
+  nickname: string
+  image_url: string | null
+  description: string | null
+  created_at: string
+}
 
 export const useAuthStore = defineStore('auth', () => {
-  const access_token = ref(useCookie('token'))
-  const refresh_token = ref()
-  const loading = ref(false)
+  const isLoading = ref(false)
+  const user = ref(ExpiringStorage.get('user') || null)
+  const errorMessage = ref<FetchError.FetchError<any>>()
+  const refreshError = ref<boolean>(false)
+
+  const getRefreshError = computed(() => {
+    return refreshError.value
+  })
 
   const login = async (email: string, password: string) => {
-    loading.value = true
-    const options = {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    }
-    const { data, isFetching } = await apiService.post<Tokens, URLSearchParams>(
+    isLoading.value = true
+
+    const { data, error, pending } = await httpService.post<
+      IAuthLoginResponse,
+      URLSearchParams
+    >(
       'public/auth/login',
       new URLSearchParams({
         username: email,
         password: password,
       }),
-      options
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     )
-    access_token.value = data.value?.access_token
-    refresh_token.value = data.value?.refresh_token
 
-    if (data.value) {
-      const token = useCookie('token')
-      token.value = data.value.access_token
+    if (error.value) {
+      errorMessage.value = error.value
+    } else {
+      await getMe()
+      useRouter().push('/')
     }
-    loading.value = isFetching.value
+
+    isLoading.value = pending.value
+
+    return data
   }
 
-  const logout = () => {
-    access_token.value = null
+  const getMe = async () => {
+    try {
+      const { data, error } = await httpService.get<IUser>('private/users/me')
+      user.value = data.value
 
-    const token = useCookie('token')
-    token.value = null
+      ExpiringStorage.set('user', user.value)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  return { access_token, refresh_token, login, loading }
+  const refresh = async () => {
+    try {
+      const { data, error } = await httpService.post('public/auth/refresh', {})
+
+      if (error.value) {
+        refreshError.value = true
+      }
+    } catch (error) {}
+  }
+
+  const logout = async () => {
+    try {
+      const { data, error } = await httpService.post('private/auth/logout', {})
+
+      user.value = null
+      ExpiringStorage.set('user', null)
+      ExpiringStorage.set('isLoggedIn', false)
+    } catch (error) {}
+  }
+
+  return {
+    login,
+    isLoading,
+    refresh,
+    getMe,
+    user,
+    errorMessage,
+    logout,
+    refreshError,
+    getRefreshError,
+  }
 })
