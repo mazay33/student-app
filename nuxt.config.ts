@@ -2,12 +2,12 @@ import pkg from './package.json'
 
 export default defineNuxtConfig({
   devtools: true,
-  ssr: true,
+  ssr: false,
   runtimeConfig: {
     public: {
       APP_VERSION: pkg.version,
       APP_NAME: pkg.name,
-      APP_MODE: process.env?.NODE_ENV
+      APP_MODE: process.env?.NODE_ENV,
     }
   },
   modules: [
