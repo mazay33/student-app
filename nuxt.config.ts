@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     public: {
       APP_VERSION: pkg.version,
       APP_NAME: pkg.name,
+      api: ''
       // APP_MODE: process.env?.NODE_ENV,
     }
   },

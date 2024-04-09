@@ -2,9 +2,10 @@ import { fetchWithCookie } from '~/composables/useFetchCookie'
 
 export default defineNuxtPlugin(() => {
   let isRefreshing = false
+  const config = useRuntimeConfig()
 
   const $api = $fetch.create({
-    baseURL: 'https://localhost/',
+    baseURL: config.public.api,
     retry: 1,
     retryStatusCodes: [401],
     credentials: 'include',
@@ -30,7 +31,7 @@ export default defineNuxtPlugin(() => {
             async () =>
               await fetchWithCookie(
                 event!,
-                `https://localhost/public/auth/refresh`
+                `${config.public.api}public/auth/refresh`
               )
           )
 
