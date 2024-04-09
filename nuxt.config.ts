@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     public: {
       APP_VERSION: pkg.version,
       APP_NAME: pkg.name,
-      APP_MODE: process.env?.NODE_ENV,
+      // APP_MODE: process.env?.NODE_ENV,
     }
   },
   modules: [
@@ -58,12 +58,12 @@ export default defineNuxtConfig({
     server: true
   },
   nitro: {
-		routeRules: {
-			'/': {
-				proxy:`${import.meta.env.VITE_API_URL}`
+		// routeRules: {
+		// 	'/': {
+		// 		proxy:`${import.meta.env.VITE_API_URL}`
 
-			},
-		},
+		// 	},
+		// },
 		// devProxy: {
 		// 	'/api': {
 		// 		target: '',

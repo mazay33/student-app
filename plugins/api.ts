@@ -44,11 +44,6 @@ export default defineNuxtPlugin(() => {
           isRefreshing = false
         }
         if (process.client) {
-          if (getRefreshError) {
-            isRefreshing = false
-
-            return
-          }
           await refresh()
 
           isRefreshing = false

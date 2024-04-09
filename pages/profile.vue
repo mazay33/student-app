@@ -4,12 +4,14 @@
   })
   const authStore = useAuthStore()
 
+  await authStore.getMe()
+
   const { user } = storeToRefs(authStore)
 </script>
 
 <template>
   <div>
-    <p>{{ user }}</p>
+    <pre>{{ user }}</pre>
   </div>
 </template>
 

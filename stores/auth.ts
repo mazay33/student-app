@@ -45,7 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
       errorMessage.value = error.value
     } else {
       await getMe()
-      useRouter().push('/')
+      await navigateTo('/')
     }
 
     isLoading.value = pending.value
@@ -70,6 +70,9 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (error.value) {
         refreshError.value = true
+        // useRouter().push('/auth/login')
+      } else {
+        refreshError.value = false
       }
     } catch (error) {}
   }
@@ -80,7 +83,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       user.value = null
       ExpiringStorage.set('user', null)
-      ExpiringStorage.set('isLoggedIn', false)
     } catch (error) {}
   }
 
