@@ -1,36 +1,59 @@
 <script setup lang="ts">
   import httpService from '~/services/httpService'
 
+  interface IRegistrationResponseData {
+    email: string
+    id: string
+    is_active: boolean
+    is_superuser: boolean
+    is_verified: boolean
+    nickname: string
+  }
+  interface IRegistrationRequestData {
+    email: string
+    password: string
+  }
+
   definePageMeta({
     layout: 'auth',
   })
+
+  //TODO Перенсти логику в store auth
 
   const authStore = useAuthStore()
 
   const codeConfirmDialog = ref(false)
 
-  const { isLoading } = storeToRefs(authStore)
+  // const { isLoading } = storeToRefs(authStore)
 
   const email = ref<string>('')
   const password = ref<string>('')
-  const codeConfirmationValue = ref(null)
+  const id = ref<string>('')
+  const codeConfirmationValue = ref()
+
+  const isLoadingPage = ref(false)
 
   const registration = async () => {
-    const { data } = await httpService.post<any, any>(
-      'public/users/registration',
-      {
-        email: email.value,
-        password: password.value,
-      }
-    )
+    isLoadingPage.value = true
+    const { data, pending } = await httpService.post<
+      IRegistrationResponseData,
+      IRegistrationRequestData
+    >('public/users/registration', {
+      email: email.value,
+      password: password.value,
+    })
 
     if (data.value) {
+      id.value = data.value.id
       codeConfirmDialog.value = true
     }
+
+    isLoadingPage.value = pending.value
   }
 
   const confirmRegistration = async () => {
-    const { data } = await httpService.patch<any, any>(
+    isLoadingPage.value = true
+    const { data, pending } = await httpService.patch<any, any>(
       'public/users/registration/confirm',
       {
         code: codeConfirmationValue.value,
@@ -40,6 +63,34 @@
     if (data.value) {
       authStore.login(email.value, password.value)
     }
+
+    isLoadingPage.value = pending.value
+  }
+
+  let timerValue = ref<number>(0)
+
+  const startTimer = () => {
+    timerValue.value = 60
+    const interval = setInterval(() => {
+      if (timerValue.value > 0) {
+        timerValue.value--
+      } else {
+        clearInterval(interval)
+      }
+    }, 1000)
+  }
+
+  const resendCode = async () => {
+    startTimer()
+    isLoadingPage.value = true
+    const { data, pending } = await httpService.post<any, any>(
+      'public/users/resending',
+      {
+        id: id.value,
+        email: email.value,
+      }
+    )
+    isLoadingPage.value = pending.value
   }
 </script>
 <template>
@@ -81,7 +132,7 @@
 
         <Button
           @click="registration()"
-          :loading="isLoading"
+          :loading="isLoadingPage"
           type="submit"
           label="Sign Up"
           icon="pi pi-user"
@@ -108,9 +159,10 @@
   >
     <div class="flex flex-col items-center">
       <div class="font-bold text-xl mb-2">Authenticate Your Account</div>
-      <p class="text-color-secondary block mb-5">
-        Please enter the code sent to your phone.
+      <p class="text-coolGray block mb-0">
+        Please enter the code sent to your email.
       </p>
+      <p mb-5 text-coolGray>{{ email }}</p>
       <div class="flex justify-center">
         <InputOtp :length="6" v-model="codeConfirmationValue" integerOnly>
           <template #default="{ attrs, events }">
@@ -123,9 +175,23 @@
           </template>
         </InputOtp>
       </div>
-      <div class="flex justify-between mt-10 self-stretch">
-        <Button label="Resend Code" link class="p-0"></Button>
-        <Button @click="confirmRegistration" label="Submit Code"></Button>
+      <div class="flex justify-between items-center mt-10 self-stretch">
+        <Button
+          @click="resendCode"
+          :loading="isLoadingPage"
+          label="Resend Code"
+          link
+          class="p-0"
+          v-if="timerValue == 0"
+        ></Button>
+        <div v-else class="text-gray-500">
+          {{ timerValue }} seconds remaining
+        </div>
+        <Button
+          :loading="isLoadingPage"
+          @click="confirmRegistration"
+          label="Submit Code"
+        ></Button>
       </div>
     </div>
   </Dialog>
