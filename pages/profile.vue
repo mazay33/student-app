@@ -7,12 +7,12 @@
   await authStore.getMe()
 
   const { user }: any = storeToRefs(authStore)
-
   const avatarOverlayPanel = ref()
 
   const toggle = (event: any) => {
     avatarOverlayPanel.value.toggle(event)
   }
+  
 </script>
 
 <template>
