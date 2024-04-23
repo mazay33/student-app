@@ -10,6 +10,7 @@ export default defineNuxtPlugin(() => {
     retryStatusCodes: [401],
     credentials: 'include',
     headers: useRequestHeaders(['cookie']),
+    
     async onRequest({ request, options, error }) {
       options.headers = {
         ...options.headers,

@@ -54,5 +54,4 @@ onMounted(async () => {
 h5 {
   color: var(--primary-color)
 }
-
 </style>

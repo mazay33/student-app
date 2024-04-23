@@ -13,6 +13,7 @@ const slug = route.params.slug.toString()
           Author: {{ doc.author }}
         </p>
         <hr>
+        <div>owirgn</div>
         <ContentRenderer :value="doc" />
       </template>
       <!-- Slot if document is not found -->
