@@ -1,6 +1,6 @@
 import httpService from '~/services/httpService'
 import type FetchError from 'ofetch'
-import { ExpiringStorage } from '~/utils/ExpiringStorage'
+import { ExpiringStorage } from '@/utils/ExpiringStorage'
 
 interface IAuthLoginResponse {
   access_token: string
@@ -18,7 +18,7 @@ interface IUser {
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false)
-  const user = ref(ExpiringStorage.get('user') || null)
+  const user = ref(null)
   const errorMessage = ref<FetchError.FetchError<any>>()
   const refreshError = ref<boolean>(false)
 
@@ -58,7 +58,9 @@ export const useAuthStore = defineStore('auth', () => {
       const { data, error } = await httpService.get<IUser>('private/users/me')
       user.value = data.value
 
-      ExpiringStorage.set('user', user.value)
+      if (process.client) {
+        ExpiringStorage.set('user', user.value)
+      }
     } catch (error) {
       console.log(error)
     }
@@ -82,7 +84,9 @@ export const useAuthStore = defineStore('auth', () => {
       const { data, error } = await httpService.post('private/auth/logout', {})
 
       user.value = null
-      ExpiringStorage.set('user', null)
+      if (process.client) {
+        ExpiringStorage.set('user', null)
+      }
     } catch (error) {}
   }
 

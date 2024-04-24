@@ -1,4 +1,6 @@
 <script setup>
+import { useAuthStore } from './modules/auth/stores/auth';
+
   useHead({
     title: 'Student App',
   })

@@ -1,6 +1,7 @@
 <template>
+  {{ data }}
 
-    <div w-full h-20 text-center text-indigo-500 text-2xl font-bold>
+  <!-- <div w-full h-20 text-center text-indigo-500 text-2xl font-bold>
         Создание конспекта
     </div>
 
@@ -10,9 +11,9 @@
             <StepperPanel header="Конспект">
                 <template #content="{ nextCallback }">
                     <div class="flex flex-column h-3rem">
-                        
+
                         <InputText type="text" placeholder="Введите название конспекта..." class="border-1 border-solid border-slate-300  rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium" />
-                            
+
 
                     </div>
                     <div class="flex py-4">
@@ -25,7 +26,7 @@
                 <template #content="{ prevCallback, nextCallback }">
                     <div class="flex flex-column h-3rem">
 
-                        <Dropdown editable showClear placeholder="Введите название вуза..." class="border-1 border-solid border-slate-300  rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium" />  
+                        <Dropdown editable showClear placeholder="Введите название вуза..." class="border-1 border-solid border-slate-300  rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium" />
 
                     </div>
                     <div class="flex py-4 gap-2">
@@ -43,7 +44,7 @@
                         <Button  ml-5 >Добавить предмет</Button>
                     </div>
                     <div class="border-2 border-dashed rounded-lg h-50 border-round mt-5  flex-auto flex justify-content-center align-items-center font-medium">
-                        
+
                         <div>
                             <ul flex justify-between> Название предмета
                                 <div>
@@ -64,9 +65,9 @@
             <StepperPanel header="Преподаватель">
                 <template #content="{ prevCallback }">
                     <div class="flex flex-column h-3rem">
-                        
-                        <Dropdown editable showClear placeholder="Введите имя преподавателя..." class="border-1 border-solid border-slate-300  rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium" />  
-                 
+
+                        <Dropdown editable showClear placeholder="Введите имя преподавателя..." class="border-1 border-solid border-slate-300  rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium" />
+
                     </div>
                     <div class="flex justify-between py-4 ">
                         <Button label="Back" severity="secondary" @click="prevCallback" />
@@ -75,25 +76,25 @@
 
                 </template>
             </StepperPanel>
-            
+
         </Stepper>
-    </div>
+    </div> -->
 </template>
 
-
-
 <script setup lang="ts">
+  import Stepper from 'primevue/stepper'
+  import StepperPanel from 'primevue/stepperpanel'
+  import SpeedDial from 'primevue/speeddial'
+  import httpService from '~/services/httpService'
 
+  // const authStore = useAuthStore()
+  // const {user} = storeToRefs(authStore)
+  // await authStore.getMe()
 
-    import Stepper from 'primevue/stepper';
-    import StepperPanel from 'primevue/stepperpanel';
-    import SpeedDial from 'primevue/speeddial';
+  const { data, error } = await httpService.get('private/users/me')
+  console.log('Error', error)
 
-    
-
+  console.log(data.value)
 </script>
-
-
-
 
 <style scoped></style>

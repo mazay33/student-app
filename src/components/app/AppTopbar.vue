@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
   import { useRouter } from 'vue-router'
+import { useAuthStore } from '~/modules/auth/stores/auth';
   const { layoutConfig, onMenuToggle } = useLayout()
   const outsideClickListener = ref(null)
   const topbarMenuActive = ref(false)
