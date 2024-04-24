@@ -7,11 +7,7 @@ import { useAuthStore } from './modules/auth/stores/auth';
 
   const authStore = useAuthStore()
 
-  const { getMe } = authStore
-
-  onBeforeMount(async () => {
-    await getMe()
-  })
+  await authStore.getMe()
 </script>
 
 <template>
