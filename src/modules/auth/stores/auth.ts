@@ -1,6 +1,4 @@
 import httpService from '~/services/httpService'
-import type FetchError from 'ofetch'
-import { ExpiringStorage } from '@/utils/ExpiringStorage'
 
 interface IAuthLoginResponse {
   access_token: string
@@ -16,89 +14,77 @@ interface IUser {
   created_at: string
 }
 
-export const useAuthStore = defineStore('auth', () => {
-  const isLoading = ref(false)
-  const user = ref(null)
-  const errorMessage = ref<FetchError.FetchError<any>>()
-  const refreshError = ref<boolean>(false)
+export const useAuthStore = defineStore(
+  'auth',
+  () => {
+    const isLoading = ref(false)
+    const user = ref()
+    const authinticated = ref(false)
 
-  const getRefreshError = computed(() => {
-    return refreshError.value
-  })
+    const login = async (email: string, password: string) => {
+      isLoading.value = true
 
-  const login = async (email: string, password: string) => {
-    isLoading.value = true
+      const { data, error, pending } = await httpService.post<
+        IAuthLoginResponse,
+        URLSearchParams
+      >(
+        'public/auth/login',
+        new URLSearchParams({
+          username: email,
+          password: password,
+        }),
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+      )
 
-    const { data, error, pending } = await httpService.post<
-      IAuthLoginResponse,
-      URLSearchParams
-    >(
-      'public/auth/login',
-      new URLSearchParams({
-        username: email,
-        password: password,
-      }),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    )
+      if (data.value) {
+        await getMe()
 
-    if (error.value) {
-      errorMessage.value = error.value
-    } else {
-      await getMe()
-      await navigateTo('/')
+        await navigateTo('/')
+      }
+
+      isLoading.value = pending.value
     }
 
-    isLoading.value = pending.value
-
-    return data
-  }
-
-  const getMe = async () => {
-    try {
+    const getMe = async () => {
       const { data, error } = await httpService.get<IUser>('private/users/me')
-      user.value = data.value
 
-      if (process.client) {
-        ExpiringStorage.set('user', user.value)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  const refresh = async () => {
-    try {
-      const { data, error } = await httpService.post('public/auth/refresh', {})
-
-      if (error.value) {
-        refreshError.value = true
-        // useRouter().push('/auth/login')
+      if (data.value) {
+        user.value = data.value
+        authinticated.value = true
       } else {
-        refreshError.value = false
+        user.value = null
+        authinticated.value = false
       }
-    } catch (error) {}
-  }
+    }
 
-  const logout = async () => {
-    try {
+    const refresh = async () => {
+      const { data, error } = await httpService.post('public/auth/refresh', {})
+    }
+
+    const logout = async () => {
       const { data, error } = await httpService.post('private/auth/logout', {})
 
       user.value = null
-      if (process.client) {
-        ExpiringStorage.set('user', null)
-      }
-    } catch (error) {}
-  }
+      authinticated.value = false
+    }
 
-  return {
-    login,
-    isLoading,
-    refresh,
-    getMe,
-    user,
-    errorMessage,
-    logout,
-    refreshError,
-    getRefreshError,
+    return {
+      user,
+      isLoading,
+      authinticated,
+
+      login,
+      refresh,
+      getMe,
+      logout,
+    }
+  },
+  {
+    persist: {
+      storage: persistedState.cookiesWithOptions({
+        sameSite: 'strict',
+        secure: true,
+      }),
+    },
   }
-})
+)

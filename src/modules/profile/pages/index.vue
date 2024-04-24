@@ -1,4 +1,7 @@
-<script setup>
+<script setup lang="ts">
+  definePageMeta({
+    middleware: ['auth-middleware'],
+  })
   const authStore = useAuthStore()
 
   const { user } = storeToRefs(authStore)

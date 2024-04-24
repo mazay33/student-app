@@ -3,11 +3,9 @@ import { defineNuxtRouteMiddleware } from 'nuxt/app'
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore()
   try {
-    await authStore.getMe()
+    const { authinticated } = storeToRefs(authStore)
 
-    const { user } = storeToRefs(authStore)
-
-    if (!user.value && to.path !== '/auth/login') {
+    if (!authinticated.value && to.path !== '/auth/login') {
       return navigateTo('/auth/login')
     }
   } catch (error) {
