@@ -10,18 +10,20 @@ export default defineNuxtPlugin(() => {
     retryStatusCodes: [401],
     credentials: 'include',
     headers: useRequestHeaders(['cookie']),
-    
+
     async onRequest({ request, options, error }) {
       options.headers = {
         ...options.headers,
         ...useRequestHeaders(['cookie']),
       }
+
+      console.log(request, options, error)
     },
 
     async onResponseError({ response, options, error }) {
       if (response.status == 401 && !isRefreshing) {
         const authStore = useAuthStore()
-        const { refresh, getRefreshError } = authStore
+        const { refresh } = authStore
 
         isRefreshing = true
 
@@ -40,7 +42,7 @@ export default defineNuxtPlugin(() => {
             await navigateTo(event.path)
             return
           } else {
-            await navigateTo('/auth/login')
+            // await navigateTo('/auth/login')
           }
 
           isRefreshing = false

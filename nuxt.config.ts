@@ -1,30 +1,42 @@
 import pkg from './package.json'
 
 export default defineNuxtConfig({
+  srcDir: 'src',
+  alias: {
+    '~': `${__dirname}/src/`,
+    '@': `${__dirname}/src/`,
+    '~~': `${__dirname}/`,
+    '@@': `${__dirname}/`,
+    assets: `${__dirname}/src/assets/`,
+    public: `${__dirname}/src/public/`,
+  },
   devtools: true,
-  ssr: false,
+  ssr: true,
   runtimeConfig: {
     public: {
       APP_VERSION: pkg.version,
       APP_NAME: pkg.name,
-      api: ''
+      api: '',
       // APP_MODE: process.env?.NODE_ENV,
-    }
+    },
   },
   modules: [
     'nuxt-primevue',
     '@formkit/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
     '@nuxt/content',
-    '@vueuse/nuxt'
+    '@vueuse/nuxt',
+    '~/modules/auth/module',
+    '~/modules/profile/module',
   ],
   content: {
     highlight: {
       theme: 'one-dark-pro',
-      preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
-    }
+      preload: ['json', 'js', 'ts', 'html', 'css', 'vue'],
+    },
     // Options
   },
   i18n: {
@@ -34,45 +46,45 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     locales: [
       { code: 'en', file: 'en.json', name: 'English' },
-      { code: 'de', file: 'de.json', name: 'German' }
+      { code: 'de', file: 'de.json', name: 'German' },
     ],
-    vueI18n: './vue-i18n.options.ts'
+    vueI18n: './vue-i18n.options.ts',
   },
   primevue: {
     components: {
-      exclude: ['Chart']
+      exclude: ['Chart'],
     },
     options: {
-      ripple: true
-    }
+      ripple: true,
+    },
   },
   css: [
     'primevue/resources/primevue.css',
     'primeicons/primeicons.css',
-    '@sfxcode/formkit-primevue/dist/sass/formkit-primevue.scss'
+    '@sfxcode/formkit-primevue/dist/sass/formkit-primevue.scss',
   ],
   build: {
-    transpile: ['nuxt', 'primevue', 'formkit-primevue']
+    transpile: ['nuxt', 'primevue', 'formkit-primevue'],
   },
   sourcemap: {
     client: false,
-    server: true
+    server: true,
   },
   nitro: {
-		// routeRules: {
-		// 	'/': {
-		// 		proxy:`${import.meta.env.VITE_API_URL}`
+    // routeRules: {
+    // 	'/': {
+    // 		proxy:`${import.meta.env.VITE_API_URL}`
 
-		// 	},
-		// },
-		// devProxy: {
-		// 	'/api': {
-		// 		target: '',
-		// 		changeOrigin: true,
-		// 		prependPath: true,
-		// 	},
-		// },
-		minify: true,
-		compressPublicAssets: true,
-	},
+    // 	},
+    // },
+    // devProxy: {
+    // 	'/api': {
+    // 		target: '',
+    // 		changeOrigin: true,
+    // 		prependPath: true,
+    // 	},
+    // },
+    minify: true,
+    compressPublicAssets: true,
+  },
 })
