@@ -51,7 +51,9 @@ export const useAuthStore = defineStore(
       if (data.value) {
         user.value = data.value
         authinticated.value = true
-      } else {
+      }
+
+      if(error.value) {
         user.value = null
         authinticated.value = false
       }
