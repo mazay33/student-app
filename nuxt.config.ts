@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     public: `${__dirname}/src/public/`,
   },
   devtools: true,
-  ssr: true,
+  ssr: false,
   runtimeConfig: {
     public: {
       APP_VERSION: pkg.version,
