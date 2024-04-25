@@ -91,7 +91,9 @@
   // const {user} = storeToRefs(authStore)
   // await authStore.getMe()
 
-  const { data, error } = await httpService.get('private/users/me')
+
+
+  const { data, error } = await httpService.get('/private/users/me')
   console.log('Error', error)
 
   console.log(data.value)

@@ -11,7 +11,7 @@ export default defineNuxtConfig({
     public: `${__dirname}/src/public/`,
   },
   devtools: true,
-  ssr: false,
+  ssr: true,
   runtimeConfig: {
     public: {
       APP_VERSION: pkg.version,
@@ -32,13 +32,13 @@ export default defineNuxtConfig({
     '~/modules/auth/module',
     '~/modules/profile/module',
   ],
-  content: {
-    highlight: {
-      theme: 'one-dark-pro',
-      preload: ['json', 'js', 'ts', 'html', 'css', 'vue'],
-    },
+  //content: {
+    //highlight: {
+      //theme: 'one-dark-pro',
+      //preload: ['json', 'js', 'ts', 'html', 'css', 'vue'],
+    //},
     // Options
-  },
+  //},
   i18n: {
     lazy: true,
     langDir: 'locales',
@@ -84,6 +84,10 @@ export default defineNuxtConfig({
     // 		prependPath: true,
     // 	},
     // },
+	   
+    prerender: {
+      failOnError: false,
+    },
     minify: true,
     compressPublicAssets: true,
   },

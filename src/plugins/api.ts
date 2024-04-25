@@ -5,7 +5,7 @@ export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
   const $api = $fetch.create({
-    baseURL: config.public.api,
+    baseURL: `https://la-parole.ru/api/`,
     retry: 1,
     retryStatusCodes: [401],
     credentials: 'include',
@@ -15,7 +15,6 @@ export default defineNuxtPlugin(() => {
       options.headers = {
         ...options.headers,
         ...useRequestHeaders(['cookie']),
-        cookies: useRequestHeaders(['cookie']).cookie,
       }
 
       console.log(request, options, error)
@@ -29,15 +28,22 @@ export default defineNuxtPlugin(() => {
         isRefreshing = true
 
         if (process.server) {
+		console.log('SERVER PROCESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS STAAAAARTTT')
           const event = useRequestEvent()
+
+	  console.log('EVENT SHIT _>>>>>>>>>>>>>>>>>>>>>>>>>>>', event)
 
           const { data, status } = await useAsyncData(
             async () =>
               await fetchWithCookie(
                 event!,
-                `${config.public.api}public/auth/refresh`
+                `https://la-parole.ru/api/public/auth/refresh`
               )
           )
+
+	  console.log('РАБОТЕТ ВООБЩЕ БЛЯТЬ ????????????????????????????')
+
+	  console.log('DATA FUCK THIS SHIT _>>>>>>>>>>>>>>>>>>>>>>>>>', data.value)
 
           if (status.value === 'success') {
             await navigateTo(event.path)
