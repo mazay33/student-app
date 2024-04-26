@@ -48,7 +48,6 @@ export interface IHttpService {
 class HttpService implements IHttpService {
   private async _request<T>(url: string, options: UseFetchOptions<T> = {}) {
     try {
-      console.log(url.includes('private') ? false : true);
 
       const response = await useAPI<T>(url, {...options, server: url.includes('private') ? false : true})
       return response

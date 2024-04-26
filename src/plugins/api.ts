@@ -28,10 +28,7 @@ export default defineNuxtPlugin(() => {
         isRefreshing = true
 
         if (process.server) {
-		console.log('SERVER PROCESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS STAAAAARTTT')
           const event = useRequestEvent()
-
-	  console.log('EVENT SHIT _>>>>>>>>>>>>>>>>>>>>>>>>>>>', event)
 
           const { data, status } = await useAsyncData(
             async () =>
@@ -40,10 +37,6 @@ export default defineNuxtPlugin(() => {
                 `https://la-parole.ru/api/public/auth/refresh`
               )
           )
-
-	  console.log('РАБОТЕТ ВООБЩЕ БЛЯТЬ ????????????????????????????')
-
-	  console.log('DATA FUCK THIS SHIT _>>>>>>>>>>>>>>>>>>>>>>>>>', data.value)
 
           if (status.value === 'success') {
             await navigateTo(event.path)
