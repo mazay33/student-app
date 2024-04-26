@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       // APP_MODE: process.env?.NODE_ENV,
     },
   },
+
   modules: [
     'nuxt-primevue',
     '@formkit/nuxt',
@@ -31,13 +32,15 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '~/modules/auth/module',
     '~/modules/profile/module',
+    '~/modules/summary/module',
+    '~/modules/reestr/module',
   ],
   //content: {
-    //highlight: {
-      //theme: 'one-dark-pro',
-      //preload: ['json', 'js', 'ts', 'html', 'css', 'vue'],
-    //},
-    // Options
+  //highlight: {
+  //theme: 'one-dark-pro',
+  //preload: ['json', 'js', 'ts', 'html', 'css', 'vue'],
+  //},
+  // Options
   //},
   i18n: {
     lazy: true,
@@ -84,7 +87,7 @@ export default defineNuxtConfig({
     // 		prependPath: true,
     // 	},
     // },
-	   
+
     prerender: {
       failOnError: false,
     },
