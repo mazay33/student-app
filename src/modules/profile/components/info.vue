@@ -76,21 +76,26 @@
 
 <template>
   <Toast />
-  <div class="flex items-center gap-5 relative">
-    <div class="flex flex-col w-100 text-center mt--10">
+  
+  <div class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 relative"> 
+
+ <!--
+  <div flex mt-10>
+ --> 
+      <div class="text-center mt--10">
       <div class="w-5/10 text-black">
         <InputText
           type="text"
           v-model="user.nickname"
           :disabled="isDisabled"
-          class="w-50 shadow-none text-black bg-white text-center font-bold mt--5 border-1"
+          class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
           :class="[isDisabled ? 'border-white' : 'border-blue']"
         />
       </div>
-      <div class="w-5/10">
+      <div >
         <img
           @click="toggle"
-          class="rounded-full mt-5 w-150px h-150px cursor-pointer"
+          class="rounded-full mt-5 w-200px h-150px cursor-pointer "
           :src="
             user.image_url
               ? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
@@ -100,7 +105,7 @@
       </div>
     </div>
 
-    <div class="ml--40">
+    <div class="">
       <div class="flex">
         <div class="flex flex-col gap-2 flex flex-col">
           <label>Email</label>
@@ -132,24 +137,27 @@
       </div>
     </div>
 
-    <div class="absolute right-0 mt-50 mr-5">
+  
+    <div class=" flex items-center justify-center gap-5 flex-col md:flex-row md:gap-5 sm:mt-48">
       <Button
         id="disnone"
         label="обновить данные"
         :class="[isDisabled ? 'hidden' : '']"
         @click="submitInfo"
-        class="bg-white text-indigo-500 hover:bg-indigo-100"
+        class="bg-white text-indigo-500 hover:bg-indigo-100 "
       ></Button>
       <Button
         id="change_button"
         label="Изменить"
         @click="isDisabled = !isDisabled"
-        class="ml-10"
-      ></Button>
+        class="">
+      </Button>
     </div>
+
+    
   </div>
   <OverlayPanel
-    class="user-information-panel"
+    class="user-information-panel ml-7"
     ref="avatarOverlayPanel"
     appendTo="div"
   >
