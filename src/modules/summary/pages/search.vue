@@ -169,6 +169,7 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import { FilterMatchMode } from 'primevue/api'
+import httpService from '~/services/httpService';
   // import { CustomerService } from '@/service/CustomerService';
   definePageMeta({
     path: '/',
@@ -444,4 +445,12 @@
         return null
     }
   }
+
+  const createSubject = async() => {
+    const {data} = await httpService.post('main/private/subjects', {
+      name: 'Математика',
+    })
+  }
+
+  // await createSubject()
 </script>

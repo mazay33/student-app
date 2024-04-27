@@ -15,9 +15,20 @@ export const useSummaryStore = defineStore(
 
     const createSummary = async () => {
       const { data, error, pending } = await httpService.post<
-        any,
+        string,
         ISummaryCreateForm
       >('main/private/summaries', summaryCreateForm)
+
+      if (data.value) {
+        clearSummaryCreateForm()
+      }
+    }
+
+    const clearSummaryCreateForm = () => {
+      summaryCreateForm.name = null
+      summaryCreateForm.university_id = null
+      summaryCreateForm.subject_id = null
+      summaryCreateForm.teacher_id = null
     }
 
     return {

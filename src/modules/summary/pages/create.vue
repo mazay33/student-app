@@ -1,7 +1,14 @@
 <script setup lang="ts">
   const summaryStore = useSummaryStore()
+  const reestrStore = useReestrStore()
+  const { universities, subjects, teachers } = storeToRefs(reestrStore)
   const { summaryCreateForm } = summaryStore
-  // const { summaryCreateForm } = storeToRefs(summaryStore)
+
+  await Promise.all([
+    reestrStore.getUniversities(),
+    reestrStore.getSubjects(),
+    reestrStore.getTeachers(),
+  ])
 
   const submitSummary = async () => {
     await summaryStore.createSummary()
@@ -15,67 +22,6 @@
       summaryCreateForm.teacher_id
     )
   })
-
-  const universities = [
-    {
-      name: 'МГУ',
-      id: 1,
-    },
-    {
-      name: 'МФТИ',
-      id: 2,
-    },
-    {
-      name: 'МАИ',
-      id: 3,
-    },
-    {
-      name: 'МГТУ',
-      id: 4,
-    },
-    {
-      name: 'МГТСУ',
-      id: 5,
-    },
-  ]
-
-  const subjects = [
-    {
-      name: 'Математика',
-      id: 1,
-    },
-    {
-      name: 'Физика',
-      id: 2,
-    },
-    {
-      name: 'Химия',
-      id: 3,
-    },
-    {
-      name: 'Биология',
-      id: 4,
-    },
-    {
-      name: 'Информатика',
-      id: 5,
-    },
-  ]
-
-  const teachers = [
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa1',
-      name: 'Вестяк А.В.',
-    },
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa2',
-      name: 'Вестяк В.А.',
-    },
-    {
-      id: '3fa85f64-5717-4562-b3fc-2c963f66afa3',
-      name: 'Кан Ю.С.',
-    },
-  ]
 </script>
 <template>
   <div w-full h-20 text-center text-indigo-500 text-2xl font-bold>
@@ -109,7 +55,7 @@
                 v-model="summaryCreateForm.university_id"
                 optionLabel="name"
                 optionValue="id"
-                :options="universities"
+                :options="universities.result"
                 editable
                 showClear
                 placeholder="Введите название вуза..."
@@ -129,7 +75,7 @@
             <div class="flex flex-column h-3rem">
               <Dropdown
                 v-model="summaryCreateForm.subject_id"
-                :options="subjects"
+                :options="subjects.result"
                 optionLabel="name"
                 optionValue="id"
                 editable
@@ -163,9 +109,9 @@
           <template #content="{ prevCallback }">
             <div class="flex flex-column h-3rem">
               <Dropdown
-                :options="teachers"
+                :options="teachers.result"
                 v-model="summaryCreateForm.teacher_id"
-                optionLabel="name"
+                optionLabel="full_name"
                 optionValue="id"
                 editable
                 showClear
