@@ -4,7 +4,7 @@
 
   const filter = ref({
     page: 1,
-    page_size: 4,
+    page_size: 25,
   })
 
   const search = ref('')
@@ -36,6 +36,8 @@
     <template #title> Список университетов </template>
     <template #content>
       <DataTable
+        scrollHeight="60vh"
+        scrollable
         :loading="isLoading"
         showGridlines
         :value="universities?.result"
@@ -55,7 +57,11 @@
             {{ slotProps.index + 1 }}
           </template>
         </Column>
-        <Column field="name" header="Название" style="width: 95%"></Column>
+        <Column field="name" header="Название" style="width: 95%">
+          <template #body="slotProps">
+            {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
+          </template>
+        </Column>
       </DataTable>
     </template>
 
@@ -63,7 +69,7 @@
       <Paginator
         :rows="filter.page_size"
         :total-records="universities?.count"
-        :rowsPerPageOptions="[1, 2, 3, 4]"
+        :rowsPerPageOptions="[10, 25, 50, 100]"
         @update:rows="filter.page_size = $event"
         @page="filter.page = $event.page + 1"
       >

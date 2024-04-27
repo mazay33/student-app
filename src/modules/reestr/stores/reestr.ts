@@ -8,12 +8,14 @@ export const useReestrStore = defineStore('reestr', () => {
   const subjects = ref<IPaginatedResult<ISubject>>()
   const teachers = ref<IPaginatedResult<ITeacher>>()
 
-  const getUniversities = async (filter: any, search?: any) => {
+  const getUniversities = async (filter?: any, search?: any) => {
     isLoading.value = true
-    const { data, error} = await httpService.get<
+    const { data, error } = await httpService.get<
       IPaginatedResult<IUniversity>
     >(
-      `main/public/universities?page=${filter.page}&page_size=${filter.page_size}&name=${search}`
+      `main/public/universities?page=${filter?.page || 1}&page_size=${
+        filter?.page_size
+      }&short_name=${search || ''}`
     )
 
     universities.value = data.value
