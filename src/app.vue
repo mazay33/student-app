@@ -1,6 +1,4 @@
 <script setup>
-import { useAuthStore } from './modules/auth/stores/auth';
-
   useHead({
     title: 'Student App',
   })
@@ -11,6 +9,7 @@ import { useAuthStore } from './modules/auth/stores/auth';
 </script>
 
 <template>
+  <NuxtLoadingIndicator />
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>

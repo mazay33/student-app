@@ -13,7 +13,6 @@ const themeStore = useThemeStore();
 
 const { layoutConfig, layoutState, isSidebarActive } = useLayout();
 
-console.log(layoutConfig);
 
 
 const containerClass = computed(() => {

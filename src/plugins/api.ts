@@ -16,8 +16,6 @@ export default defineNuxtPlugin(() => {
         ...options.headers,
         ...useRequestHeaders(['cookie']),
       }
-
-      console.log(request, options, error)
     },
 
     async onResponseError({ response, options, error }) {
