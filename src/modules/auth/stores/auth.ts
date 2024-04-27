@@ -1,25 +1,12 @@
 import httpService from '~/services/httpService'
-
-interface IAuthLoginResponse {
-  access_token: string
-  refresh_token: string
-  token_type: string
-}
-
-interface IUser {
-  email: string
-  nickname: string
-  image_url: string | null
-  description: string | null
-  created_at: string
-}
+import type { IAuthLoginResponse, IUser } from '../@types'
 
 export const useAuthStore = defineStore(
   'auth',
   () => {
-    const isLoading = ref(false)
-    const user = ref()
-    const authinticated = ref(false)
+    const isLoading = ref<boolean>(false)
+    const user = ref<IUser | null>()
+    const authinticated = computed<boolean>(() => !!user.value)
 
     const login = async (email: string, password: string) => {
       isLoading.value = true
@@ -46,33 +33,51 @@ export const useAuthStore = defineStore(
     }
 
     const getMe = async () => {
-      const { data, error } = await httpService.get<IUser>('private/users/me')
+      isLoading.value = true
+      const { data, error, pending } = await httpService.get<IUser>(
+        'private/users/me'
+      )
 
       if (data.value) {
         user.value = data.value
-        authinticated.value = true
       }
 
-      if(error.value) {
+      if (error.value) {
         user.value = null
-        authinticated.value = false
       }
+
+      isLoading.value = pending.value
     }
 
     const refresh = async () => {
-      const { data, error } = await httpService.post('public/auth/refresh', {})
+      isLoading.value = true
+      const { data, error, pending } = await httpService.post<
+        IAuthLoginResponse,
+        {}
+      >('public/auth/refresh', {})
+
+      if (error.value) {
+        user.value = null
+      }
+
+      isLoading.value = pending.value
     }
 
     const logout = async () => {
-      const { data, error } = await httpService.post('private/auth/logout', {})
+      isLoading.value = true
+      const { data, error, pending } = await httpService.post<
+        { message: string },
+        {}
+      >('private/auth/logout', {})
 
       user.value = null
-      authinticated.value = false
+
+      isLoading.value = pending.value
     }
 
     return {
       user,
-      isLoading,
+      isLoading: computed(() => isLoading.value),
       authinticated,
 
       login,
