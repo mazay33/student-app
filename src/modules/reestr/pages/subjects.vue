@@ -9,7 +9,10 @@
   <Card>
     <template #title> Список предметов </template>
     <template #content>
-      <pre>{{ subjects }}</pre>
+      <DataTable :value="subjects?.result">
+        <Column field="id" header="№" style="width: 20%"></Column>
+        <Column field="name" header="Название" style="width: 80%"></Column>
+      </DataTable>
     </template>
   </Card>
 </template>
