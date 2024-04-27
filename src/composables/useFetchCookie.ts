@@ -3,20 +3,14 @@ import { appendResponseHeader, H3Event } from 'h3'
 export const fetchWithCookie = async (event: H3Event, url: string) => {
   /* Get the response from the server endpoint */
 
-	console.log('START FETCH WITH COKIESSSSSSS')
-
   const res = await $fetch.raw(url, {
     credentials: 'include',
     headers: useRequestHeaders(['cookie']),
     method: 'POST',
   })
 
-  console.log('RES --------->>>>>>>>>>>>>>>>>>', res)
-
   /* Get the cookies from the response */
   const cookies = (res.headers.get('set-cookie') || '').split(',')
-
-	console.log('COOOOKIES ->>>>>>>>>>', cookies)
 
   /* Modify cookies to include httpOnly and secure attributes */
   const modifiedCookies = cookies.map((cookie) => {
@@ -35,7 +29,7 @@ export const fetchWithCookie = async (event: H3Event, url: string) => {
     const updatedAttributes = []
     updatedAttributes.push('HttpOnly')
     updatedAttributes.push('Secure')
-    updatedAttributes.push(`Path=/`);
+    updatedAttributes.push(`Path=/`)
 
     // Reconstruct the modified cookie string
     const modifiedCookie = `${cookieNameValue}; ${updatedAttributes.join('; ')}`
@@ -48,8 +42,6 @@ export const fetchWithCookie = async (event: H3Event, url: string) => {
     appendResponseHeader(event, 'set-cookie', modifiedCookie)
   }
   /* Return the data of the response */
-
-	console.log('res data ----->>>>>',res._data)
 
   return res._data
 }

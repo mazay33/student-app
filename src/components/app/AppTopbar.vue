@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
   import { useRouter } from 'vue-router'
-import { useAuthStore } from '~/modules/auth/stores/auth';
+  import { useAuthStore } from '~/modules/auth/stores/auth'
   const { layoutConfig, onMenuToggle } = useLayout()
   const outsideClickListener = ref(null)
   const topbarMenuActive = ref(false)
@@ -85,33 +85,37 @@ import { useAuthStore } from '~/modules/auth/stores/auth';
     isUserMenuActive.value.toggle(event)
   }
 
-  const items = ref(
-    (user && [
-      {
-        label: 'Профиль',
-        icon: 'pi pi-user',
-        command: () => {
-          router.push('/profile')
+  const items = computed(() => {
+    if (authStore.authinticated) {
+      return [
+        {
+          label: 'Профиль',
+          icon: 'pi pi-user',
+          command: () => {
+            router.push('/profile')
+          },
         },
-      },
-      {
-        label: 'Выйти',
-        icon: 'pi pi-sign-out',
-        command: () => {
-          useAuthStore().logout()
-          router.push('/auth/login')
+        {
+          label: 'Выйти',
+          icon: 'pi pi-sign-out',
+          command: () => {
+            useAuthStore().logout()
+            router.push('/auth/login')
+          },
         },
-      },
-    ]) || [
-      {
-        label: 'Войти',
-        icon: 'pi pi-sign-in ',
-        command: () => {
-          router.push('/auth/login')
+      ]
+    } else {
+      return [
+        {
+          label: 'Войти',
+          icon: 'pi pi-sign-in ',
+          command: () => {
+            router.push('/auth/login')
+          },
         },
-      },
-    ]
-  )
+      ]
+    }
+  })
 </script>
 
 <template>
