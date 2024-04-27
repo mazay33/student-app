@@ -76,84 +76,85 @@
 
 <template>
   <Toast />
-  
-  <div class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between">
 
-      <div flex flex-col sm:flex-row>
-        <div class="text-center mt--10">
-      <div class="w-5/10 text-black">
-        <InputText
-          type="text"
-          v-model="user.nickname"
-          :disabled="isDisabled"
-          class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
-          :class="[isDisabled ? 'border-white' : 'border-blue']"
-        />
-      </div>
-      <div >
-        <img
-          @click="toggle"
-          class="rounded-full mt-5 w-200px h-150px cursor-pointer "
-          :src="
-            user.image_url
-              ? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
-              : 'https://pinia.vuejs.org/logo.svg'
-          "
-        />
-      </div>
-    </div>
-
-    <div sm:ml-7>
-      <div class="flex">
-        <div class="flex flex-col gap-2 flex flex-col">
-          <label>Email</label>
-          <div class="bg-slate-200 rounded w-60 h-10">
-            <p class="pt-2 pl-3">{{ user.email }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="flex mt-6">
-        <div class="flex flex-col gap-2 flex flex-col">
-          <label>Created at</label>
-          <div class="bg-slate-200 rounded w-60 h-10">
-            <p class="pt-2 pl-3">{{ user.created_at }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="flex mt-6">
-        <div class="flex flex-col gap-2 flex flex-col mb-5">
-          <label for="username">Description</label>
+  <div
+    class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between"
+  >
+    <div flex flex-col sm:flex-row>
+      <div class="text-center mt--10">
+        <div class="w-5/10 text-black">
           <InputText
             type="text"
-            v-model="user.description"
-            class="placeholder:text-slate-700 shadow-none border-1 h-10"
-            :class="[isDisabled ? 'border-white' : 'border-blue']"
-            placeholder="Some info about..."
+            v-model="user.nickname"
             :disabled="isDisabled"
+            class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
+            :class="[isDisabled ? 'border-white' : 'border-blue']"
+          />
+        </div>
+        <div>
+          <img
+            @click="toggle"
+            class="rounded-full mt-5 h-200px w-200px cursor-pointer"
+            :src="
+              user.image_url
+                ? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
+                : 'https://pinia.vuejs.org/logo.svg'
+            "
           />
         </div>
       </div>
-    </div>
-      </div>
 
-  
-    <div class=" flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48">
+      <div sm:ml-7>
+        <div class="flex">
+          <div class="flex flex-col gap-2 flex flex-col">
+            <label>Email</label>
+            <div class="bg-slate-200 rounded w-60 h-10">
+              <p class="pt-2 pl-3">{{ user.email }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex mt-6">
+          <div class="flex flex-col gap-2 flex flex-col">
+            <label>Created at</label>
+            <div class="bg-slate-200 rounded w-60 h-10">
+              <p class="pt-2 pl-3">{{ user.created_at }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="flex mt-6">
+          <div class="flex flex-col gap-2 flex flex-col mb-5">
+            <label for="username">Description</label>
+            <InputText
+              type="text"
+              v-model="user.description"
+              class="placeholder:text-slate-700 shadow-none border-1 h-10"
+              :class="[isDisabled ? 'border-white' : 'border-blue']"
+              placeholder="Some info about..."
+              :disabled="isDisabled"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48"
+    >
       <Button
         id="disnone"
         label="обновить данные"
         :class="[isDisabled ? 'hidden' : '']"
         @click="submitInfo"
-        class="bg-white text-indigo-500 hover:bg-indigo-100 "
+        class="bg-white text-indigo-500 hover:bg-indigo-100"
       ></Button>
       <Button
         id="change_button"
         label="Изменить"
         @click="isDisabled = !isDisabled"
-        class="">
+        class=""
+      >
       </Button>
     </div>
-
-    
   </div>
   <OverlayPanel
     class="user-information-panel ml-7"
