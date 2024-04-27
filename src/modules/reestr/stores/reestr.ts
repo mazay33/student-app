@@ -1,28 +1,36 @@
+import type { IPaginatedResult } from '~/@types/@types'
 import httpService from '~/services/httpService'
+import type { ISubject, ITeacher, IUniversity } from '../@types'
 
 export const useReestrStore = defineStore('reestr', () => {
-  const isLoading = ref(false)
-  const universities = ref([])
-  const subjects = ref([])
-  const teachers = ref([])
+  const isLoading = ref<boolean>(false)
+  const universities = ref<IPaginatedResult<IUniversity>>()
+  const subjects = ref<IPaginatedResult<ISubject>>()
+  const teachers = ref<IPaginatedResult<ITeacher>>()
 
   const getUniversities = async () => {
     isLoading.value = true
-    const { data, error } = await httpService.get('main/public/universities')
+    const { data, error } = await httpService.get<
+      IPaginatedResult<IUniversity>
+    >('main/public/universities')
     universities.value = data.value
     isLoading.value = false
   }
 
   const getSubjects = async () => {
     isLoading.value = true
-    const { data, error } = await httpService.get('main/public/subjects')
+    const { data, error } = await httpService.get<IPaginatedResult<ISubject>>(
+      'main/public/subjects'
+    )
     subjects.value = data.value
     isLoading.value = false
   }
 
   const getTeachers = async () => {
     isLoading.value = true
-    const { data, error } = await httpService.get('main/public/teachers')
+    const { data, error } = await httpService.get<IPaginatedResult<ITeacher>>(
+      'main/public/teachers'
+    )
     teachers.value = data.value
     isLoading.value = false
   }
