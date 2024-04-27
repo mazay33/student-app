@@ -77,12 +77,10 @@
 <template>
   <Toast />
   
-  <div class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 relative"> 
+  <div class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between">
 
- <!--
-  <div flex mt-10>
- --> 
-      <div class="text-center mt--10">
+      <div flex flex-col sm:flex-row>
+        <div class="text-center mt--10">
       <div class="w-5/10 text-black">
         <InputText
           type="text"
@@ -105,7 +103,7 @@
       </div>
     </div>
 
-    <div class="">
+    <div sm:ml-7>
       <div class="flex">
         <div class="flex flex-col gap-2 flex flex-col">
           <label>Email</label>
@@ -136,9 +134,10 @@
         </div>
       </div>
     </div>
+      </div>
 
   
-    <div class=" flex items-center justify-center gap-5 flex-col md:flex-row md:gap-5 sm:mt-48">
+    <div class=" flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48">
       <Button
         id="disnone"
         label="обновить данные"
