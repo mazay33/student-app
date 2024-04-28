@@ -5,7 +5,7 @@ export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
   const $api = $fetch.create({
-    baseURL: `https://la-parole.ru/api/`,
+    baseURL: `https://auth.24konspect.ru/api/`,
     retry: 1,
     retryStatusCodes: [401],
     credentials: 'include',
@@ -32,7 +32,7 @@ export default defineNuxtPlugin(() => {
             async () =>
               await fetchWithCookie(
                 event!,
-                `https://la-parole.ru/api/public/auth/refresh`
+                `https://auth.24konspect.ru/api/public/auth/refresh`
               )
           )
 

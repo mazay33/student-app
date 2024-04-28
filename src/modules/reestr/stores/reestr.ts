@@ -8,15 +8,12 @@ export const useReestrStore = defineStore('reestr', () => {
   const subjects = ref<IPaginatedResult<ISubject>>()
   const teachers = ref<IPaginatedResult<ITeacher>>()
 
-  const getUniversities = async (filter?: any, search?: any) => {
+  const getUniversities = async (filterQuery?: string) => {
     isLoading.value = true
+
     const { data, error } = await httpService.get<
       IPaginatedResult<IUniversity>
-    >(
-      `main/public/universities?page=${filter?.page || 1}&page_size=${
-        filter?.page_size
-      }&short_name=${search || ''}`
-    )
+    >(`main/public/universities${filterQuery ? filterQuery : ''}`)
 
     universities.value = data.value
     isLoading.value = false

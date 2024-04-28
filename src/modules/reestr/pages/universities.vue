@@ -1,31 +1,39 @@
 <script setup lang="ts">
+  import QueryBuilder from '~/utils/QueryBuilder'
+
   const reestrStore = useReestrStore()
   const { universities, isLoading } = storeToRefs(reestrStore)
 
-  const filter = ref({
+  const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
+    name: '',
   })
 
-  const search = ref('')
+  const filterUrl = computed(() => {
+    return new QueryBuilder()
+      .setPage(filter.value.page)
+      .setPageSize(filter.value.page_size)
+      .setFilter('name', filter.value.name, true)
+  })
 
-  await reestrStore.getUniversities(filter.value, search.value)
+  const debounceFetch = useDebounceFn(async () => {
+    await reestrStore.getUniversities(filterUrl.value.buildUrl())
+  }, 500)
 
-  const debounceSearchUniversities = useDebounceFn(async () => {
-    await reestrStore.getUniversities(filter.value, search.value)
-  }, 800)
-
-  watch(
-    () => search.value,
-    async () => {
-      await debounceSearchUniversities()
-    }
-  )
+  await reestrStore.getUniversities(filterUrl.value.buildUrl())
 
   watch(
     () => filter.value,
     async () => {
-      await reestrStore.getUniversities(filter.value, search.value)
+      //Сомнительно, но окэй, потом поправлю
+      for (let i = 0; i < filterUrl.value.getDebounceFilters().length; i++) {
+        if (!filter.value[filterUrl.value.getDebounceFilters()[i]]) {
+          await reestrStore.getUniversities(filterUrl.value.buildUrl())
+        } else {
+          debounceFetch()
+        }
+      }
     },
     { deep: true }
   )
@@ -48,7 +56,10 @@
               <InputIcon>
                 <i class="pi pi-search" />
               </InputIcon>
-              <InputText v-model="search" placeholder="Поиск университета" />
+              <InputText
+                v-model="filter.name"
+                placeholder="Поиск университета"
+              />
             </IconField>
           </div>
         </template>
@@ -79,3 +90,4 @@
 </template>
 
 <style scoped></style>
+~/utils/QueryBuilder
