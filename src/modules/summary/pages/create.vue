@@ -5,7 +5,7 @@
   const { summaryCreateForm } = summaryStore
 
   await Promise.all([
-    reestrStore.getUniversities(false, ''), //TODO добавить фильтр
+    reestrStore.getUniversities(),
     reestrStore.getSubjects(),
     reestrStore.getTeachers(),
   ])
@@ -55,7 +55,7 @@
                 v-model="summaryCreateForm.university_id"
                 optionLabel="name"
                 optionValue="id"
-                :options="universities.result"
+                :options="universities?.result"
                 editable
                 showClear
                 placeholder="Введите название вуза..."
@@ -75,7 +75,7 @@
             <div class="flex flex-column h-3rem">
               <Dropdown
                 v-model="summaryCreateForm.subject_id"
-                :options="subjects.result"
+                :options="subjects?.result"
                 optionLabel="name"
                 optionValue="id"
                 editable
@@ -109,7 +109,7 @@
           <template #content="{ prevCallback }">
             <div class="flex flex-column h-3rem">
               <Dropdown
-                :options="teachers.result"
+                :options="teachers?.result"
                 v-model="summaryCreateForm.teacher_id"
                 optionLabel="full_name"
                 optionValue="id"
