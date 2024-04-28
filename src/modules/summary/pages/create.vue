@@ -5,7 +5,7 @@
   const { summaryCreateForm } = summaryStore
 
   await Promise.all([
-    reestrStore.getUniversities(),
+    reestrStore.getUniversities(false, ''), //TODO добавить фильтр
     reestrStore.getSubjects(),
     reestrStore.getTeachers(),
   ])
