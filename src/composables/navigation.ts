@@ -1,5 +1,7 @@
+const authStore = useAuthStore()
+
 export function useNavigationMenu() {
-  const navigationMenu = () => {
+  const navigationMenu = computed(() => {
     return [
       {
         label: 'Конспект',
@@ -28,6 +30,18 @@ export function useNavigationMenu() {
           },
         ],
       },
+
+      authStore.isAdmin && {
+        label: 'Админ',
+        items: [
+          {
+            label: 'Страничка админа',
+            to: '/admin',
+            icon: 'pi pi-fw pi-key',
+          },
+        ],
+      },
+
       // {
       //   label: 'UI',
       //   items: [
@@ -110,7 +124,7 @@ export function useNavigationMenu() {
       //   ],
       // },
     ]
-  }
+  })
 
   return { navigationMenu }
 }

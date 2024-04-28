@@ -7,6 +7,9 @@ export const useAuthStore = defineStore(
     const isLoading = ref<boolean>(false)
     const user = ref<IUser | null>()
     const authinticated = computed<boolean>(() => !!user.value)
+    const isAdmin = computed<boolean>(
+      () => !!user.value && user.value.is_superuser
+    )
 
     const login = async (email: string, password: string) => {
       isLoading.value = true
@@ -79,6 +82,7 @@ export const useAuthStore = defineStore(
       user,
       isLoading: computed(() => isLoading.value),
       authinticated,
+      isAdmin,
 
       login,
       refresh,
