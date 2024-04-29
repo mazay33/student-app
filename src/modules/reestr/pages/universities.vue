@@ -60,6 +60,7 @@
         :value="universities?.result"
         removableSort
         @sort="() => {}"
+        lazy
         @update:sortField="filter.sort_by = $event"
         @update:sortOrder="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
       >
