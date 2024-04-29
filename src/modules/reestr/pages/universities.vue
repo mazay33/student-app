@@ -59,6 +59,7 @@
         showGridlines
         :value="universities?.result"
         removableSort
+        @sort="() => {}"
         @update:sortField="filter.sort_by = $event"
         @update:sortOrder="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
       >
@@ -102,4 +103,3 @@
 </template>
 
 <style scoped></style>
-~/utils/QueryBuilder
