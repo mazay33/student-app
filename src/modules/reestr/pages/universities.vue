@@ -7,6 +7,8 @@
   const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
+    sort_by: '',
+    sort_type: 'asc',
   })
 
   const searchFilter = ref({
@@ -17,6 +19,8 @@
     return new QueryBuilder()
       .setPage(filter.value.page)
       .setPageSize(filter.value.page_size)
+      .setSortBy(filter.value.sort_by)
+      .setSortType(filter.value.sort_type)
       .setFilter('name', searchFilter.value.name)
       .buildUrl()
   })
@@ -54,6 +58,9 @@
         :loading="isLoading"
         showGridlines
         :value="universities?.result"
+        removableSort
+        @update:sortField="filter.sort_by = $event"
+        @update:sortOrder="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
       >
         <template #header>
           <div>
@@ -73,7 +80,7 @@
             {{ slotProps.index + 1 }}
           </template>
         </Column>
-        <Column field="name" header="Название" style="width: 95%">
+        <Column sortable field="name" header="Название" style="width: 95%">
           <template #body="slotProps">
             {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
           </template>

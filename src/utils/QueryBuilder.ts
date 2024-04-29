@@ -27,12 +27,17 @@ class QueryBuilder {
   }
 
   setSortBy(sortBy: string): QueryBuilder {
-    this.filter['sort_by'] = sortBy
+    if (sortBy) {
+      this.filter['sort_by'] = sortBy
+    }
+
     return this
   }
 
   setSortType(sortType: 'asc' | 'desc'): QueryBuilder {
-    this.filter['sort_type'] = sortType
+    if (sortType) {
+      this.filter['sort_type'] = sortType
+    }
     return this
   }
 
