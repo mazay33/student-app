@@ -55,7 +55,6 @@
       <DataTable
         scrollHeight="60vh"
         scrollable
-        :loading="isLoading"
         showGridlines
         :value="universities?.result"
         removableSort
@@ -79,12 +78,16 @@
         </template>
         <Column class="text-center" header="№" style="width: 2%">
           <template #body="slotProps">
-            {{ slotProps.index + 1 }}
+            <Skeleton v-if="isLoading" />
+            <div v-else>{{ slotProps.index + 1 }}</div>
           </template>
         </Column>
         <Column sortable field="name" header="Название" style="width: 95%">
           <template #body="slotProps">
-            {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
+            <Skeleton v-if="isLoading" />
+            <div v-else>
+              {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
+            </div>
           </template>
         </Column>
       </DataTable>
