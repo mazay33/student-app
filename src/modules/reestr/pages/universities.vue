@@ -7,6 +7,9 @@
   const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
+  })
+
+  const searchFilter = ref({
     name: '',
   })
 
@@ -14,28 +17,30 @@
     return new QueryBuilder()
       .setPage(filter.value.page)
       .setPageSize(filter.value.page_size)
-      .setFilter('name', filter.value.name, true)
+      .setFilter('name', searchFilter.value.name)
+      .buildUrl()
   })
 
   const debounceFetch = useDebounceFn(async () => {
-    await reestrStore.getUniversities(filterUrl.value.buildUrl())
+    await reestrStore.getUniversities(filterUrl.value)
   }, 500)
 
-  await reestrStore.getUniversities(filterUrl.value.buildUrl())
+  await reestrStore.getUniversities(filterUrl.value)
 
   watch(
     () => filter.value,
     async () => {
-      //Сомнительно, но окэй, потом поправлю
-      for (let i = 0; i < filterUrl.value.getDebounceFilters().length; i++) {
-        if (!filter.value[filterUrl.value.getDebounceFilters()[i]]) {
-          await reestrStore.getUniversities(filterUrl.value.buildUrl())
-        } else {
-          debounceFetch()
-        }
-      }
+      await reestrStore.getUniversities(filterUrl.value)
     },
-    { deep: true }
+    { deep: true, immediate: true }
+  )
+
+  watch(
+    () => searchFilter.value,
+    async () => {
+      await debounceFetch()
+    },
+    { deep: true, immediate: true }
   )
 </script>
 
@@ -57,7 +62,7 @@
                 <i class="pi pi-search" />
               </InputIcon>
               <InputText
-                v-model="filter.name"
+                v-model="searchFilter.name"
                 placeholder="Поиск университета"
               />
             </IconField>
