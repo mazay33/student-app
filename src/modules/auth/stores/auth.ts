@@ -1,5 +1,6 @@
 import httpService from '~/services/httpService'
-import type { IAuthLoginResponse, IUser } from '../@types'
+import type { IAuthLoginResponse } from '../@types'
+import type { IUser } from '~/@types/@types'
 
 export const useAuthStore = defineStore(
   'auth',
