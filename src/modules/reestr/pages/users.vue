@@ -7,6 +7,9 @@
   const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
+  })
+
+  const searchFilter = ref({
     nickname: '',
   })
 
@@ -14,28 +17,33 @@
     return new QueryBuilder()
       .setPage(filter.value.page)
       .setPageSize(filter.value.page_size)
-      .setFilter('nickname', filter.value.nickname, true)
+
+      .setFilter('nickname', searchFilter.value.nickname)
+      .buildUrl()
   })
 
+  await reestrStore.getUsers(filterUrl.value)
+
   const debounceFetch = useDebounceFn(async () => {
-    await reestrStore.getUsers(filterUrl.value.buildUrl())
+    await reestrStore.getUsers(filterUrl.value)
   }, 500)
-  
-  await reestrStore.getUsers(filterUrl.value.buildUrl())
+
+  await reestrStore.getUsers(filterUrl.value)
 
   watch(
     () => filter.value,
     async () => {
-
-      for (let i = 0; i < filterUrl.value.getDebounceFilters().length; i++) {
-        if (!filter.value[filterUrl.value.getDebounceFilters()[i]]) {
-          await reestrStore.getUsers(filterUrl.value.buildUrl())
-        } else {
-          debounceFetch()
-        }
-      }
+      await reestrStore.getUsers(filterUrl.value)
     },
-    { deep: true }
+    { deep: true, immediate: true }
+  )
+
+  watch(
+    () => searchFilter.value,
+    async () => {
+      await debounceFetch()
+    },
+    { deep: true, immediate: true }
   )
 </script>
 
@@ -50,15 +58,14 @@
         showGridlines
         :value="users?.result"
       >
-
-      <template #header>
+        <template #header>
           <div>
             <IconField iconPosition="left">
               <InputIcon>
                 <i class="pi pi-search" />
               </InputIcon>
               <InputText
-                v-model="filter.nickname"
+                v-model="searchFilter.nickname"
                 placeholder="Поиск пользователя"
               />
             </IconField>
@@ -76,7 +83,7 @@
             {{ slotProps.data.nickname }}
           </template>
         </Column>
-    </DataTable>
+      </DataTable>
     </template>
 
     <template #footer>
@@ -89,9 +96,7 @@
       >
       </Paginator>
     </template>
-
   </Card>
 </template>
 
 <style scoped></style>
-~/utils/QueryBuilder
