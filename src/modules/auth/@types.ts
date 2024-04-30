@@ -4,12 +4,6 @@ interface IAuthLoginResponse {
   token_type: string
 }
 
-interface IUser {
-  email: string
-  nickname: string
-  image_url: string | null
-  description: string | null
-  created_at: string
-}
 
-export type { IAuthLoginResponse, IUser }
+
+export type { IAuthLoginResponse }

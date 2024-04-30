@@ -121,7 +121,7 @@
 <template>
   <div class="layout-topbar">
     <NuxtLink to="/" class="layout-topbar-logo">
-      <span class="text-[var(--primary-color)]">App Name</span>
+      <span class="text-[var(--primary-color)]">Конспект</span>
     </NuxtLink>
 
     <button
