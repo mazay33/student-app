@@ -9,6 +9,7 @@
     "fetchWithCookie": "readonly",
     "usePrimeDataTable": "readonly",
     "ExpiringStorage": "readonly",
+    "QueryBuilder": "readonly",
     "useCounterStore": "readonly",
     "useDataStore": "readonly",
     "updateTheme": "readonly",

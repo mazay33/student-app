@@ -7,7 +7,7 @@
 
 <template>
   <Card>
-    <template #title> Список предметов </template>
+    <template #title> Список предметов</template>
     <template #content>
       <DataTable :value="subjects?.result">
         <Column field="id" header="№" style="width: 20%"></Column>

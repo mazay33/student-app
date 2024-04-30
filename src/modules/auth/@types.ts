@@ -13,4 +13,4 @@ interface IUser {
   created_at: string
 }
 
-export type { IAuthLoginResponse, IUser }
+export type { IAuthLoginResponse }
