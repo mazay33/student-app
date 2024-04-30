@@ -34,6 +34,7 @@ export default defineNuxtConfig({
     '~/modules/profile/module',
     '~/modules/summary/module',
     '~/modules/reestr/module',
+    '~/modules/admin/module',
   ],
   //content: {
   //highlight: {

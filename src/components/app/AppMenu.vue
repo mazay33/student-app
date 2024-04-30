@@ -4,13 +4,13 @@ import AppMenuItem from './AppMenuItem.vue'
 import { useNavigationMenu } from '~/composables/navigation'
 
 const { navigationMenu } = useNavigationMenu()
-const model = navigationMenu()
+// const model = navigationMenu()
 
 </script>
 
 <template>
   <ul class="layout-menu">
-    <template v-for="(item, i) in model" :key="item">
+    <template v-for="(item, i) in navigationMenu" :key="item">
       <app-menu-item v-if="!item.separator" :item="item" :index="i" />
       <li v-if="item.separator" class="menu-separator" />
     </template>

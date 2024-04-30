@@ -7,6 +7,11 @@
   const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
+    sort_by: '',
+    sort_type: 'asc',
+  })
+
+  const searchFilter = ref({
     name: '',
   })
 
@@ -14,28 +19,32 @@
     return new QueryBuilder()
       .setPage(filter.value.page)
       .setPageSize(filter.value.page_size)
-      .setFilter('name', filter.value.name, true)
+      .setSortBy(filter.value.sort_by)
+      .setSortType(filter.value.sort_type)
+      .setFilter('name', searchFilter.value.name)
+      .buildUrl()
   })
 
   const debounceFetch = useDebounceFn(async () => {
-    await reestrStore.getUniversities(filterUrl.value.buildUrl())
+    await reestrStore.getUniversities(filterUrl.value)
   }, 500)
 
-  await reestrStore.getUniversities(filterUrl.value.buildUrl())
+  await reestrStore.getUniversities(filterUrl.value)
 
   watch(
     () => filter.value,
     async () => {
-      //Сомнительно, но окэй, потом поправлю
-      for (let i = 0; i < filterUrl.value.getDebounceFilters().length; i++) {
-        if (!filter.value[filterUrl.value.getDebounceFilters()[i]]) {
-          await reestrStore.getUniversities(filterUrl.value.buildUrl())
-        } else {
-          debounceFetch()
-        }
-      }
+      await reestrStore.getUniversities(filterUrl.value)
     },
-    { deep: true }
+    { deep: true, immediate: true }
+  )
+
+  watch(
+    () => searchFilter.value,
+    async () => {
+      await debounceFetch()
+    },
+    { deep: true, immediate: true }
   )
 </script>
 
@@ -46,9 +55,13 @@
       <DataTable
         scrollHeight="60vh"
         scrollable
-        :loading="isLoading"
         showGridlines
         :value="universities?.result"
+        removableSort
+        @sort="() => {}"
+        lazy
+        @update:sortField="filter.sort_by = $event"
+        @update:sortOrder="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
       >
         <template #header>
           <div>
@@ -57,7 +70,7 @@
                 <i class="pi pi-search" />
               </InputIcon>
               <InputText
-                v-model="filter.name"
+                v-model="searchFilter.name"
                 placeholder="Поиск университета"
               />
             </IconField>
@@ -65,12 +78,16 @@
         </template>
         <Column class="text-center" header="№" style="width: 2%">
           <template #body="slotProps">
-            {{ slotProps.index + 1 }}
+            <Skeleton v-if="isLoading" />
+            <div v-else>{{ slotProps.index + 1 }}</div>
           </template>
         </Column>
-        <Column field="name" header="Название" style="width: 95%">
+        <Column sortable field="name" header="Название" style="width: 95%">
           <template #body="slotProps">
-            {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
+            <Skeleton v-if="isLoading" />
+            <div v-else>
+              {{ slotProps.data.short_name }} - {{ slotProps.data.name }}
+            </div>
           </template>
         </Column>
       </DataTable>
@@ -90,4 +107,3 @@
 </template>
 
 <style scoped></style>
-~/utils/QueryBuilder

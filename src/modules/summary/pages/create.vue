@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import type { IUniversity } from '~/modules/reestr/@types'
+
   const summaryStore = useSummaryStore()
   const reestrStore = useReestrStore()
   const { universities, subjects, teachers } = storeToRefs(reestrStore)
@@ -22,6 +24,20 @@
       summaryCreateForm.teacher_id
     )
   })
+
+  const debounceFetch = useDebounceFn(async (formatUrl) => {
+    await reestrStore.getUniversities(formatUrl)
+  }, 250)
+
+  const onUniversityChange = async (event: any) => {
+    if (typeof event.value == 'string') {
+      const formatUrl = computed(() => {
+        return new QueryBuilder().setFilter('name', event.value).buildUrl()
+      })
+
+      await debounceFetch(formatUrl.value)
+    }
+  }
 </script>
 <template>
   <div w-full h-20 text-center text-indigo-500 text-2xl font-bold>
@@ -52,15 +68,21 @@
           <template #content="{ prevCallback, nextCallback }">
             <div class="flex flex-column h-3rem">
               <Dropdown
+                @change="onUniversityChange($event)"
                 v-model="summaryCreateForm.university_id"
                 optionLabel="name"
                 optionValue="id"
+                :loading="reestrStore.isLoading"
                 :options="universities?.result"
                 editable
                 showClear
                 placeholder="Введите название вуза..."
                 class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
-              />
+              >
+                <template #option="{ option }: { option: IUniversity }">
+                  {{ option.short_name }} - {{ option.name }}
+                </template>
+              </Dropdown>
               <Button ml-5>Добавить ВУЗ</Button>
             </div>
             <div class="flex py-4 gap-2">

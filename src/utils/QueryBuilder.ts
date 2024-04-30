@@ -1,6 +1,5 @@
 class QueryBuilder {
   private filter: Record<string, any>
-  private debounceFilter: Record<string, any>
 
   private defaultFilter = {
     page: 1,
@@ -9,15 +8,10 @@ class QueryBuilder {
 
   constructor() {
     this.filter = { ...this.defaultFilter }
-    this.debounceFilter = {}
   }
 
-  setFilter(key: string, value: any, debounce?: boolean): QueryBuilder {
-    if (!debounce) {
-      this.filter[key] = value
-    } else {
-      this.debounceFilter[key] = { value, debounce }
-    }
+  setFilter(key: string, value: any): QueryBuilder {
+    this.filter[key] = value
 
     return this
   }
@@ -33,17 +27,18 @@ class QueryBuilder {
   }
 
   setSortBy(sortBy: string): QueryBuilder {
-    this.filter['sort_by'] = sortBy
+    if (sortBy) {
+      this.filter['sort_by'] = sortBy
+    }
+
     return this
   }
 
   setSortType(sortType: 'asc' | 'desc'): QueryBuilder {
-    this.filter['sort_type'] = sortType
+    if (sortType) {
+      this.filter['sort_type'] = sortType
+    }
     return this
-  }
-
-  getDebounceFilters(): Record<string, any> {
-    return Object.entries(this.debounceFilter).map(([key]) => key)
   }
 
   buildUrl(): string {
@@ -52,14 +47,6 @@ class QueryBuilder {
     for (const key in this.filter) {
       if (this.filter.hasOwnProperty(key)) {
         params.append(key, this.filter[key].toString())
-      }
-    }
-
-    for (const key in this.debounceFilter) {
-      if (this.debounceFilter.hasOwnProperty(key)) {
-        console.log(this.debounceFilter[key].value)
-
-        params.append(key, this.debounceFilter[key].value)
       }
     }
 
