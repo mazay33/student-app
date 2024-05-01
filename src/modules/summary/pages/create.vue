@@ -60,8 +60,7 @@
 
   const onTeacherChange = async (event: any) => {
     if (typeof event.value == 'string') {
-      teacherFormatUrl.value
-        .setFilter('full_name', event.value)
+      teacherFormatUrl.value.setFilter('full_name', event.value)
 
       await debounceFetch(() =>
         reestrStore.getTeachers(teacherFormatUrl.value.buildUrl())
@@ -113,11 +112,11 @@
           <div class="flex flex-col sm:flex-row h-8rem sm:h-3rem">
             <Dropdown
               @change="onSubjectChange($event)"
+              @update:model-value="summaryCreateForm.teacher = null"
               v-model="summaryCreateForm.subject"
               :options="subjects?.result"
               optionLabel="name"
               :loading="reestrStore.isLoading"
-
               editable
               showClear
               placeholder="Выбрать из существующих"
