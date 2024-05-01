@@ -1,13 +1,15 @@
+import type { ISubject, ITeacher, IUniversity } from '../reestr/@types'
+
 interface ISummaryCreateForm {
   name: string | null
-  university_id: number | null
-  subject_id: number  | null
-  teacher_id: string  | null
+  university: IUniversity | null
+  subject: ISubject | null
+  teacher: ITeacher | null
 }
 
 interface ISummaries {
   id: String
-  name: String,
+  name: String
   user_id: String
 }
 

@@ -311,6 +311,10 @@ watch(
     path: '/',
   })
 
+  const summaryStore = useSummaryStore()
+
+  await summaryStore.getSummaries()
+
   const customers = ref()
   const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },

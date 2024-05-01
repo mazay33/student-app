@@ -10,6 +10,10 @@
 
   const { user } = authStore
 
+  const userImg = computed(() => {
+    return authStore.user?.image_url
+  })
+
   onMounted(() => {
     bindOutsideClickListener()
   })
@@ -140,7 +144,12 @@
 
     <div class="layout-topbar-menu" :class="topbarMenuClasses">
       <button class="p-link layout-topbar-button" @click="toggleUserMenu">
-        <i class="pi pi-user" />
+        <i v-if="!userImg" class="pi pi-user" />
+        <img
+          v-else
+          class="rounded-full h-40px w-40px cursor-pointer"
+          :src="`${userImg.replace('localhost', 'la-parole.ru/api')}`"
+        />
         <span>Profile</span>
       </button>
       <!-- <button class="p-link layout-topbar-button" @click="toggle">

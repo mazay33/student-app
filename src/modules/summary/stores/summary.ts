@@ -2,26 +2,25 @@ import httpService from '~/services/httpService'
 import type { ISummaryCreateForm, ISummaries } from '../@types'
 import type { IPaginatedResult } from '~/@types/@types'
 
-
 export const useSummaryStore = defineStore(
   'summary',
   () => {
     const isLoading = ref<boolean>(false)
-    const summaries = ref<IPaginatedResult<ISummaries>>()
+    const summaries = ref([])
 
     const summaryCreateForm = reactive<ISummaryCreateForm>({
       name: null,
-      university_id: null,
-      subject_id: null,
-      teacher_id: null,
+      university: null,
+      subject: null,
+      teacher: null,
     })
 
     const getSummaries = async (filterQuery?: string) => {
       isLoading.value = true
-      
+
       const { data, error } = await httpService.get<
-      IPaginatedResult<ISummaries>
-    >(`main/public/summaries${filterQuery ? filterQuery : ''}`)
+        IPaginatedResult<ISummaries>
+      >(`main/public/summaries${filterQuery ? filterQuery : ''}`)
 
       summaries.value = data.value
       isLoading.value = false
@@ -31,7 +30,12 @@ export const useSummaryStore = defineStore(
       const { data, error, pending } = await httpService.post<
         string,
         ISummaryCreateForm
-      >('main/private/summaries', summaryCreateForm)
+      >('main/private/summaries', {
+        name: summaryCreateForm.name,
+        university_id: summaryCreateForm.university?.id,
+        subject_id: summaryCreateForm.subject?.id,
+        teacher_id: summaryCreateForm.teacher?.id,
+      })
 
       if (data.value) {
         clearSummaryCreateForm()
@@ -40,17 +44,17 @@ export const useSummaryStore = defineStore(
 
     const clearSummaryCreateForm = () => {
       summaryCreateForm.name = null
-      summaryCreateForm.university_id = null
-      summaryCreateForm.subject_id = null
-      summaryCreateForm.teacher_id = null
+      summaryCreateForm.university = null
+      summaryCreateForm.subject = null
+      summaryCreateForm.teacher = null
     }
 
     return {
       summaryCreateForm,
       createSummary,
+      getSummaries,
       isLoading: computed(() => isLoading.value),
       summaries,
-      getSummaries,
     }
   },
   {
