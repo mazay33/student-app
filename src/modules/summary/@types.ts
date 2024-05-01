@@ -5,5 +5,10 @@ interface ISummaryCreateForm {
   teacher_id: string  | null
 }
 
+interface ISummaries {
+  id: String
+  name: String,
+  user_id: String
+}
 
-export type { ISummaryCreateForm }
+export type { ISummaryCreateForm, ISummaries }
