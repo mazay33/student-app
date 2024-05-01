@@ -7,10 +7,22 @@ interface ISummaryCreateForm {
   teacher: ITeacher | null
 }
 
-interface ISummaries {
-  id: String
-  name: String
-  user_id: String
+interface ILecture {
+  name: string
+  description: string
+  pdf_file_url: string
+  video_url: string
+  id: string
 }
 
-export type { ISummaryCreateForm, ISummaries }
+interface ISummary {
+  id: string
+  name: string
+  user_id: string
+  university?: IUniversity
+  subject?: ISubject
+  teacher?: ITeacher
+  status?: string
+  lectures?: ILecture[]
+}
+export type { ISummaryCreateForm, ISummary }

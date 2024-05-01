@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import QueryBuilder from '~/utils/QueryBuilder'
+  definePageMeta({
+    path: '/',
+  })
+  import QueryBuilder from '~/utils/QueryBuilder'
 
-const summaryStore = useSummaryStore()
-const { isLoading, summaries } = storeToRefs(summaryStore)
+  const summaryStore = useSummaryStore()
+  const { summaries } = storeToRefs(summaryStore)
 
-
-const filter = ref<{ [key: string]: any }>({
+  const filter = ref<{ [key: string]: any }>({
     page: 1,
     page_size: 25,
   })
@@ -18,7 +20,6 @@ const filter = ref<{ [key: string]: any }>({
     return new QueryBuilder()
       .setPage(filter.value.page)
       .setPageSize(filter.value.page_size)
-
       .setFilter('name', searchFilter.value.name)
       .buildUrl()
   })
@@ -27,14 +28,14 @@ const filter = ref<{ [key: string]: any }>({
     await summaryStore.getSummaries(filterUrl.value)
   }, 500)
 
-await summaryStore.getSummaries()
+  await summaryStore.getSummaries(filterUrl.value)
 
-watch(
+  watch(
     () => filter.value,
     async () => {
       await summaryStore.getSummaries(filterUrl.value)
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
 
   watch(
@@ -42,33 +43,20 @@ watch(
     async () => {
       await debounceFetch()
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
-
-
-  // import { CustomerService } from '@/service/CustomerService';
-  definePageMeta({
-    path: '/',
-  })
 </script>
 
-
-
 <template>
-<!-- <pre>
-  {{ summaries }}
-</pre> -->
-
-
-<Card>
+  <Card>
     <template #title>Поиск конспектов</template>
     <template #content>
       <DataTable
         scrollHeight="60vh"
         scrollable
-        :loading="isLoading"
         showGridlines
         :value="summaries?.result"
+        @row-click="(row) => $router.push(`/summary/${row.data.id}`)"
       >
         <template #header>
           <div>
@@ -86,28 +74,39 @@ watch(
 
         <Column class="text-center" header="№" style="width: 1%">
           <template #body="slotProps">
-            {{ slotProps.index + 1 }}
+            <Skeleton v-if="summaryStore.isLoading" />
+
+            <div v-else>{{ slotProps.index + 1 }}</div>
           </template>
         </Column>
 
         <Column field="full_name" header="Название" style="width: 19%">
           <template #body="slotProps">
-            {{ slotProps.data.name }}
+            <Skeleton v-if="summaryStore.isLoading" />
+            <span v-else class="text-indigo-500 cursor-pointer">{{
+              slotProps.data.name
+            }}</span>
           </template>
         </Column>
 
         <Column field="full_name" header="id конспекта" style="width: 40%">
           <template #body="slotProps">
-            {{ slotProps.data.id }}
+            <Skeleton v-if="summaryStore.isLoading" />
+
+            <div v-else>
+              {{ slotProps.data.id }}
+            </div>
           </template>
         </Column>
 
         <Column field="full_name" header="id пользователя" style="width: 40%">
           <template #body="slotProps">
-            {{ slotProps.data.user_id }}
+            <Skeleton v-if="summaryStore.isLoading" />
+            <div v-else>
+              {{ slotProps.data.user_id }}
+            </div>
           </template>
         </Column>
-
       </DataTable>
     </template>
 
@@ -124,15 +123,7 @@ watch(
   </Card>
 </template>
 
-
-
-
-
-
-
-
-
-  <!-- <div class="card">
+<!-- <div class="card">
     <DataTable
       v-model:filters="filters"
       :value="customers"
@@ -294,15 +285,8 @@ watch(
           />
         </template>
       </Column>
-    </DataTable> 
+    </DataTable>
   </div>-->
-  
-
-
-
-
-
-
 
 <!-- <script setup lang="ts">
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import type { IUniversity } from '~/modules/reestr/@types'
 
-  const summaryStore = useSummaryStore()
+  const summaryCreateFormStore = useSummaryCreateFormStore()
   const reestrStore = useReestrStore()
   const { universities, subjects, teachers } = storeToRefs(reestrStore)
-  const { summaryCreateForm } = summaryStore
+  const { summaryCreateForm } = summaryCreateFormStore
 
   await Promise.all([
     reestrStore.getUniversities(),
@@ -13,7 +13,7 @@
   ])
 
   const submitSummary = async () => {
-    await summaryStore.createSummary()
+    await summaryCreateFormStore.createSummary()
   }
 
   const submitButtonDisabled = computed(() => {
@@ -69,10 +69,6 @@
   }
 </script>
 <template>
-  <div w-full h-18 text-center text-indigo-500 text-2xl font-bold>
-    Создание конспекта
-  </div>
-
   <Card>
     <template #title>Создание конспекта</template>
     <template #content>
