@@ -20,6 +20,9 @@ export default defineNuxtConfig({
       // APP_MODE: process.env?.NODE_ENV,
     },
   },
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
+  },
 
   modules: [
     'nuxt-primevue',
