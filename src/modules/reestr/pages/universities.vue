@@ -36,7 +36,7 @@
     async () => {
       await reestrStore.getUniversities(filterUrl.value)
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
 
   watch(
@@ -44,7 +44,7 @@
     async () => {
       await debounceFetch()
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
 </script>
 

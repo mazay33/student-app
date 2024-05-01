@@ -22,8 +22,6 @@
       .buildUrl()
   })
 
-  await reestrStore.getUsers(filterUrl.value)
-
   const debounceFetch = useDebounceFn(async () => {
     await reestrStore.getUsers(filterUrl.value)
   }, 500)
@@ -35,7 +33,7 @@
     async () => {
       await reestrStore.getUsers(filterUrl.value)
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
 
   watch(
@@ -43,7 +41,7 @@
     async () => {
       await debounceFetch()
     },
-    { deep: true, immediate: true }
+    { deep: true }
   )
 </script>
 
