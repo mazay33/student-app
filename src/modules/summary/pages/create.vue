@@ -40,7 +40,7 @@
   }
 </script>
 <template>
-  <div w-full h-20 text-center text-indigo-500 text-2xl font-bold>
+  <div w-full h-18 text-center text-indigo-500 text-2xl font-bold>
     Создание конспекта
   </div>
 
@@ -49,24 +49,23 @@
     <template #content>
       <Stepper orientation="vertical">
         <StepperPanel header="Конспект">
-          <template #content="{ nextCallback }">
+           
             <div class="flex flex-column h-3rem">
               <InputText
                 v-model="summaryCreateForm.name"
                 type="text"
                 placeholder="Введите название конспекта..."
-                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
+                class="border-1 border-solid border-slate-200 rounded-xl surface-border border-round surface-ground 
+                flex-auto flex justify-content-center align-items-center font-medium"
               />
             </div>
-            <div class="flex py-4">
-              <Button label="Next" @click="nextCallback" />
-            </div>
-          </template>
+            
+           
         </StepperPanel>
 
         <StepperPanel header="ВУЗ">
-          <template #content="{ prevCallback, nextCallback }">
-            <div class="flex flex-column h-3rem">
+           
+            <div class="flex flex-col h-3rem">
               <Dropdown
                 @change="onUniversityChange($event)"
                 v-model="summaryCreateForm.university_id"
@@ -77,24 +76,23 @@
                 editable
                 showClear
                 placeholder="Введите название вуза..."
-                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
+                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground
+                flex-auto  font-medium"
               >
                 <template #option="{ option }: { option: IUniversity }">
                   {{ option.short_name }} - {{ option.name }}
                 </template>
               </Dropdown>
-              <Button ml-5>Добавить ВУЗ</Button>
+              
+              
             </div>
-            <div class="flex py-4 gap-2">
-              <Button label="Back" severity="secondary" @click="prevCallback" />
-              <Button label="Next" @click="nextCallback" />
-            </div>
-          </template>
+            
+           
         </StepperPanel>
 
         <StepperPanel header="Предмет">
-          <template #content="{ prevCallback, nextCallback }">
-            <div class="flex flex-column h-3rem">
+          
+          <div class="flex flex-col sm:flex-row h-8rem sm:h-3rem">
               <Dropdown
                 v-model="summaryCreateForm.subject_id"
                 :options="subjects?.result"
@@ -103,9 +101,10 @@
                 editable
                 showClear
                 placeholder="Выбрать из существующих"
-                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
+                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground 
+                flex-auto flex justify-content-center align-items-center font-medium"
               />
-              <Button ml-5>Добавить предмет</Button>
+              <Button mb-3 ml-0 mt-3 sm:mt-0 sm:ml-5 sm:mb-0 w-36 h-3rem text-sm font-medium>Создать новый</Button>
             </div>
             <!-- <div
               class="border-2 border-dashed rounded-lg h-50 border-round mt-5 flex-auto flex justify-content-center align-items-center font-medium"
@@ -120,16 +119,12 @@
               </div>
             </div> -->
 
-            <div class="flex py-4 gap-2">
-              <Button label="Back" severity="secondary" @click="prevCallback" />
-              <Button label="Next" @click="nextCallback" />
-            </div>
-          </template>
+          
         </StepperPanel>
 
         <StepperPanel header="Преподаватель">
-          <template #content="{ prevCallback }">
-            <div class="flex flex-column h-3rem">
+          
+          <div class="flex flex-col sm:flex-row h-3rem ">
               <Dropdown
                 :options="teachers?.result"
                 v-model="summaryCreateForm.teacher_id"
@@ -138,16 +133,17 @@
                 editable
                 showClear
                 placeholder="Введите имя преподавателя..."
-                class="border-1 border-solid border-slate-300 rounded-xl surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
+                class="border-1 border-solid border-slate-300 rounded-xl surface-border 
+                border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium"
               />
             </div>
             <div class="flex justify-between py-4">
-              <Button label="Back" severity="secondary" @click="prevCallback" />
+              <Button w-37 text-sm font-medium h-3rem>Создать нового</Button>
               <Button @click="submitSummary" :disabled="!submitButtonDisabled"
-                >Сохранить</Button
+              text-sm font-medium h-3rem>Сохранить</Button
               >
             </div>
-          </template>
+          
         </StepperPanel>
       </Stepper>
     </template>

@@ -1,10 +1,13 @@
 import httpService from '~/services/httpService'
-import type { ISummaryCreateForm } from '../@types'
+import type { ISummaryCreateForm, ISummaries } from '../@types'
+import type { IPaginatedResult } from '~/@types/@types'
+
 
 export const useSummaryStore = defineStore(
   'summary',
   () => {
     const isLoading = ref<boolean>(false)
+    const summaries = ref<IPaginatedResult<ISummaries>>()
 
     const summaryCreateForm = reactive<ISummaryCreateForm>({
       name: null,
@@ -12,6 +15,15 @@ export const useSummaryStore = defineStore(
       subject_id: null,
       teacher_id: null,
     })
+
+    const getSummaries = async () => {
+      isLoading.value = true
+      const { data, error } = await httpService.get<IPaginatedResult<ISummaries>>(
+        'main/public/summaries'
+      )
+      summaries.value = data.value
+      isLoading.value = false
+    }
 
     const createSummary = async () => {
       const { data, error, pending } = await httpService.post<
@@ -35,6 +47,8 @@ export const useSummaryStore = defineStore(
       summaryCreateForm,
       createSummary,
       isLoading: computed(() => isLoading.value),
+      summaries,
+      getSummaries,
     }
   },
   {

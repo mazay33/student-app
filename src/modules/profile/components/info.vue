@@ -127,7 +127,7 @@
             <InputText
               type="text"
               v-model="user.description"
-              class="placeholder:text-slate-700 shadow-none border-1 h-10"
+              class="placeholder:text-slate-700 shadow-none border-1 rounded w-60 h-10 "
               :class="[isDisabled ? 'border-white' : 'border-blue']"
               placeholder="Some info about..."
               :disabled="isDisabled"
