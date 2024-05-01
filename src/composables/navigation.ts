@@ -8,6 +8,11 @@ export function useNavigationMenu() {
         items: [
           { label: 'Поиск', to: '/', icon: 'pi pi-fw pi-search' },
           { label: 'Создать', to: '/summary/create', icon: 'pi pi-file-plus' },
+          authStore.authinticated && {
+            label: 'Мои конспекты',
+            to: '/summary/my',
+            icon: 'pi pi-fw pi-file',
+          }
         ],
       },
       {
