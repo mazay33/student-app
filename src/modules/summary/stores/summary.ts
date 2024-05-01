@@ -16,11 +16,13 @@ export const useSummaryStore = defineStore(
       teacher_id: null,
     })
 
-    const getSummaries = async () => {
+    const getSummaries = async (filterQuery?: string) => {
       isLoading.value = true
-      const { data, error } = await httpService.get<IPaginatedResult<ISummaries>>(
-        'main/public/summaries'
-      )
+      
+      const { data, error } = await httpService.get<
+      IPaginatedResult<ISummaries>
+    >(`main/public/summaries${filterQuery ? filterQuery : ''}`)
+
       summaries.value = data.value
       isLoading.value = false
     }
