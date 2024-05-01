@@ -8,7 +8,7 @@ export const useReestrStore = defineStore('reestr', () => {
   const subjects = ref<IPaginatedResult<ISubject>>()
   const teachers = ref<IPaginatedResult<ITeacher>>()
   const users = ref<IPaginatedResult<IUser>>()
-  
+
   const getUniversities = async (filterQuery?: string) => {
     isLoading.value = true
 
@@ -20,19 +20,19 @@ export const useReestrStore = defineStore('reestr', () => {
     isLoading.value = false
   }
 
-  const getSubjects = async () => {
+  const getSubjects = async (filterQuery?: string) => {
     isLoading.value = true
     const { data, error } = await httpService.get<IPaginatedResult<ISubject>>(
-      'main/public/subjects'
+      `main/public/subjects${filterQuery ? filterQuery : ''}`
     )
     subjects.value = data.value
     isLoading.value = false
   }
 
-  const getTeachers = async () => {
+  const getTeachers = async (filterQuery?: string) => {
     isLoading.value = true
     const { data, error } = await httpService.get<IPaginatedResult<ITeacher>>(
-      'main/public/teachers'
+      `main/public/teachers${filterQuery ? filterQuery : ''}`
     )
     teachers.value = data.value
     isLoading.value = false
@@ -40,9 +40,9 @@ export const useReestrStore = defineStore('reestr', () => {
 
   const getUsers = async (filterQuery?: string) => {
     isLoading.value = true
-      const { data, error } = await httpService.get<IPaginatedResult<IUser>>(
-        `public/users${filterQuery ? filterQuery : ''}`
-      )
+    const { data, error } = await httpService.get<IPaginatedResult<IUser>>(
+      `public/users${filterQuery ? filterQuery : ''}`
+    )
     users.value = data.value
     isLoading.value = false
   }
