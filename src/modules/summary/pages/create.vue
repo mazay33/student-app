@@ -116,6 +116,8 @@
               v-model="summaryCreateForm.subject"
               :options="subjects?.result"
               optionLabel="name"
+              :loading="reestrStore.isLoading"
+
               editable
               showClear
               placeholder="Выбрать из существующих"
@@ -155,6 +157,7 @@
               @change="onTeacherChange($event)"
               :loading="reestrStore.isLoading"
               :options="teachers?.result"
+              :disabled="!summaryCreateForm.subject?.id"
               v-model="summaryCreateForm.teacher"
               optionLabel="full_name"
               editable
