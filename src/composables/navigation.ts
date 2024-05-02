@@ -12,7 +12,7 @@ export function useNavigationMenu() {
             label: 'Мои конспекты',
             to: '/summary/my',
             icon: 'pi pi-fw pi-file',
-          }
+          } ,
         ],
       },
       {

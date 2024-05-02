@@ -11,8 +11,8 @@ const { navigationMenu } = useNavigationMenu()
 <template>
   <ul class="layout-menu">
     <template v-for="(item, i) in navigationMenu" :key="item">
-      <app-menu-item v-if="!item.separator" :item="item" :index="i" />
-      <li v-if="item.separator" class="menu-separator" />
+      <app-menu-item  :item="item" :index="i" />
+      <li  class="menu-separator" />
     </template>
   </ul>
 </template>
