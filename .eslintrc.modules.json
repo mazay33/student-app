@@ -2,6 +2,7 @@
   "globals": {
     "useReestrStore": "readonly",
     "useSummaryStore": "readonly",
+    "useSummaryCreateFormStore": "readonly",
     "useAuthStore": "readonly",
     "useLayout": "readonly",
     "useNavigationMenu": "readonly",
