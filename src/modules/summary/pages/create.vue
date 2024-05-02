@@ -1,16 +1,90 @@
 <script setup lang="ts">
-  import type { IUniversity } from '~/modules/reestr/@types'
+  import type { IPaginatedResult } from '~/@types/@types'
+  import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types'
+  import { Repository } from '~/repositories/Repository.module'
+
+  const { subjectRepo, universityRepo, teacherRepo } = Repository
 
   const summaryCreateFormStore = useSummaryCreateFormStore()
-  const reestrStore = useReestrStore()
-  const { universities, subjects, teachers } = storeToRefs(reestrStore)
   const { summaryCreateForm } = summaryCreateFormStore
 
-  await Promise.all([
-    reestrStore.getUniversities(),
-    reestrStore.getSubjects(),
-    reestrStore.getTeachers(),
-  ])
+  const isLoading = ref<boolean>(false)
+  const universities = ref<IPaginatedResult<IUniversity>>()
+  const subjects = ref<IPaginatedResult<ISubject>>()
+  const teachers = ref<IPaginatedResult<ITeacher>>()
+
+  const getUniversities = async (queryUrl: string = '') => {
+    isLoading.value = true
+    const { data, error, pending } = await universityRepo.getUniversityList(
+      queryUrl
+    )
+    if (data.value) {
+      universities.value = data.value
+    }
+
+    isLoading.value = pending.value
+  }
+
+  const getSubjects = async (queryUrl: string = '') => {
+    isLoading.value = true
+    const { data, error, pending } = await subjectRepo.getSubjectList(queryUrl)
+    if (data.value) {
+      subjects.value = data.value
+    }
+    isLoading.value = pending.value
+  }
+
+  const getTeachers = async (queryUrl: string = '') => {
+    isLoading.value = true
+    const { data, error, pending } = await teacherRepo.getTeacherList(queryUrl)
+    if (data.value) {
+      teachers.value = data.value
+    }
+    isLoading.value = pending.value
+  }
+
+  await Promise.all([getUniversities(), getSubjects(), getTeachers()])
+
+  const debounceFetch = useDebounceFn(async (fetch: Function) => {
+    await fetch()
+  }, 250)
+
+  const onUniversityChange = async (event: any) => {
+    if (typeof event.value == 'string') {
+      const formatUrl = computed(() => {
+        return new QueryBuilder().setFilter('name', event.value).buildUrl()
+      })
+
+      await debounceFetch(() => getUniversities(formatUrl.value))
+    }
+  }
+
+  const onSubjectChange = async (event: any) => {
+    if (typeof event.value == 'string') {
+      const formatUrl = computed(() => {
+        return new QueryBuilder().setFilter('name', event.value).buildUrl()
+      })
+      await debounceFetch(() => getSubjects(formatUrl.value))
+    }
+
+    if (event.value?.id) {
+      teacherFormatUrl.value.setFilter('subject_id', event.value?.id)
+
+      await getTeachers(teacherFormatUrl.value.buildUrl())
+    }
+  }
+
+  const teacherFormatUrl = computed(() => {
+    return new QueryBuilder()
+  })
+
+  const onTeacherChange = async (event: any) => {
+    if (typeof event.value == 'string') {
+      teacherFormatUrl.value.setFilter('full_name', event.value)
+
+      await debounceFetch(() => getTeachers(teacherFormatUrl.value.buildUrl()))
+    }
+  }
 
   const submitSummary = async () => {
     await summaryCreateFormStore.createSummary()
@@ -24,49 +98,6 @@
       summaryCreateForm.teacher?.id
     )
   })
-
-  const debounceFetch = useDebounceFn(async (fetch: Function) => {
-    await fetch()
-  }, 250)
-
-  const onUniversityChange = async (event: any) => {
-    if (typeof event.value == 'string') {
-      const formatUrl = computed(() => {
-        return new QueryBuilder().setFilter('name', event.value).buildUrl()
-      })
-
-      await debounceFetch(() => reestrStore.getUniversities(formatUrl.value))
-    }
-  }
-
-  const onSubjectChange = async (event: any) => {
-    if (typeof event.value == 'string') {
-      const formatUrl = computed(() => {
-        return new QueryBuilder().setFilter('name', event.value).buildUrl()
-      })
-      await debounceFetch(() => reestrStore.getSubjects(formatUrl.value))
-    }
-
-    if (event.value?.id) {
-      teacherFormatUrl.value.setFilter('subject_id', event.value?.id)
-
-      await reestrStore.getTeachers(teacherFormatUrl.value.buildUrl())
-    }
-  }
-
-  const teacherFormatUrl = computed(() => {
-    return new QueryBuilder()
-  })
-
-  const onTeacherChange = async (event: any) => {
-    if (typeof event.value == 'string') {
-      teacherFormatUrl.value.setFilter('full_name', event.value)
-
-      await debounceFetch(() =>
-        reestrStore.getTeachers(teacherFormatUrl.value.buildUrl())
-      )
-    }
-  }
 </script>
 <template>
   <Card>
@@ -90,7 +121,7 @@
               @change="onUniversityChange($event)"
               v-model="summaryCreateForm.university"
               optionLabel="name"
-              :loading="reestrStore.isLoading"
+              :loading="isLoading"
               :options="universities?.result"
               editable
               showClear
@@ -112,7 +143,7 @@
               v-model="summaryCreateForm.subject"
               :options="subjects?.result"
               optionLabel="name"
-              :loading="reestrStore.isLoading"
+              :loading="isLoading"
               editable
               showClear
               placeholder="Выбрать из существующих"
@@ -150,7 +181,7 @@
           <div class="flex flex-col sm:flex-row h-3rem">
             <Dropdown
               @change="onTeacherChange($event)"
-              :loading="reestrStore.isLoading"
+              :loading="isLoading"
               :options="teachers?.result"
               :disabled="!summaryCreateForm.subject?.id"
               v-model="summaryCreateForm.teacher"
