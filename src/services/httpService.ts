@@ -1,128 +1,66 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import type {
-  _AsyncData,
-  KeysOf,
-  PickFrom,
-} from 'nuxt/dist/app/composables/asyncData'
 import type { FetchError } from 'ofetch'
+import type { Ref } from 'vue'
+import type { _AsyncData, KeysOf, PickFrom } from '#app/composables/asyncData'
 
-export interface IHttpService {
-  get<T>(
-    url: string
-  ): Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>
-  post<T, U>(
+export type HttpReturnType<T> = Promise<
+  _AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>
+>
+export type HttpBodyType<T> = T extends Ref<Record<string, any>>
+  ? T
+  : Record<string, any>
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+
+class HttpService {
+  private _request<T, U>(
+    method: HttpMethod,
     url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
-    options?: UseFetchOptions<T>
-  ): Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>
-  put<T, U>(
-    url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
-    options?: UseFetchOptions<T>
-  ): Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>
-
-  patch<T, U>(
-    url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
-    options?: UseFetchOptions<T>
-  ): Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>
-  delete<T>(
-    url: string
-  ): Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>
-
-  [key: string]: any
-}
-
-class HttpService implements IHttpService {
-  private async _request<T>(url: string, options: UseFetchOptions<T> = {}) {
-    try {
-
-      const response = await useAPI<T>(url, {...options, server: url.includes('private') ? false : true})
-      return response
-    } catch (error: any) {
-      throw new Error(error.message)
-    }
+    body?: HttpBodyType<U>,
+    options: UseFetchOptions<T> = {}
+  ): HttpReturnType<T> {
+    return useAPI<T>(url, {
+      method,
+      body,
+      ...options,
+    })
   }
 
   public get<T>(
     url: string,
-    body: Record<string, any> = {},
     options: UseFetchOptions<T> = {}
-  ): Promise<
-    _AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>
-  > {
-    return this._request<T>(url, options)
+  ): HttpReturnType<T> {
+    return this._request<T, never>('GET', url, undefined, options)
   }
 
   public post<T, U>(
     url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
+    body: HttpBodyType<U>,
     options: UseFetchOptions<T> = {}
-  ) {
-    return this._request<T>(url, {
-      method: 'POST',
-      body,
-      ...options,
-    })
-  }
-
-  public patch<T, U>(
-    url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
-    options: UseFetchOptions<T> = {}
-  ) {
-    return this._request<T>(url, {
-      method: 'PATCH',
-      body,
-      ...options,
-    })
+  ): HttpReturnType<T> {
+    return this._request<T, U>('POST', url, body, options)
   }
 
   public put<T, U>(
     url: string,
-    body: U extends globalThis.Ref<
-      Record<string, any> | BodyInit | null | undefined
-    >
-      ? U
-      : Record<string, any>,
+    body: HttpBodyType<U>,
     options: UseFetchOptions<T> = {}
-  ) {
-    return this._request<T>(url, {
-      method: 'PUT',
-      body,
-      ...options,
-    })
+  ): HttpReturnType<T> {
+    return this._request<T, U>('PUT', url, body, options)
+  }
+
+  public patch<T, U>(
+    url: string,
+    body: HttpBodyType<U>,
+    options: UseFetchOptions<T> = {}
+  ): HttpReturnType<T> {
+    return this._request<T, U>('PATCH', url, body, options)
   }
 
   public delete<T>(
     url: string,
-    body: Record<string, any> = {},
     options: UseFetchOptions<T> = {}
-  ) {
-    return this._request<T>(url, {
-      method: 'DELETE',
-      ...options,
-    })
+  ): HttpReturnType<T> {
+    return this._request<T, never>('DELETE', url, undefined, options)
   }
 }
 
