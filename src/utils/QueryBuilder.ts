@@ -1,40 +1,32 @@
 class QueryBuilder {
-  private filter: Record<string, any>
-
-  private defaultFilter = {
+  private filter: Record<string, any> = {
     page: 1,
     page_size: 50,
   }
 
-  constructor() {
-    this.filter = { ...this.defaultFilter }
-  }
-
-  setFilter(key: string, value: any): QueryBuilder {
+  setFilter(key: string, value: any): this {
     this.filter[key] = value
-
     return this
   }
 
-  setPage(page: number): QueryBuilder {
+  setPage(page: number): this {
     this.filter['page'] = page
     return this
   }
 
-  setPageSize(pageSize: number): QueryBuilder {
+  setPageSize(pageSize: number): this {
     this.filter['page_size'] = pageSize
     return this
   }
 
-  setSortBy(sortBy: string): QueryBuilder {
+  setSortBy(sortBy: string): this {
     if (sortBy) {
       this.filter['sort_by'] = sortBy
     }
-
     return this
   }
 
-  setSortType(sortType: 'asc' | 'desc'): QueryBuilder {
+  setSortType(sortType: 'asc' | 'desc'): this {
     if (sortType) {
       this.filter['sort_type'] = sortType
     }
@@ -43,13 +35,9 @@ class QueryBuilder {
 
   buildUrl(): string {
     const params = new URLSearchParams()
-
-    for (const key in this.filter) {
-      if (this.filter.hasOwnProperty(key)) {
-        params.append(key, this.filter[key].toString())
-      }
-    }
-
+    Object.entries(this.filter).forEach(([key, value]) => {
+      params.append(key, value.toString())
+    })
     return `?${params.toString()}`
   }
 }
