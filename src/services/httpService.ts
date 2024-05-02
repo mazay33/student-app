@@ -21,6 +21,7 @@ class HttpService {
     return useAPI<T>(url, {
       method,
       body,
+      server: url.includes('private') ? false : true,
       ...options,
     })
   }
