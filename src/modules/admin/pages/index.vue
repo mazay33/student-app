@@ -9,9 +9,11 @@
 </script>
 
 <template>
-  <h1>only for admin</h1>
+  <div>
+    <h1>only for admin</h1>
 
-  <h2>hello {{ user?.nickname }}</h2>
+    <h2>hello {{ user?.nickname }}</h2>
+  </div>
 </template>
 
 <style scoped></style>
