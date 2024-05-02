@@ -1,20 +1,21 @@
-<script setup lang="ts">
-  const reestrStore = useReestrStore()
-  const { subjects } = storeToRefs(reestrStore)
-
-  await reestrStore.getSubjects()
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <Card>
-    <template #title> Список предметов</template>
-    <template #content>
-      <DataTable :value="subjects?.result">
-        <Column field="id" header="№" style="width: 20%"></Column>
-        <Column field="name" header="Название" style="width: 80%"></Column>
-      </DataTable>
-    </template>
-  </Card>
+  <div>
+    <NuxtErrorBoundary>
+      <Card>
+        <template #title> Список предметов</template>
+        <template #content>
+          <ReestrSubjectTable />
+        </template>
+      </Card>
+
+      <template #error="{ error, clearError }">
+        <Error :error="error" />
+        <Button @click="clearError">Try to reset</Button>
+      </template>
+    </NuxtErrorBoundary>
+  </div>
 </template>
 
 <style scoped></style>
