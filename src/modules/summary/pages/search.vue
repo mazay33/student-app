@@ -80,7 +80,7 @@
           </template>
         </Column>
 
-        <Column field="full_name" header="Название" style="width: 19%">
+        <Column field="full_name" header="Название" style="width: 15%">
           <template #body="slotProps">
             <Skeleton v-if="summaryStore.isLoading" />
             <span v-else class="text-indigo-500 cursor-pointer">{{
@@ -89,24 +89,34 @@
           </template>
         </Column>
 
-        <Column field="full_name" header="id конспекта" style="width: 40%">
+        <Column field="full_name" header="Наименование вуза" style="width: 20%">
           <template #body="slotProps">
             <Skeleton v-if="summaryStore.isLoading" />
 
             <div v-else>
-              {{ slotProps.data.id }}
+              {{ slotProps.data.university_name }}
             </div>
           </template>
         </Column>
 
-        <Column field="full_name" header="id пользователя" style="width: 40%">
+        <Column field="full_name" header="Предмет" style="width: 20%">
           <template #body="slotProps">
             <Skeleton v-if="summaryStore.isLoading" />
             <div v-else>
-              {{ slotProps.data.user_id }}
+              {{ slotProps.data.subject_name }}
             </div>
           </template>
         </Column>
+
+        <Column field="full_name" header="Предмет" style="width: 10%">
+          <template #body="slotProps">
+            <Skeleton v-if="summaryStore.isLoading" />
+            <div v-else>
+              {{ slotProps.data.teacher_full_name }}
+            </div>
+          </template>
+        </Column>
+
       </DataTable>
     </template>
 
