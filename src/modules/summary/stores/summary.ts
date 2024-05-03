@@ -1,5 +1,5 @@
 import httpService from '~/services/httpService'
-import type { ISummary } from '../@types'
+import type { ISummary, ISummaryUser } from '../@types'
 import type { IPaginatedResult } from '~/@types/@types'
 
 export const useSummaryStore = defineStore('summary', () => {
@@ -8,6 +8,17 @@ export const useSummaryStore = defineStore('summary', () => {
   const summary = ref<ISummary | null>(null)
   const mySummaries = ref<IPaginatedResult<ISummary[]> | null>(null)
   const mySummary = ref<ISummary | null>(null)
+  const summaryUser = ref<ISummaryUser | null>(null)
+
+
+  const getUserById = async (id: String) => {
+    isLoading.value = true
+    const { data, error, pending } = await httpService.get<ISummaryUser>(
+      `public/users/${id}`
+    )
+    summaryUser.value = data.value
+    isLoading.value = pending.value
+  }
 
   const getSummaries = async (filterQuery?: string) => {
     isLoading.value = true
@@ -55,6 +66,8 @@ export const useSummaryStore = defineStore('summary', () => {
   }
 
   return {
+    summaryUser,
+    getUserById,
     getSummaries,
     isLoading: computed(() => isLoading.value),
     summaries,
