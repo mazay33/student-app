@@ -5,7 +5,9 @@ class QueryBuilder {
 	};
 
 	setFilter(key: string, value: any): this {
-		this.filter[key] = value;
+		if (value) {
+			this.filter[key] = value;
+		}
 		return this;
 	}
 
