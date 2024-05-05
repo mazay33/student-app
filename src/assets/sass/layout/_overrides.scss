@@ -1,30 +1,30 @@
 a {
-  outline: none !important;
-  box-shadow: none !important;
-  color: var(--primary-color);
+	color: var(--primary-color);
+	outline: none !important;
+	box-shadow: none !important;
 }
 
 .layout-main {
-  a {
-    text-decoration: none;
-    color: var(--primary-color);
-  }
+	a {
+		color: var(--primary-color);
+		text-decoration: none;
+	}
 
-  a:hover {
-    border-bottom: 1px solid var(--primary-color);
-    padding-bottom: 2px;
-  }
+	a:hover {
+		padding-bottom: 2px;
+		border-bottom: 1px solid var(--primary-color);
+	}
 }
 
 button {
-  outline: none !important;
-  box-shadow: none !important;
+	outline: none !important;
+	box-shadow: none !important;
 }
 
 .p-radiobutton {
-  margin-right: 5px;
+	margin-right: 5px;
 }
 
 .field-radiobutton {
-  margin-top: 10px;
+	margin-top: 10px;
 }
