@@ -10,16 +10,16 @@ Hello World Form **Nuxt Content V2**
 
 [Component Sample](/cms/component)
 
-### Code 
+### Code
 
 ```typescript
-import { useDataStore, useThemeStore } from '@/stores'
-const themeStore = useThemeStore()
-const dataStore = useDataStore()
+import { useDataStore, useThemeStore } from '@/stores';
+const themeStore = useThemeStore();
+const dataStore = useDataStore();
 
 onMounted(async () => {
-  await dataStore.initData()
-})
+	await dataStore.initData();
+});
 ```
 
 ### List
@@ -31,11 +31,8 @@ onMounted(async () => {
 
 ### Table
 
-| Key      | Type      | Description     |
-|:---------|:----------|:----------------|
-| 1        | Wonderful | Table           |
-| 2        | Complete  | Data            |
-| 3        | Cool      | Website         |
-
-
-
+| Key | Type      | Description |
+| :-- | :-------- | :---------- |
+| 1   | Wonderful | Table       |
+| 2   | Complete  | Data        |
+| 3   | Cool      | Website     |

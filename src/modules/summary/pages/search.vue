@@ -1,136 +1,157 @@
 <script setup lang="ts">
-  definePageMeta({
-    path: '/',
-  })
-  import QueryBuilder from '~/utils/QueryBuilder'
+import QueryBuilder from '~/utils/QueryBuilder';
+definePageMeta({
+	path: '/',
+});
 
-  const summaryStore = useSummaryStore()
-  const { summaries } = storeToRefs(summaryStore)
+const summaryStore = useSummaryStore();
+const { summaries } = storeToRefs(summaryStore);
 
-  const filter = ref<{ [key: string]: any }>({
-    page: 1,
-    page_size: 25,
-  })
+const filter = ref<{ [key: string]: any }>({
+	page: 1,
+	page_size: 25,
+});
 
-  const searchFilter = ref({
-    name: '',
-  })
+const searchFilter = ref({
+	name: '',
+});
 
-  const filterUrl = computed(() => {
-    return new QueryBuilder()
-      .setPage(filter.value.page)
-      .setPageSize(filter.value.page_size)
-      .setFilter('name', searchFilter.value.name)
-      .buildUrl()
-  })
+const filterUrl = computed(() => {
+	return new QueryBuilder()
+		.setPage(filter.value.page)
+		.setPageSize(filter.value.page_size)
+		.setFilter('name', searchFilter.value.name)
+		.buildUrl();
+});
 
-  const debounceFetch = useDebounceFn(async () => {
-    await summaryStore.getSummaries(filterUrl.value)
-  }, 500)
+const debounceFetch = useDebounceFn(async () => {
+	await summaryStore.getSummaries(filterUrl.value);
+}, 500);
 
-  await summaryStore.getSummaries(filterUrl.value)
+await summaryStore.getSummaries(filterUrl.value);
 
-  watch(
-    () => filter.value,
-    async () => {
-      await summaryStore.getSummaries(filterUrl.value)
-    },
-    { deep: true }
-  )
+watch(
+	() => filter.value,
+	async () => {
+		await summaryStore.getSummaries(filterUrl.value);
+	},
+	{ deep: true },
+);
 
-  watch(
-    () => searchFilter.value,
-    async () => {
-      await debounceFetch()
-    },
-    { deep: true }
-  )
+watch(
+	() => searchFilter.value,
+	async () => {
+		await debounceFetch();
+	},
+	{ deep: true },
+);
 </script>
 
 <template>
-  <Card>
-    <template #title>Поиск конспектов</template>
-    <template #content>
-      <DataTable
-        scrollHeight="60vh"
-        scrollable
-        showGridlines
-        :value="summaries?.result"
-        @row-click="(row) => $router.push(`/summary/${row.data.id}`)"
-      >
-        <template #header>
-          <div>
-            <IconField iconPosition="left">
-              <InputIcon>
-                <i class="pi pi-search" />
-              </InputIcon>
-              <InputText
-                v-model="searchFilter.name"
-                placeholder="Название конспекта"
-              />
-            </IconField>
-          </div>
-        </template>
+	<Card>
+		<template #title>Поиск конспектов</template>
+		<template #content>
+			<DataTable
+				scroll-height="60vh"
+				scrollable
+				show-gridlines
+				:value="summaries?.result"
+				@row-click="row => $router.push(`/summary/${row.data.id}`)"
+			>
+				<template #header>
+					<div>
+						<IconField icon-position="left">
+							<InputIcon>
+								<i class="pi pi-search" />
+							</InputIcon>
+							<InputText
+								v-model="searchFilter.name"
+								placeholder="Название конспекта"
+							/>
+						</IconField>
+					</div>
+				</template>
 
-        <Column class="text-center" header="№" style="width: 1%">
-          <template #body="slotProps">
-            <Skeleton v-if="summaryStore.isLoading" />
+				<Column
+					class="text-center"
+					header="№"
+					style="width: 1%"
+				>
+					<template #body="slotProps">
+						<Skeleton v-if="summaryStore.isLoading" />
 
-            <div v-else>{{ slotProps.index + 1 }}</div>
-          </template>
-        </Column>
+						<div v-else>{{ slotProps.index + 1 }}</div>
+					</template>
+				</Column>
 
-        <Column field="full_name" header="Название" style="width: 15%">
-          <template #body="slotProps">
-            <Skeleton v-if="summaryStore.isLoading" />
-            <span v-else class="text-indigo-500 cursor-pointer">{{
-              slotProps.data.name
-            }}</span>
-          </template>
-        </Column>
+				<Column
+					field="full_name"
+					header="Название"
+					style="width: 15%"
+				>
+					<template #body="slotProps">
+						<Skeleton v-if="summaryStore.isLoading" />
+						<span
+							v-else
+							class="text-indigo-500 cursor-pointer"
+							>{{ slotProps.data.name }}</span
+						>
+					</template>
+				</Column>
 
-        <Column field="full_name" header="Наименование вуза" style="width: 20%">
-          <template #body="slotProps">
-            <Skeleton v-if="summaryStore.isLoading" />
+				<Column
+					field="full_name"
+					header="Наименование вуза"
+					style="width: 20%"
+				>
+					<template #body="slotProps">
+						<Skeleton v-if="summaryStore.isLoading" />
 
-            <div v-else>
-              {{ slotProps.data.university_name }}
-            </div>
-          </template>
-        </Column>
+						<div v-else>
+							{{ slotProps.data.university_name }}
+						</div>
+					</template>
+				</Column>
 
-        <Column field="full_name" header="Предмет" style="width: 20%">
-          <template #body="slotProps">
-            <Skeleton v-if="summaryStore.isLoading" />
-            <div v-else>
-              {{ slotProps.data.subject_name }}
-            </div>
-          </template>
-        </Column>
+				<Column
+					field="full_name"
+					header="Предмет"
+					style="width: 20%"
+				>
+					<template #body="slotProps">
+						<Skeleton v-if="summaryStore.isLoading" />
+						<div v-else>
+							{{ slotProps.data.subject_name }}
+						</div>
+					</template>
+				</Column>
 
-        <Column field="full_name" header="Предмет" style="width: 10%">
-          <template #body="slotProps">
-            <Skeleton v-if="summaryStore.isLoading" />
-            <div v-else>
-              {{ slotProps.data.teacher_full_name }}
-            </div>
-          </template>
-        </Column>
+				<Column
+					field="full_name"
+					header="Предмет"
+					style="width: 10%"
+				>
+					<template #body="slotProps">
+						<Skeleton v-if="summaryStore.isLoading" />
+						<div v-else>
+							{{ slotProps.data.teacher_full_name }}
+						</div>
+					</template>
+				</Column>
+			</DataTable>
+		</template>
 
-      </DataTable>
-    </template>
-
-    <template #footer>
-      <Paginator
-        :rows="filter.page_size"
-        :total-records="summaries?.count"
-        :rowsPerPageOptions="[10, 25, 50, 100]"
-        @update:rows="filter.page_size = $event"
-        @page="filter.page = $event.page + 1"
-      >
-      </Paginator>
-    </template>
-  </Card>
+		<template #footer>
+			<Paginator
+				:rows="filter.page_size"
+				:total-records="summaries?.count"
+				:rows-per-page-options="[10, 25, 50, 100]"
+				@update:rows="filter.page_size = $event"
+				@page="filter.page = $event.page + 1"
+			>
+			</Paginator>
+		</template>
+	</Card>
 </template>
 
 <!-- <div class="card">

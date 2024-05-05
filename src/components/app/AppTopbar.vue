@@ -1,174 +1,187 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-  import { useRouter } from 'vue-router'
-  import { useAuthStore } from '~/modules/auth/stores/auth'
-  const { layoutConfig, onMenuToggle } = useLayout()
-  const outsideClickListener = ref(null)
-  const topbarMenuActive = ref(false)
-  const router = useRouter()
-  const authStore = useAuthStore()
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '~/modules/auth/stores/auth';
+const { layoutConfig, onMenuToggle } = useLayout();
+const outsideClickListener = ref(null);
+const topbarMenuActive = ref(false);
+const router = useRouter();
+const authStore = useAuthStore();
 
-  const { user } = authStore
+const { user } = authStore;
 
-  const userImg = computed(() => {
-    return authStore.user?.image_url
-  })
+const userImg = computed(() => {
+	return authStore.user?.image_url;
+});
 
-  onMounted(() => {
-    bindOutsideClickListener()
-  })
-  onBeforeUnmount(() => {
-    unbindOutsideClickListener()
-  })
-  const logoUrl = computed(() => {
-    return `/layout/images/${
-      layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'
-    }.svg`
-  })
+onMounted(() => {
+	bindOutsideClickListener();
+});
+onBeforeUnmount(() => {
+	unbindOutsideClickListener();
+});
+const logoUrl = computed(() => {
+	return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+});
 
-  const onTopBarMenuButton = () => {
-    topbarMenuActive.value = !topbarMenuActive.value
-  }
+const onTopBarMenuButton = () => {
+	topbarMenuActive.value = !topbarMenuActive.value;
+};
 
-  const onSettingsClick = () => {
-    topbarMenuActive.value = false
-    router.push('/utilities/documentation')
-  }
+const onSettingsClick = () => {
+	topbarMenuActive.value = false;
+	router.push('/utilities/documentation');
+};
 
-  const topbarMenuClasses = computed(() => {
-    return {
-      'layout-topbar-menu-mobile-active': topbarMenuActive.value,
-    }
-  })
+const topbarMenuClasses = computed(() => {
+	return {
+		'layout-topbar-menu-mobile-active': topbarMenuActive.value,
+	};
+});
 
-  const bindOutsideClickListener = () => {
-    if (!outsideClickListener.value) {
-      outsideClickListener.value = (event) => {
-        if (isOutsideClicked(event)) {
-          topbarMenuActive.value = false
-        }
-      }
+const bindOutsideClickListener = () => {
+	if (!outsideClickListener.value) {
+		outsideClickListener.value = event => {
+			if (isOutsideClicked(event)) {
+				topbarMenuActive.value = false;
+			}
+		};
 
-      document.addEventListener('click', outsideClickListener.value)
-    }
-  }
+		document.addEventListener('click', outsideClickListener.value);
+	}
+};
 
-  const unbindOutsideClickListener = () => {
-    if (outsideClickListener.value) {
-      document.removeEventListener('click', outsideClickListener)
-      outsideClickListener.value = null
-    }
-  }
+const unbindOutsideClickListener = () => {
+	if (outsideClickListener.value) {
+		document.removeEventListener('click', outsideClickListener);
+		outsideClickListener.value = null;
+	}
+};
 
-  const isOutsideClicked = (event) => {
-    if (!topbarMenuActive.value) {
-      return
-    }
-    const sidebarEl = document.querySelector('.layout-topbar-menu')
-    const topbarEl = document.querySelector('.layout-topbar-menu-button')
+const isOutsideClicked = event => {
+	if (!topbarMenuActive.value) {
+		return;
+	}
+	const sidebarEl = document.querySelector('.layout-topbar-menu');
+	const topbarEl = document.querySelector('.layout-topbar-menu-button');
 
-    return !(
-      sidebarEl.isSameNode(event.target) ||
-      sidebarEl.contains(event.target) ||
-      topbarEl.isSameNode(event.target) ||
-      topbarEl.contains(event.target)
-    )
-  }
+	return !(
+		sidebarEl.isSameNode(event.target) ||
+		sidebarEl.contains(event.target) ||
+		topbarEl.isSameNode(event.target) ||
+		topbarEl.contains(event.target)
+	);
+};
 
-  const emit = defineEmits(['menuToggle'])
+const emit = defineEmits(['menuToggle']);
 
-  const themeStore = useThemeStore()
-  const op = ref<any>(null)
-  const isUserMenuActive = ref<any>(null)
+const themeStore = useThemeStore();
+const op = ref<any>(null);
+const isUserMenuActive = ref<any>(null);
 
-  function toggle(event: any) {
-    op.value.toggle(event)
-  }
+function toggle(event: any) {
+	op.value.toggle(event);
+}
 
-  function toggleUserMenu(event: any) {
-    isUserMenuActive.value.toggle(event)
-  }
+function toggleUserMenu(event: any) {
+	isUserMenuActive.value.toggle(event);
+}
 
-  const items = computed(() => {
-    if (authStore.authinticated) {
-      return [
-        {
-          label: 'Профиль',
-          icon: 'pi pi-user',
-          command: () => {
-            router.push('/profile')
-          },
-        },
-        {
-          label: 'Выйти',
-          icon: 'pi pi-sign-out',
-          command: () => {
-            useAuthStore().logout()
-            router.push('/auth/login')
-          },
-        },
-      ]
-    } else {
-      return [
-        {
-          label: 'Войти',
-          icon: 'pi pi-sign-in ',
-          command: () => {
-            router.push('/auth/login')
-          },
-        },
-      ]
-    }
-  })
+const items = computed(() => {
+	if (authStore.authinticated) {
+		return [
+			{
+				label: 'Профиль',
+				icon: 'pi pi-user',
+				command: () => {
+					router.push('/profile');
+				},
+			},
+			{
+				label: 'Выйти',
+				icon: 'pi pi-sign-out',
+				command: () => {
+					useAuthStore().logout();
+					router.push('/auth/login');
+				},
+			},
+		];
+	} else {
+		return [
+			{
+				label: 'Войти',
+				icon: 'pi pi-sign-in ',
+				command: () => {
+					router.push('/auth/login');
+				},
+			},
+		];
+	}
+});
 </script>
 
 <template>
-  <div class="layout-topbar">
-    <NuxtLink to="/" class="layout-topbar-logo">
-      <span class="text-[var(--primary-color)]">Конспект</span>
-    </NuxtLink>
+	<div class="layout-topbar">
+		<NuxtLink
+			to="/"
+			class="layout-topbar-logo"
+		>
+			<span class="text-[var(--primary-color)]">Конспект</span>
+		</NuxtLink>
 
-    <button
-      class="p-link layout-menu-button layout-topbar-button"
-      @click="onMenuToggle()"
-    >
-      <i class="pi pi-bars" />
-    </button>
+		<button
+			class="p-link layout-menu-button layout-topbar-button"
+			@click="onMenuToggle()"
+		>
+			<i class="pi pi-bars" />
+		</button>
 
-    <button
-      class="p-link layout-topbar-menu-button layout-topbar-button"
-      @click="onTopBarMenuButton()"
-    >
-      <i class="pi pi-ellipsis-v" />
-    </button>
+		<button
+			class="p-link layout-topbar-menu-button layout-topbar-button"
+			@click="onTopBarMenuButton()"
+		>
+			<i class="pi pi-ellipsis-v" />
+		</button>
 
-    <div class="layout-topbar-menu" :class="topbarMenuClasses">
-      <button class="p-link layout-topbar-button" @click="toggleUserMenu">
-        <i v-if="!userImg" class="pi pi-user" />
-        <img
-          v-else
-          class="rounded-full h-40px w-40px cursor-pointer"
-          :src="`${userImg.replace('localhost', 'la-parole.ru/api')}`"
-        />
-        <span>Profile</span>
-      </button>
-      <!-- <button class="p-link layout-topbar-button" @click="toggle">
+		<div
+			class="layout-topbar-menu"
+			:class="topbarMenuClasses"
+		>
+			<button
+				class="p-link layout-topbar-button"
+				@click="toggleUserMenu"
+			>
+				<i
+					v-if="!userImg"
+					class="pi pi-user"
+				/>
+				<img
+					v-else
+					class="rounded-full h-40px w-40px cursor-pointer"
+					:src="`${userImg.replace('localhost', 'la-parole.ru/api')}`"
+				/>
+				<span>Profile</span>
+			</button>
+			<!-- <button class="p-link layout-topbar-button" @click="toggle">
         <i class="pi pi-cog" />
         <span>Settings</span>
       </button> -->
-    </div>
-    <client-only>
-      <OverlayPanel
-        id="overlay_panel"
-        ref="isUserMenuActive"
-        append-to="body"
-        style="width: 200px"
-      >
-        <Menu class="border-none" :model="items" />
-      </OverlayPanel>
-    </client-only>
+		</div>
+		<client-only>
+			<OverlayPanel
+				id="overlay_panel"
+				ref="isUserMenuActive"
+				append-to="body"
+				style="width: 200px"
+			>
+				<Menu
+					class="border-none"
+					:model="items"
+				/>
+			</OverlayPanel>
+		</client-only>
 
-    <!-- <client-only>
+		<!-- <client-only>
       <OverlayPanel
         id="overlay_panel"
         ref="op"
@@ -247,7 +260,7 @@
         </div>
       </OverlayPanel>
     </client-only>-->
-  </div>
+	</div>
 </template>
 
 <style lang="scss" scoped></style>

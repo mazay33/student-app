@@ -1,9 +1,9 @@
-import { defineNuxtRouteMiddleware } from 'nuxt/app'
+import { defineNuxtRouteMiddleware } from 'nuxt/app';
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const authStore = useAuthStore()
+	const authStore = useAuthStore();
 
-  if (!authStore.isAdmin) {
-    return navigateTo('/')
-  }
-})
+	if (!authStore.isAdmin) {
+		return await navigateTo('/');
+	}
+});

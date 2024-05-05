@@ -1,203 +1,218 @@
 <script setup lang="ts">
-  import httpService from '~/services/httpService'
+import useApiService from '~/services/apiService';
 
-  const toast = useToast()
+const apiService = useApiService();
 
-  const authStore = useAuthStore()
-  const { user } = storeToRefs(authStore)
+const toast = useToast();
 
-  const isDisabled = ref(true)
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 
-  const submitInfo = async () => {
-    try {
-      const { data } = await httpService.patch('private/users/update', {
-        nickname: user.value.nickname,
-        description: user.value.description,
-      })
+const isDisabled = ref(true);
 
-      if (data) {
-        authStore.getMe()
-        isDisabled.value = true
-        toast.add({
-          severity: 'success',
-          summary: 'Данные успешно обновлены',
-          // detail: `Username:${user.value.nickname}\nDescription: ${user.value.description}`,
-          life: 3000,
-        })
-      }
-    } catch (error) {
-      console.error('error', error)
-    }
-  }
+const submitInfo = async () => {
+	if (!user.value || !user.value.description) {
+		return;
+	}
+	const { data } = await apiService.user.updateUserInfo(user.value.nickname, user.value.description);
 
-  const openFileDialog = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'image/*'
-    input.multiple = false
-    input.style.display = 'none'
-    input.addEventListener('change', (event) => {
-      const target = event.target as HTMLInputElement
-      if (!target.files) return
+	if (data.value) {
+		authStore.getMe();
+		isDisabled.value = true;
+		toast.add({
+			severity: 'success',
+			summary: 'Данные успешно обновлены',
+			life: 3000,
+		});
+	}
+};
 
-      uploadImage(event)
-    })
-    document.body.appendChild(input)
-    input.click()
-    document.body.removeChild(input)
-  }
+const uploadImage = async (event: Event) => {
+	const formData = new FormData();
+	const target = event.target as HTMLInputElement;
+	if (!event.target || !target.files) {
+		return;
+	}
+	formData.append('file', target.files[0]);
 
-  const uploadImage = async (event) => {
-    try {
-      const formData = new FormData()
-      formData.append('file', event.target.files[0])
+	const { data } = await apiService.user.updateUserImage(formData);
 
-      const { data } = await httpService.patch('private/users/image', formData)
+	if (data.value) {
+		await authStore.getMe();
+		toast.add({
+			severity: 'success',
+			summary: 'Изображение успешно обновлено',
+			life: 3000,
+		});
+	}
+};
 
-      if (data.value) {
-        await authStore.getMe()
-        toast.add({
-          severity: 'success',
-          summary: 'Изображение успешно обновлено',
-          life: 3000,
-        })
-      }
-    } catch (error) {
-      console.error('error', error)
-    }
-  }
+const openFileDialog = () => {
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.accept = 'image/*';
+	input.multiple = false;
+	input.style.display = 'none';
+	input.addEventListener('change', event => {
+		const target = event.target as HTMLInputElement;
+		if (!target.files) {
+			return;
+		}
 
-  const avatarOverlayPanel = ref()
+		uploadImage(event);
+	});
+	document.body.appendChild(input);
+	input.click();
+	document.body.removeChild(input);
+};
 
-  const toggle = (event: any) => {
-    avatarOverlayPanel.value.toggle(event)
-  }
+const avatarOverlayPanel = ref();
+
+const toggle = (event: Event) => {
+	avatarOverlayPanel.value.toggle(event);
+};
 </script>
 
 <template>
-  <Toast />
+	<Toast />
 
-  <div
-    class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between"
-  >
-    <div flex flex-col sm:flex-row>
-      <div class="text-center mt--10">
-        <div class="w-5/10 text-black">
-          <InputText
-            type="text"
-            v-model="user.nickname"
-            :disabled="isDisabled"
-            class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
-            :class="[isDisabled ? 'border-white' : 'border-blue']"
-          />
-        </div>
-        <div>
-          <img
-            @click="toggle"
-            class="rounded-full mt-5 h-200px w-200px cursor-pointer"
-            :src="
-              user.image_url
-                ? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
-                : 'https://pinia.vuejs.org/logo.svg'
-            "
-          />
-        </div>
-      </div>
+	<div
+		v-if="user"
+		class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between"
+	>
+		<div
+			flex
+			flex-col
+			sm:flex-row
+		>
+			<div class="text-center mt--10">
+				<div class="w-5/10 text-black">
+					<InputText
+						v-model="user.nickname"
+						type="text"
+						:disabled="isDisabled"
+						class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
+						:class="[isDisabled ? 'border-white' : 'border-blue']"
+					/>
+				</div>
+				<div>
+					<img
+						class="rounded-full mt-5 h-200px w-200px cursor-pointer"
+						:src="
+							user.image_url
+								? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
+								: 'https://pinia.vuejs.org/logo.svg'
+						"
+						@click="toggle"
+					/>
+				</div>
+			</div>
 
-      <div sm:ml-7>
-        <div class="flex">
-          <div class="flex flex-col gap-2 flex flex-col">
-            <label>Email</label>
-            <div class="bg-slate-200 rounded w-60 h-10">
-              <p class="pt-2 pl-3">{{ user.email }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="flex mt-6">
-          <div class="flex flex-col gap-2 flex flex-col">
-            <label>Created at</label>
-            <div class="bg-slate-200 rounded w-60 h-10">
-              <p class="pt-2 pl-3">{{ user.created_at }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="flex mt-6">
-          <div class="flex flex-col gap-2 flex flex-col mb-5">
-            <label for="username">Description</label>
-            <InputText
-              type="text"
-              v-model="user.description"
-              class="placeholder:text-slate-700 shadow-none border-1 rounded w-60 h-10 "
-              :class="[isDisabled ? 'border-white' : 'border-blue']"
-              placeholder="Some info about..."
-              :disabled="isDisabled"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+			<div sm:ml-7>
+				<div class="flex">
+					<div class="flex flex-col gap-2 flex flex-col">
+						<label>Email</label>
+						<div class="bg-slate-200 rounded w-60 h-10">
+							<p class="pt-2 pl-3">{{ user.email }}</p>
+						</div>
+					</div>
+				</div>
+				<div class="flex mt-6">
+					<div class="flex flex-col gap-2 flex flex-col">
+						<label>Created at</label>
+						<div class="bg-slate-200 rounded w-60 h-10">
+							<p class="pt-2 pl-3">{{ user.created_at }}</p>
+						</div>
+					</div>
+				</div>
+				<div class="flex mt-6">
+					<div class="flex flex-col gap-2 flex flex-col mb-5">
+						<label for="username">Description</label>
+						<InputText
+							v-model="user.description"
+							type="text"
+							class="placeholder:text-slate-700 shadow-none border-1 rounded w-60 h-10"
+							:class="[isDisabled ? 'border-white' : 'border-blue']"
+							placeholder="Some info about..."
+							:disabled="isDisabled"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <div
-      class="flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48"
-    >
-      <Button
-        id="disnone"
-        label="обновить данные"
-        :class="[isDisabled ? 'hidden' : '']"
-        @click="submitInfo"
-        class="bg-white text-indigo-500 hover:bg-indigo-100"
-      ></Button>
-      <Button
-        id="change_button"
-        label="Изменить"
-        @click="isDisabled = !isDisabled"
-        class=""
-      >
-      </Button>
-    </div>
-  </div>
-  <OverlayPanel
-    class="user-information-panel ml-7"
-    ref="avatarOverlayPanel"
-    appendTo="div"
-  >
-    <div class="w-150px">
-      <div
-        @click="openFileDialog"
-        v-if="!user.image_url"
-        class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
-      >
-        <p class="m-0 w-110px">Загрузить фото</p>
-        <i class="pi pi-upload" style="font-size: 1rem"></i>
-      </div>
-      <div
-        @click="openFileDialog"
-        v-else
-        class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
-      >
-        <p class="m-0 w-110px">Изменить фото</p>
-        <i class="pi pi-pencil" style="font-size: 1rem"></i>
-      </div>
-      <div
-        class="flex items-center justify-between p-1 py-2 text-red hover:text-red-700 duration-200 cursor-pointer"
-      >
-        <p class="m-0 w-110px">Удалить фото</p>
-        <i class="pi pi-trash" style="font-size: 1rem"></i>
-      </div>
-    </div>
-  </OverlayPanel>
+		<div class="flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48">
+			<Button
+				id="disnone"
+				label="обновить данные"
+				:class="[isDisabled ? 'hidden' : '']"
+				class="bg-white text-indigo-500 hover:bg-indigo-100"
+				@click="submitInfo"
+			/>
+			<Button
+				id="change_button"
+				label="Изменить"
+				class=""
+				@click="isDisabled = !isDisabled"
+			/>
+		</div>
+	</div>
+	<OverlayPanel
+		ref="avatarOverlayPanel"
+		class="user-information-panel ml-7"
+		append-to="div"
+	>
+		<div
+			v-if="user"
+			class="w-150px"
+		>
+			<div
+				v-if="!user.image_url"
+				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
+				@click="openFileDialog"
+			>
+				<p class="m-0 w-110px">Загрузить фото</p>
+				<i
+					class="pi pi-upload"
+					style="font-size: 1rem"
+				/>
+			</div>
+			<div
+				v-else
+				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
+				@click="openFileDialog"
+			>
+				<p class="m-0 w-110px">Изменить фото</p>
+				<i
+					class="pi pi-pencil"
+					style="font-size: 1rem"
+				/>
+			</div>
+			<div
+				class="flex items-center justify-between p-1 py-2 text-red hover:text-red-700 duration-200 cursor-pointer"
+			>
+				<p class="m-0 w-110px">Удалить фото</p>
+				<i
+					class="pi pi-trash"
+					style="font-size: 1rem"
+				/>
+			</div>
+		</div>
+	</OverlayPanel>
 </template>
 
 <style lang="scss">
-  .user-information-panel {
-    display: flex;
-    justify-content: center;
-    width: 170px;
-    &:before {
-      margin-left: 45px;
-    }
-    &:after {
-      margin-left: 47px;
-    }
-  }
+.user-information-panel {
+	display: flex;
+	justify-content: center;
+	width: 170px;
+
+	&::before {
+		margin-left: 45px;
+	}
+
+	&::after {
+		margin-left: 47px;
+	}
+}
 </style>

@@ -1,16 +1,19 @@
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-export function usePrimeDataTable () {
-  const tableData = ref([])
+export function usePrimeDataTable() {
+	const tableData = ref([]);
 
-  const filters = ref({})
-  const dataTableRef = ref()
+	const filters = ref({});
+	const dataTableRef = ref();
 
-  function exportCSV () {
-    dataTableRef.value?.exportCSV()
-  }
+	function exportCSV() {
+		dataTableRef.value?.exportCSV();
+	}
 
-  return {
-    tableData, filters, dataTableRef, exportCSV
-  }
+	return {
+		tableData,
+		filters,
+		dataTableRef,
+		exportCSV,
+	};
 }

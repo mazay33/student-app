@@ -1,57 +1,51 @@
-import httpService from '~/services/httpService'
-import type { ISummaryCreateForm } from '../@types'
+import type { ISummaryCreateForm } from '../@types';
+import useApiService from '~/services/apiService';
+
+const apiService = useApiService();
 
 export const useSummaryCreateFormStore = defineStore(
-  'summaryCreateForm',
-  () => {
-    const isLoading = ref<boolean>(false)
+	'summaryCreateForm',
+	() => {
+		const isLoading = ref<boolean>(false);
 
-    const summaryCreateForm = reactive<ISummaryCreateForm>({
-      name: null,
-      university: null,
-      subject: null,
-      teacher: null,
-    })
+		const summaryCreateForm = reactive<ISummaryCreateForm>({
+			name: null,
+			university: null,
+			subject: null,
+			teacher: null,
+		});
 
-    const createSummary = async () => {
-      const { data, error, pending } = await httpService.post<
-        string,
-        ISummaryCreateForm
-      >('main/private/summaries', {
-        name: summaryCreateForm.name,
-        university_id: summaryCreateForm.university?.id,
-        subject_id: summaryCreateForm.subject?.id,
-        teacher_id: summaryCreateForm.teacher?.id,
-      })
+		const clearSummaryCreateForm = () => {
+			summaryCreateForm.name = null;
+			summaryCreateForm.university = null;
+			summaryCreateForm.subject = null;
+			summaryCreateForm.teacher = null;
+		};
 
-      if (data.value) {
-        clearSummaryCreateForm()
-        return navigateTo(`/summary/my/${data.value}`)
-      }
+		const createSummary = async () => {
+			const { data, pending } = await apiService.summary.createSummary(summaryCreateForm);
 
-      isLoading.value = pending.value
-    }
+			if (data.value) {
+				clearSummaryCreateForm();
+				await navigateTo(`/summary/my/${data.value}`);
+			}
 
-    const clearSummaryCreateForm = () => {
-      summaryCreateForm.name = null
-      summaryCreateForm.university = null
-      summaryCreateForm.subject = null
-      summaryCreateForm.teacher = null
-    }
+			isLoading.value = pending.value;
+		};
 
-    return {
-      summaryCreateForm,
-      createSummary,
+		return {
+			summaryCreateForm,
+			createSummary,
 
-      isLoading: computed(() => isLoading.value),
-    }
-  },
-  {
-    persist: {
-      storage: persistedState.cookiesWithOptions({
-        sameSite: 'strict',
-        secure: true,
-      }),
-    },
-  }
-)
+			isLoading: computed(() => isLoading.value),
+		};
+	},
+	{
+		persist: {
+			storage: persistedState.cookiesWithOptions({
+				sameSite: 'strict',
+				secure: true,
+			}),
+		},
+	},
+);
