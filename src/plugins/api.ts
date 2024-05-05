@@ -1,62 +1,57 @@
-import { fetchWithCookie } from '~/composables/useFetchCookie'
+import { fetchWithCookie } from '~/composables/useFetchCookie';
 
 export default defineNuxtPlugin(() => {
-  let isRefreshing = false
-  const config = useRuntimeConfig()
+	let isRefreshing = false;
+	const config = useRuntimeConfig();
 
-  const $api = $fetch.create({
-    baseURL: `https://auth.24konspect.ru/api/`,
-    retry: 1,
-    retryStatusCodes: [401],
-    credentials: 'include',
-    headers: useRequestHeaders(['cookie']),
+	const $api = $fetch.create({
+		baseURL: 'https://auth.24konspect.ru/api/',
+		retry: 1,
+		retryStatusCodes: [401],
+		credentials: 'include',
+		headers: useRequestHeaders(['cookie']),
 
-    async onRequest({ request, options, error }) {
-      options.headers = {
-        ...options.headers,
-        ...useRequestHeaders(['cookie']),
-      }
-    },
+		async onRequest({ request, options, error }) {
+			options.headers = {
+				...options.headers,
+				...useRequestHeaders(['cookie']),
+			};
+		},
 
-    async onResponseError({ response, options, error }) {
-      if (response.status == 401 && !isRefreshing) {
-        const authStore = useAuthStore()
-        const { refresh } = authStore
+		async onResponseError({ response, options, error }) {
+			if (response.status === 401 && !isRefreshing) {
+				const authStore = useAuthStore();
+				const { refresh } = authStore;
 
-        isRefreshing = true
+				isRefreshing = true;
 
-        if (process.server) {
-          const event = useRequestEvent()
+				if (process.server) {
+					const event = useRequestEvent();
 
-          const { data, status } = await useAsyncData(
-            async () =>
-              await fetchWithCookie(
-                event!,
-                `https://auth.24konspect.ru/api/public/auth/refresh`
-              )
-          )
+					const { data, status } = await useAsyncData(
+						async () => await fetchWithCookie(event!, 'https://auth.24konspect.ru/api/public/auth/refresh'),
+					);
 
-          if (status.value === 'success') {
-            await navigateTo(event.path)
-            return
-          } else {
-            // await navigateTo('/auth/login')
-          }
+					if (status.value === 'success') {
+						await navigateTo(event?.path);
+						return;
+					}
+					// await navigateTo('/auth/login')
 
-          isRefreshing = false
-        }
-        if (process.client) {
-          await refresh()
+					isRefreshing = false;
+				}
+				if (process.client) {
+					await refresh();
 
-          isRefreshing = false
-        }
-      }
-    },
-  })
-  // Expose to useNuxtApp().$api
-  return {
-    provide: {
-      api: $api,
-    },
-  }
-})
+					isRefreshing = false;
+				}
+			}
+		},
+	});
+	// Expose to useNuxtApp().$api
+	return {
+		provide: {
+			api: $api,
+		},
+	};
+});

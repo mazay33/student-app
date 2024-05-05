@@ -1,68 +1,62 @@
-import type { UseFetchOptions } from 'nuxt/app'
-import type { FetchError } from 'ofetch'
-import type { Ref } from 'vue'
-import type { _AsyncData, KeysOf, PickFrom } from '#app/composables/asyncData'
+import type { UseFetchOptions } from 'nuxt/app';
+import type { FetchError } from 'ofetch';
+import type { Ref } from 'vue';
 
-export type HttpReturnType<T> = Promise<
-  _AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>
->
-export type HttpBodyType<T> = T extends Ref<Record<string, any>>
-  ? T
-  : Record<string, any>
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+import type { _AsyncData, KeysOf, PickFrom } from '#app/composables/asyncData';
 
-class HttpService {
-  private _request<T, U>(
-    method: HttpMethod,
-    url: string,
-    body?: HttpBodyType<U>,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return useAPI<T>(url, {
-      method,
-      body,
-      server: url.includes('private') ? false : true,
-      ...options,
-    })
-  }
+export type HttpReturnType<T> = Promise<_AsyncData<PickFrom<T, KeysOf<T>> | null, FetchError<any> | null>>;
 
-  public get<T>(
-    url: string,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return this._request<T, never>('GET', url, undefined, options)
-  }
+export type HttpBodyType<T> = T extends Ref<Record<string, any>> ? T : Record<string, any>;
 
-  public post<T, U>(
-    url: string,
-    body: HttpBodyType<U>,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return this._request<T, U>('POST', url, body, options)
-  }
-
-  public put<T, U>(
-    url: string,
-    body: HttpBodyType<U>,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return this._request<T, U>('PUT', url, body, options)
-  }
-
-  public patch<T, U>(
-    url: string,
-    body: HttpBodyType<U>,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return this._request<T, U>('PATCH', url, body, options)
-  }
-
-  public delete<T>(
-    url: string,
-    options: UseFetchOptions<T> = {}
-  ): HttpReturnType<T> {
-    return this._request<T, never>('DELETE', url, undefined, options)
-  }
+export enum HttpMethod {
+	GET = 'GET',
+	POST = 'POST',
+	PUT = 'PUT',
+	DELETE = 'DELETE',
+	PATCH = 'PATCH',
 }
 
-export default new HttpService()
+export interface IHttpService {
+	get<T>(url: string, options?: UseFetchOptions<T>): HttpReturnType<T>;
+	post<T, U>(url: string, body: HttpBodyType<U>, options?: UseFetchOptions<T>): HttpReturnType<T>;
+	put<T, U>(url: string, body: HttpBodyType<U>, options?: UseFetchOptions<T>): HttpReturnType<T>;
+	delete<T>(url: string, options?: UseFetchOptions<T>): HttpReturnType<T>;
+	patch<T, U>(url: string, body: HttpBodyType<U>, options?: UseFetchOptions<T>): HttpReturnType<T>;
+}
+
+export default class HttpService {
+	private request<T, U>(
+		method: HttpMethod,
+		url: string,
+		body?: HttpBodyType<U>,
+		options: UseFetchOptions<T> = {},
+	): HttpReturnType<T> {
+		const response = useAPI<T>(url, {
+			method,
+			body,
+			server: !url.includes('private'),
+			...options,
+		});
+		return response;
+	}
+
+	public get<T>(url: string, options: UseFetchOptions<T> = {}): HttpReturnType<T> {
+		return this.request<T, never>(HttpMethod.GET, url, undefined, options);
+	}
+
+	public post<T, U>(url: string, body: HttpBodyType<U>, options: UseFetchOptions<T> = {}): HttpReturnType<T> {
+		return this.request<T, U>(HttpMethod.POST, url, body, options);
+	}
+
+	public put<T, U>(url: string, body: HttpBodyType<U>, options: UseFetchOptions<T> = {}): HttpReturnType<T> {
+		return this.request<T, U>(HttpMethod.PUT, url, body, options);
+	}
+
+	public patch<T, U>(url: string, body: HttpBodyType<U>, options: UseFetchOptions<T> = {}): HttpReturnType<T> {
+		return this.request<T, U>(HttpMethod.PATCH, url, body, options);
+	}
+
+	public delete<T>(url: string, options: UseFetchOptions<T> = {}): HttpReturnType<T> {
+		return this.request<T, never>(HttpMethod.DELETE, url, undefined, options);
+	}
+}
