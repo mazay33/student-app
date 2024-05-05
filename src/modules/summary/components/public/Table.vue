@@ -280,7 +280,7 @@ watch(
 					editable
 					show-clear
 					@change="onTeacherChange($event)"
-					placeholder="Введите название предмета..."
+					placeholder="Введите имя преподователя..."
 					class="border-1 border-solid border-slate-300 rounded-xl flex-auto font-medium"
 				>
 					<template #option="{ option }: { option: ITeacher }">
