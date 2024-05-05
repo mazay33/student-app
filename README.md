@@ -3,34 +3,31 @@
 Build your VUE.js App with Nuxt3. First Class PrimeVUE support. Validation by Formkit.
 Based on [Nuxt-Sakai](https://github.com/primefaces/sakai-nuxt) Theme.
 
-
 [![CI](https://github.com/sfxcode/nuxt3-primevue-starter/actions/workflows/main.yml/badge.svg)](https://github.com/sfxcode/nuxt3-primevue-starter/actions/workflows/main.yml)
 
 THX to [antfu / Vitesse Nuxt3](https://github.com/antfu/vitesse-nuxt3) for starter code
 
 ## Features
 
-- [Nuxt 3](https://v3.nuxtjs.org) - SSR, ESR, File-based routing, components auto importing, modules, etc.
-- [PrimeVue](https://primevue.org/) 3.40.x with free Sakai Layout and Lara Theme
-- [Formkit-PrimeVue](https://formkit-primevue.netlify.app/) PrimeVue Formkit Integration
-- [Vite](https://vitejs.dev/) - Instant HMR
-- [UnoCSS](https://github.com/antfu/unocss) - The instant on-demand atomic CSS engine.
-- Use icons from any icon sets in Pure CSS, powered by [UnoCSS](https://github.com/antfu/unocss)
-- [State Management via Pinia](https://pinia.esm.dev)
-- [TipTap](https://tiptap.dev) - Headless Editor
-- [Vitest](https://vitest.dev/) - Blazing Fast Unit Test Framework
+-   [Nuxt 3](https://v3.nuxtjs.org) - SSR, ESR, File-based routing, components auto importing, modules, etc.
+-   [PrimeVue](https://primevue.org/) 3.40.x with free Sakai Layout and Lara Theme
+-   [Formkit-PrimeVue](https://formkit-primevue.netlify.app/) PrimeVue Formkit Integration
+-   [Vite](https://vitejs.dev/) - Instant HMR
+-   [UnoCSS](https://github.com/antfu/unocss) - The instant on-demand atomic CSS engine.
+-   Use icons from any icon sets in Pure CSS, powered by [UnoCSS](https://github.com/antfu/unocss)
+-   [State Management via Pinia](https://pinia.esm.dev)
+-   [TipTap](https://tiptap.dev) - Headless Editor
+-   [Vitest](https://vitest.dev/) - Blazing Fast Unit Test Framework
 
 ## Nuxt Modules
 
-- [PrimeVue-Nuxt](https://primevue.org/nuxt/) PrimeVue Nuxt Module
-- [Pinia](https://pinia.esm.dev/) - intuitive, type safe, light and flexible Store for Vue.
-- [VueUse](https://github.com/vueuse/vueuse) - collection of useful composition APIs.
-- [FormKit](https://formkit.com/) - Validation
-- [UnoCSS](https://github.com/antfu/unocss) - the instant on-demand atomic CSS engine.
-- [Content](https://content.nuxtjs.org) - parses .md, .yml, .csv and .json files
-- [I18n](https://v8.i18n.nuxtjs.org) - Integration with [Vue I18n](https://vue-i18n.intlify.dev/)
-
-
+-   [PrimeVue-Nuxt](https://primevue.org/nuxt/) PrimeVue Nuxt Module
+-   [Pinia](https://pinia.esm.dev/) - intuitive, type safe, light and flexible Store for Vue.
+-   [VueUse](https://github.com/vueuse/vueuse) - collection of useful composition APIs.
+-   [FormKit](https://formkit.com/) - Validation
+-   [UnoCSS](https://github.com/antfu/unocss) - the instant on-demand atomic CSS engine.
+-   [Content](https://content.nuxtjs.org) - parses .md, .yml, .csv and .json files
+-   [I18n](https://v8.i18n.nuxtjs.org) - Integration with [Vue I18n](https://vue-i18n.intlify.dev/)
 
 ## Variations
 
@@ -42,13 +39,13 @@ Vite Primevue Starter Template
 
 [App on Netlify](https://vite-primevue-starter.netlify.app/)
 
-* Pages, Layouts, and other NUXT like features by VITE Plugins
-* UnoCSS
-* Markdown
-* CachedPiniaStore
-* i18n
-* Validation
-* ...
+-   Pages, Layouts, and other NUXT like features by VITE Plugins
+-   UnoCSS
+-   Markdown
+-   CachedPiniaStore
+-   i18n
+-   Validation
+-   ...
 
 ## Project setup and usage
 

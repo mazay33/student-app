@@ -1,9 +1,9 @@
 // formkit.config.ts
-import type { DefaultConfigOptions } from '@formkit/vue'
-import { primeInputs } from '@sfxcode/formkit-primevue'
+import type { DefaultConfigOptions } from '@formkit/vue';
+import { primeInputs } from '@sfxcode/formkit-primevue';
 
 const config: DefaultConfigOptions = {
-  inputs: primeInputs
-}
+	inputs: primeInputs,
+};
 
-export default config
+export default config;
