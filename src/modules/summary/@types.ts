@@ -12,7 +12,7 @@ interface ILecture {
 	description: string;
 	pdf_file_url: string;
 	video_url: string;
-	id: string;
+	id?: string;
 }
 
 interface ISummary {
@@ -25,4 +25,11 @@ interface ISummary {
 	status?: string;
 	lectures?: ILecture[];
 }
-export type { ISummaryCreateForm, ISummary };
+
+interface IUpload {
+	id: string;
+	name: string;
+	file_url: string;
+}
+
+export type { ISummaryCreateForm, ISummary, IUpload, ILecture };

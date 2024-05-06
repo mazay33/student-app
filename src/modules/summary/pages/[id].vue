@@ -31,10 +31,26 @@ await getSummary();
 
 const getYoutubeId = (url: string) => {
 	const youtubeRegex =
-		// eslint-disable-next-line max-len
+		// eslint-disable-next-line
 		/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 	const match = url.match(youtubeRegex);
 	return match ? match[1] : '';
+};
+
+const lectionLink = (link: string) => {
+	window.open(link, '_blank');
+};
+
+const showModal = ref(false);
+let lectureLink = '';
+
+const openModal = (link: string) => {
+	lectureLink = link;
+	showModal.value = true;
+};
+
+const closeModal = () => {
+	showModal.value = false;
 };
 </script>
 
@@ -116,13 +132,37 @@ const getYoutubeId = (url: string) => {
 							flex
 							flex-col
 						>
-							<a
-								:href="lecture.pdf_file_url"
-								target="_blank"
-								class="text-lg"
-							>
-								Открыть лекцию для чтения
-							</a>
+							<div class="flex">
+								<Button
+									class="w-full sm:w-46 mr-5"
+									@click="lectionLink(lecture.pdf_file_url)"
+									>Лекция для чтения</Button
+								>
+								<Button
+									class="bg-green border-green"
+									@click="openModal(lecture.pdf_file_url)"
+								>
+									<i class="pi pi-share-alt pr-2 sm-pr-0"></i>
+								</Button>
+
+								<Dialog
+									v-model="showModal"
+									header="Ссылка на лекцию"
+									:modal="true"
+									:visible="showModal"
+									class="w-5/10 md-w-200"
+									@hide="closeModal"
+								>
+									<div>{{ lectureLink }}</div>
+									<div class="flex mt-3">
+										<Button
+											class="p-button-text"
+											@click="closeModal"
+											>Закрыть</Button
+										>
+									</div>
+								</Dialog>
+							</div>
 
 							<div class="mt-5">
 								<iframe
@@ -154,7 +194,6 @@ const getYoutubeId = (url: string) => {
 
 <style scoped>
 .p-accordion-header:hover {
-	transform: none !important; /* Отменяет изменение размера при наведении */
-	background-color: red;
+	transform: none !important;
 }
 </style>
