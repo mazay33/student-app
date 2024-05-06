@@ -1,13 +1,13 @@
 class QueryBuilder {
-	private filter: Record<string, any> = {
-		page: 1,
-		page_size: 50,
-	};
+	private filter: Record<string, any> = {};
 
 	setFilter(key: string, value: any): this {
-		if (value) {
+		if (value && typeof value === 'number') {
 			this.filter[key] = value;
+		} else if (typeof value === 'string') {
+			this.filter[key] = value || '';
 		}
+
 		return this;
 	}
 

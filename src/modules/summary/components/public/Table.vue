@@ -5,111 +5,150 @@ import type { IPaginatedResult } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
 import QueryBuilder from '~/utils/QueryBuilder';
-type FetchFunction<T = unknown> = (...args: unknown[]) => Promise<T>;
-const apiService = useApiService();
+import type { VirtualScrollerLazyEvent } from 'primevue/virtualscroller';
 
+const apiService = useApiService();
+const debounceFetch = createDebounceFetch(500);
+
+//  university
 const universities = ref<IPaginatedResult<IUniversity>>();
 const university = ref<IUniversity | null>(null);
+const universityQueryFilter = ref(new QueryBuilder().setPageSize(25));
+const universityQueryUrl = computed(() => universityQueryFilter.value.buildUrl());
+const isUniversitiesLoading = ref<boolean>(false);
 
-const getUniversities = async (queryUrl: string = '') => {
-	const { data, error, pending } = await apiService.university.getUniversityList(queryUrl);
+const getUniversities = async () => {
+	isUniversitiesLoading.value = true;
+	const { data, error, pending } = await apiService.university.getUniversityList(universityQueryUrl.value);
 	if (data.value) {
 		universities.value = data.value;
 	}
+	isUniversitiesLoading.value = pending.value;
 };
 
 await getUniversities();
 
-const onUniversityChange = async (event: DropdownChangeEvent) => {
-	if (typeof event.value == 'string') {
-		const formatUrl = computed(() =>
-			new QueryBuilder().setFilter('name', event.value ? event.value : '').buildUrl(),
-		);
+const onUniversityInput = async (event: InputEvent) => {
+	const target = event.target as HTMLInputElement;
 
-		await debounceFetch(() => getUniversities(formatUrl.value));
-	}
-	if (typeof event.value == 'object') {
-		console.log(event.value);
-		filter.value.university_id = event.value?.id;
+	universityQueryFilter.value.setFilter('name', target.value);
+
+	await debounceFetch(() => getUniversities());
+};
+
+const onUniversityChange = async (event: DropdownChangeEvent) => {
+	summaryFilter.value.university_id = event.value?.id;
+};
+
+const onUniversitiesLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
+	const { first, last } = event;
+
+	if (universities.value && universities.value.result.length === last && last < universities.value.count) {
+		universityQueryFilter.value.setPageSize(last + 25);
+
+		await debounceFetch(() => getUniversities());
 	}
 };
 
+// subjects
 const subjects = ref<IPaginatedResult<ISubject>>();
 const subject = ref<ISubject | null>(null);
+const subjectQueryFilter = ref(new QueryBuilder().setPageSize(25));
+const subjectQueryUrl = computed(() => subjectQueryFilter.value.buildUrl());
+const isSubjectsLoading = ref<boolean>(false);
 
-const getSubjects = async (queryUrl: string = '') => {
-	const { data, error, pending } = await apiService.subject.getSubjectList(queryUrl);
+const getSubjects = async () => {
+	isSubjectsLoading.value = true;
+	const { data, error, pending } = await apiService.subject.getSubjectList(subjectQueryUrl.value);
 	if (data.value) {
 		subjects.value = data.value;
 	}
+
+	isSubjectsLoading.value = pending.value;
 };
 
 await getSubjects();
 
-const onSubjectChange = async (event: DropdownChangeEvent) => {
-	if (typeof event.value == 'string') {
-		const formatUrl = computed(() =>
-			new QueryBuilder().setFilter('name', event.value ? event.value : '').buildUrl(),
-		);
+const onSubjectInput = async (event: InputEvent) => {
+	const target = event.target as HTMLInputElement;
 
-		await debounceFetch(() => getSubjects(formatUrl.value));
-	}
-	if (typeof event.value == 'object') {
-		filter.value.subject_id = event.value?.id;
+	subjectQueryFilter.value.setFilter('name', target.value);
+
+	await debounceFetch(() => getSubjects());
+};
+
+const onSubjectChange = async (event: DropdownChangeEvent) => {
+	summaryFilter.value.subject_id = event.value?.id;
+};
+
+const onSubjectsLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
+	const { first, last } = event;
+
+	if (subjects.value && subjects.value.result.length === last && last < subjects.value.count) {
+		subjectQueryFilter.value.setPageSize(last + 25);
+
+		await debounceFetch(() => getSubjects());
 	}
 };
 
+// teachers
 const teachers = ref<IPaginatedResult<ITeacher>>();
 const teacher = ref<ITeacher | null>(null);
-const getTeachers = async (queryUrl: string = '') => {
-	const { data, error, pending } = await apiService.teacher.getTeacherList(queryUrl);
+const teacherQueryFilter = ref(new QueryBuilder().setPageSize(25));
+const teacherQueryUrl = computed(() => teacherQueryFilter.value.buildUrl());
+const isTeachersLoading = ref<boolean>(false);
+const getTeachers = async () => {
+	isTeachersLoading.value = true;
+	const { data, error, pending } = await apiService.teacher.getTeacherList(teacherQueryUrl.value);
 	if (data.value) {
 		teachers.value = data.value;
 	}
+
+	isTeachersLoading.value = pending.value;
 };
 
 await getTeachers();
 
-const onTeacherChange = async (event: DropdownChangeEvent) => {
-	if (typeof event.value == 'string') {
-		const formatUrl = computed(() =>
-			new QueryBuilder().setFilter('full_name', event.value ? event.value : '').buildUrl(),
-		);
-		await debounceFetch(() => getTeachers(formatUrl.value));
-	}
-	if (typeof event.value == 'object') {
-		filter.value.teacher_id = event.value?.id;
-	}
+const onTeacherInput = async (event: InputEvent) => {
+	const target = event.target as HTMLInputElement;
+
+	teacherQueryFilter.value.setFilter('full_name', target.value);
+
+	await debounceFetch(() => getTeachers());
 };
 
-const summaries = ref<IPaginatedResult<ISummary[]>>();
-const isLoading = ref<boolean>(false);
+const onTeacherChange = async (event: DropdownChangeEvent) => {
+	summaryFilter.value.teacher_id = event.value?.id;
+};
 
-const filter = ref<{ [key: string]: any }>({
+// summaries
+const summaries = ref<IPaginatedResult<ISummary[]>>();
+const isSummariesLoading = ref<boolean>(false);
+
+const summaryFilter = ref<{ [key: string]: any }>({
 	page: 1,
 	page_size: 25,
 	university_id: null,
 	subject_id: null,
 	teacher_id: null,
 });
-
-const searchFilter = ref({
+const summarySearchFilter = ref({
 	name: '',
 });
 
-const filterUrl = computed(() => {
+const summaryQueryUrl = computed(() => {
 	return new QueryBuilder()
-		.setPage(filter.value.page)
-		.setPageSize(filter.value.page_size)
-		.setFilter('name', searchFilter.value.name)
-		.setFilter('university_id', filter.value.university_id)
-		.setFilter('subject_id', filter.value.subject_id)
-		.setFilter('teacher_id', filter.value.teacher_id)
+		.setPage(summaryFilter.value.page)
+		.setPageSize(summaryFilter.value.page_size)
+		.setFilter('name', summarySearchFilter.value.name)
+		.setFilter('university_id', summaryFilter.value.university_id)
+		.setFilter('subject_id', summaryFilter.value.subject_id)
+		.setFilter('teacher_id', summaryFilter.value.teacher_id)
 		.buildUrl();
 });
 
 const getSummaries = async () => {
-	const { data, error } = await apiService.summary.getPublicSummaries(filterUrl.value);
+	const { data, error } = await apiService.summary.getPublicSummaries(summaryQueryUrl.value);
 
 	if (data.value) {
 		summaries.value = data.value;
@@ -120,14 +159,10 @@ const getSummaries = async () => {
 	}
 };
 
-const debounceFetch = useDebounceFn(async (fetch: FetchFunction) => {
-	await fetch();
-}, 500);
-
 await getSummaries();
 
 watch(
-	() => filter.value,
+	() => summaryFilter.value,
 	async () => {
 		await getSummaries();
 	},
@@ -135,47 +170,82 @@ watch(
 );
 
 watch(
-	() => searchFilter.value,
+	() => summarySearchFilter.value,
 	async () => {
 		await debounceFetch(() => getSummaries());
 	},
 	{ deep: true },
 );
+
+const clearFilters = () => {
+	university.value = null;
+	subject.value = null;
+	teacher.value = null;
+
+	summarySearchFilter.value.name = '';
+
+	summaryFilter.value = {
+		page: 1,
+		page_size: 25,
+		university_id: null,
+		subject_id: null,
+		teacher_id: null,
+	};
+};
 </script>
 
 <template>
 	<DataTable
-		scroll-height="60vh"
+		scroll-height="64vh"
 		scrollable
 		show-gridlines
 		filterDisplay="row"
 		:value="summaries?.result"
 	>
+		<template #empty>
+			<div class="w-full flex flex-col items-center justify-center py-20">
+				<img
+					class="w-90px h-90px text-slate-400"
+					src="~/assets/images/empty.svg"
+				/>
+				<div class="text-slate-400 text-2xl mt-4">Конспекты не найдены</div>
+			</div>
+		</template>
 		<Column
 			class="text-center"
 			header="№"
 			style="width: 1%"
 			:showFilterMenu="false"
-			filterField="representative"
+			:showFilterOperators="false"
+			:showClearButton="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isLoading" />
+				<Skeleton v-if="isSummariesLoading" />
 
 				<div v-else>{{ slotProps.index + 1 }}</div>
 			</template>
-			<!-- <template #filter="{ filterModel, filterCallback }">
-				<i class="pi pi-search"></i>
-			</template> -->
+			<template #filter>
+				<i
+					@click="clearFilters()"
+					class="pi pi-filter-slash"
+					:class="[
+						university?.id || subject?.id || teacher?.id || summarySearchFilter.name
+							? 'text-[var(--primary-color)] cursor-pointer'
+							: '	text-slate-400 cursor-not-allowed',
+					]"
+				></i>
+			</template>
 		</Column>
 
 		<Column
 			field="full_name"
 			header="Название"
-			style="width: 15%"
 			:showFilterMenu="false"
+			:showFilterOperators="false"
+			:showClearButton="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isLoading" />
+				<Skeleton v-if="isSummariesLoading" />
 				<nuxt-link
 					v-else
 					:to="`/summary/${slotProps.data.id}`"
@@ -189,7 +259,7 @@ watch(
 						<i class="pi pi-search" />
 					</InputIcon>
 					<InputText
-						v-model="searchFilter.name"
+						v-model="summarySearchFilter.name"
 						placeholder="Название конспекта"
 					/>
 				</IconField>
@@ -199,11 +269,12 @@ watch(
 		<Column
 			field="full_name"
 			header="Наименование вуза"
-			style="width: 20%"
 			:showFilterMenu="false"
+			:showFilterOperators="false"
+			:showClearButton="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isLoading" />
+				<Skeleton v-if="isSummariesLoading" />
 
 				<div v-else>
 					{{ slotProps.data.university_name }}
@@ -213,14 +284,28 @@ watch(
 				<Dropdown
 					v-model="university"
 					option-label="short_name"
-					:loading="isLoading"
+					:loading="isUniversitiesLoading"
 					:options="universities?.result"
-					editable
 					show-clear
+					editable
+					@input="onUniversityInput($event)"
 					@change="onUniversityChange($event)"
 					placeholder="Введите название вуза..."
-					class="border-1 border-solid border-slate-300 rounded-xl flex-auto font-medium"
+					emptyMessage="Ничего не найдено"
+					:virtualScrollerOptions="{
+						lazy: true,
+						loading: isUniversitiesLoading,
+						onLazyLoad: onUniversitiesLazyScrollLoad,
+						itemSize: 25,
+					}"
 				>
+					<template #clearicon="{ clearCallback }">
+						<i
+							@click="
+								clearCallback($event), universityQueryFilter.setFilter('name', ''), getUniversities()
+							"
+							class="pi pi-times p-dropdown-clear-icon"
+					/></template>
 					<template #option="{ option }: { option: IUniversity }">
 						{{ option.short_name }} - {{ option.name }}
 					</template>
@@ -231,11 +316,12 @@ watch(
 		<Column
 			field="full_name"
 			header="Предмет"
-			style="width: 20%"
 			:showFilterMenu="false"
+			:showFilterOperators="false"
+			:showClearButton="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isLoading" />
+				<Skeleton v-if="isSummariesLoading" />
 				<div v-else>
 					{{ slotProps.data.subject_name }}
 				</div>
@@ -244,14 +330,21 @@ watch(
 				<Dropdown
 					v-model="subject"
 					option-label="name"
-					:loading="isLoading"
+					:loading="isSubjectsLoading"
 					:options="subjects?.result"
+					@input="onSubjectInput($event)"
 					editable
 					show-clear
 					@change="onSubjectChange($event)"
 					placeholder="Введите название предмета..."
-					class="border-1 border-solid border-slate-300 rounded-xl flex-auto font-medium"
+					emptyMessage="Ничего не найдено"
 				>
+					<template #clearicon="{ clearCallback }">
+						<i
+							@click="clearCallback($event), subjectQueryFilter.setFilter('name', ''), getSubjects()"
+							class="pi pi-times p-dropdown-clear-icon"
+						/>
+					</template>
 					<template #option="{ option }: { option: ISubject }">
 						{{ option.name }}
 					</template>
@@ -264,9 +357,11 @@ watch(
 			header="Преподователь"
 			style="width: 20%"
 			:showFilterMenu="false"
+			:showFilterOperators="false"
+			:showClearButton="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isLoading" />
+				<Skeleton v-if="isSummariesLoading" />
 				<div v-else>
 					{{ slotProps.data.teacher_full_name }}
 				</div>
@@ -275,14 +370,21 @@ watch(
 				<Dropdown
 					v-model="teacher"
 					option-label="full_name"
-					:loading="isLoading"
+					:loading="isSummariesLoading"
 					:options="teachers?.result"
 					editable
 					show-clear
+					@input="onTeacherInput($event)"
 					@change="onTeacherChange($event)"
 					placeholder="Введите имя преподователя..."
-					class="border-1 border-solid border-slate-300 rounded-xl flex-auto font-medium"
+					emptyMessage="Ничего не найдено"
 				>
+					<template #clearicon="{ clearCallback }">
+						<i
+							@click="clearCallback($event), teacherQueryFilter.setFilter('full_name', ''), getTeachers()"
+							class="pi pi-times p-dropdown-clear-icon"
+						/>
+					</template>
 					<template #option="{ option }: { option: ITeacher }">
 						{{ option.full_name }}
 					</template>
@@ -292,11 +394,12 @@ watch(
 	</DataTable>
 
 	<Paginator
-		:rows="filter.page_size"
+		v-if="summaries?.pages"
+		:rows="summaryFilter.page_size"
 		:total-records="summaries?.count"
 		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="filter.page_size = $event"
-		@page="filter.page = $event.page + 1"
+		@update:rows="summaryFilter.page_size = $event"
+		@page="summaryFilter.page = $event.page + 1"
 	>
 	</Paginator>
 </template>
