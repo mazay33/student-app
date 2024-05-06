@@ -2,14 +2,7 @@
 import 'primeicons/primeicons.css';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
-
-const getYoutubeId = (url: string) => {
-	const youtubeRegex =
-		// eslint-disable-next-line max-len
-		/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-	const match = url.match(youtubeRegex);
-	return match ? match[1] : '';
-};
+import Menu from 'primevue/menu';
 
 const summaryStore = useSummaryStore();
 const { summary } = storeToRefs(summaryStore);
@@ -22,6 +15,29 @@ await summaryStore.getSummaryById(String(id));
 
 const userId = summary.value?.user_id;
 await summaryStore.getUserById(userId!);
+
+const getYoutubeId = (url: string) => {
+	const youtubeRegex =
+		/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+	const match = url.match(youtubeRegex);
+	return match ? match[1] : '';
+};
+
+const lectionLink = link => {
+	window.open(link, '_blank');
+};
+
+const showModal = ref(false);
+let lectureLink = '';
+
+const openModal = (link: string) => {
+	lectureLink = link;
+	showModal.value = true;
+};
+
+const closeModal = () => {
+	showModal.value = false;
+};
 </script>
 
 <template>
@@ -102,13 +118,37 @@ await summaryStore.getUserById(userId!);
 							flex
 							flex-col
 						>
-							<a
-								:href="lecture.pdf_file_url"
-								target="_blank"
-								class="text-lg"
-							>
-								Открыть лекцию для чтения
-							</a>
+							<div class="flex">
+								<Button
+									@click="lectionLink(lecture.pdf_file_url)"
+									class="w-full sm:w-46 mr-5"
+									>Лекция для чтения</Button
+								>
+								<Button
+									class="bg-green border-green"
+									@click="openModal(lecture.pdf_file_url)"
+								>
+									<i class="pi pi-share-alt pr-2 sm-pr-0"></i>
+								</Button>
+
+								<Dialog
+									v-model="showModal"
+									header="Ссылка на лекцию"
+									:modal="true"
+									:visible="showModal"
+									@hide="closeModal"
+									class="w-5/10 md-w-200"
+								>
+									<div>{{ lectureLink }}</div>
+									<div class="flex mt-3">
+										<Button
+											@click="closeModal"
+											class="p-button-text"
+											>Закрыть</Button
+										>
+									</div>
+								</Dialog>
+							</div>
 
 							<div class="mt-5">
 								<iframe
@@ -140,7 +180,6 @@ await summaryStore.getUserById(userId!);
 
 <style scoped>
 .p-accordion-header:hover {
-	transform: none !important; /* Отменяет изменение размера при наведении */
-	background-color: red;
+	transform: none !important;
 }
 </style>

@@ -11,7 +11,7 @@ await authStore.getMe();
 
 <template>
 	<Card class="profile-card">
-		<template #title> User Information</template>
+		<template #title><p class="text-center">Данные пользователя</p></template>
 		<template #content>
 			<ProfileInfo v-if="user" />
 		</template>

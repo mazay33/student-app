@@ -119,7 +119,7 @@ const toggle = (event: Event) => {
 				</div>
 				<div class="flex mt-6">
 					<div class="flex flex-col gap-2 flex flex-col">
-						<label>Created at</label>
+						<label>Дата создания аккаунта</label>
 						<div class="bg-slate-200 rounded w-60 h-10">
 							<p class="pt-2 pl-3">{{ user.created_at }}</p>
 						</div>
@@ -127,7 +127,7 @@ const toggle = (event: Event) => {
 				</div>
 				<div class="flex mt-6">
 					<div class="flex flex-col gap-2 flex flex-col mb-5">
-						<label for="username">Description</label>
+						<label for="username">описание</label>
 						<InputText
 							v-model="user.description"
 							type="text"
