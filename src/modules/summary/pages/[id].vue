@@ -1,7 +1,33 @@
 <script setup lang="ts">
-import 'primeicons/primeicons.css';
-import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
+import type { ISummary } from '../@types';
+import type { IUser } from '~/@types/@types';
+import useApiService from '~/services/apiService';
+
+const apiService = useApiService();
+
+const route = useRoute();
+
+const summary = ref<ISummary | null>(null);
+const user = ref<IUser | null>(null);
+
+const getSummary = async () => {
+	const { data } = await apiService.summary.getPublicSummaryById(String(route.params.id));
+	if (data.value) {
+		summary.value = data.value;
+		await getUser();
+	}
+};
+
+const getUser = async () => {
+	if (!summary.value) return;
+	const { data } = await apiService.user.getUserById(summary.value?.user_id);
+
+	if (data.value) {
+		user.value = data.value;
+	}
+};
+
+await getSummary();
 
 const getYoutubeId = (url: string) => {
 	const youtubeRegex =
@@ -10,18 +36,6 @@ const getYoutubeId = (url: string) => {
 	const match = url.match(youtubeRegex);
 	return match ? match[1] : '';
 };
-
-const summaryStore = useSummaryStore();
-const { summary } = storeToRefs(summaryStore);
-const { summaryUser } = storeToRefs(summaryStore);
-
-const route = useRoute();
-const { id } = route.params;
-
-await summaryStore.getSummaryById(String(id));
-
-const userId = summary.value?.user_id;
-await summaryStore.getUserById(userId!);
 </script>
 
 <template>
@@ -49,11 +63,11 @@ await summaryStore.getUserById(userId!);
 			<div class="text-lg pl-0 sm-pl-5 flex justify-center">
 				<div class="flex mt-1 sm-mt--2">
 					<img
-						v-if="summaryUser?.image_url"
+						v-if="user?.image_url"
 						class="w-10 rounded-full text-center"
-						:src="summaryUser.image_url"
+						:src="user.image_url"
 					/>
-					<p class="pt-2 ml-3">{{ summaryUser?.nickname }}</p>
+					<p class="pt-2 ml-3">{{ user?.nickname }}</p>
 				</div>
 				<i
 					class="pi pi-bookmark pt-3 sm-pt-0 pl-3 sm-pl-5 text-center"

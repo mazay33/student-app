@@ -21,7 +21,7 @@ export default class UserApi extends BaseApi {
 	}
 
 	public async getUserById(id: string, options?: UseFetchOptions<IUser>) {
-		const url = `main/public/users/${id}`;
+		const url = `/public/users/${id}`;
 		return await this.sendRequest<IUser>(HttpMethod.GET, url, {
 			...options,
 		});
