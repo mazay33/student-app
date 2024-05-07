@@ -2,7 +2,7 @@
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 
-//
+import useApiService from '~/services/apiService';
 
 const summaryStore = useSummaryStore();
 const { mySummary } = storeToRefs(summaryStore);
@@ -12,18 +12,12 @@ const id = route.params.id;
 
 await summaryStore.getMySummaryById(String(id));
 
-//
-
-//
-
-import useApiService from '~/services/apiService';
-
 const apiService = useApiService();
 
 const openFileDialog = () => {
 	const input = document.createElement('input');
 	input.type = 'file';
-	input.accept = 'application/pdf'; //тип файла
+	input.accept = 'application/pdf'; // тип файла
 	input.multiple = false; // только 1
 	input.style.display = 'none';
 	input.addEventListener('change', event => {
@@ -50,7 +44,7 @@ const Lection = ref({
 	pdf_file_url: null,
 	summary_id: null,
 });
-
+const pdfName = ref('');
 const uploadPdf = async (event: Event) => {
 	const formData = new FormData();
 	const target = event.target as HTMLInputElement;
@@ -64,6 +58,7 @@ const uploadPdf = async (event: Event) => {
 
 	if (data.value) {
 		Lection.value.pdf_file_url = data.value.file_url;
+		pdfName.value = data.value.name;
 	}
 };
 
@@ -207,9 +202,9 @@ const activeCheck = () => {
 									>
 									<div>
 										<InputText
+											v-model="Lection.name"
 											type="text"
 											class="w-10/10"
-											v-model="Lection.name"
 										/>
 									</div>
 								</div>
@@ -218,32 +213,36 @@ const activeCheck = () => {
 									<label class="block text-sm font-medium leading-6 text-gray-900">Описание</label>
 									<div>
 										<InputText
+											v-model="Lection.description"
 											type="text"
 											class="w-10/10"
-											v-model="Lection.description"
 										/>
 									</div>
 								</div>
 							</div>
 						</div>
 
-						<div class="flex flex-col sm-flex w-5/10 pr-3 mt-2">
-							<label class="block text-sm font-medium leading-8 text-gray-900"
-								>Дата проведения лекции</label
-							>
-							<Calendar
-								class=""
-								v-model="Lection.date"
-								dateFormat="yy-mm-dd"
-							/>
-							<label class="block text-sm font-medium leading-8 text-gray-900 mt-2"
-								>Ссылка на youtube видео</label
-							>
-							<InputText
-								type="text"
-								class="w-10/10"
-								v-model="Lection.uLink"
-							/>
+						<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
+							<div class="sm:col-span-3">
+								<label class="block text-sm font-medium leading-8 text-gray-900"
+									>Дата проведения лекции</label
+								>
+								<Calendar
+									v-model="Lection.date"
+									class="w-10/10"
+									date-format="yy-mm-dd"
+								/>
+							</div>
+							<div class="sm:col-span-3">
+								<label class="block text-sm font-medium leading-8 text-gray-900"
+									>Ссылка на youtube видео</label
+								>
+								<InputText
+									v-model="Lection.uLink"
+									type="text"
+									class="w-10/10"
+								/>
+							</div>
 						</div>
 
 						<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -255,9 +254,15 @@ const activeCheck = () => {
 									<div class="text-center">
 										<div class="mt-4 flex text-sm leading-6 text-gray-600">
 											<label
-												class="relative rounded-md cursor-pointer bg-white font-semibold text-indigo-600 hover:text-indigo-500"
+												class="relative rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500"
 											>
-												<p @click="openFileDialog">Файл с лекцией</p>
+												<p
+													class="cursor-pointer"
+													@click="openFileDialog"
+												>
+													Файл с лекцией
+												</p>
+												<div class="mb-3 w-10/10">{{ pdfName }}</div>
 											</label>
 										</div>
 										<p class="text-xs leading-5 text-gray-600">PDF</p>
@@ -300,8 +305,8 @@ const activeCheck = () => {
 						>
 							<div class="flex">
 								<Button
-									@click="lectionLink(lecture.pdf_file_url)"
 									class="w-full sm:w-46 mr-5"
+									@click="lectionLink(lecture.pdf_file_url)"
 									>Лекция для чтения</Button
 								>
 								<Button
@@ -316,14 +321,14 @@ const activeCheck = () => {
 									header="Ссылка на лекцию"
 									:modal="true"
 									:visible="showModal"
-									@hide="closeModal"
 									class="w-5/10 md-w-200"
+									@hide="closeModal"
 								>
 									<div>{{ lectureLink }}</div>
 									<div class="flex mt-3">
 										<Button
-											@click="closeModal"
 											class="p-button-text"
+											@click="closeModal"
 											>Закрыть</Button
 										>
 									</div>
