@@ -7,7 +7,7 @@ interface IUniversity {
 interface ISubject {
 	id: number;
 	name: string;
-	is_moderated: boolean;
+	is_moderated?: boolean;
 }
 
 interface ITeacher {

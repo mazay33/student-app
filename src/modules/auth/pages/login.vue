@@ -62,7 +62,6 @@ const login = () => {
 				</div>
 
 				<Button
-					:loading="isLoading"
 					type="submit"
 					label="Sign In"
 					icon="pi pi-user"

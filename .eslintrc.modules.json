@@ -6,6 +6,7 @@
     "useLayout": "readonly",
     "useNavigationMenu": "readonly",
     "useAPI": "readonly",
+    "createDebounceFetch": "readonly",
     "fetchWithCookie": "readonly",
     "usePrimeDataTable": "readonly",
     "ExpiringStorage": "readonly",
