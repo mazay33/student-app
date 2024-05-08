@@ -8,6 +8,7 @@ import Dialog from 'primevue/dialog';
 import Calendar from 'primevue/calendar';
 
 const visible = ref(false);
+const visible1 = ref(false);
 
 type FetchFunction<T = unknown> = (...args: unknown[]) => Promise<T>;
 
@@ -22,10 +23,15 @@ const subjects = ref<IPaginatedResult<ISubject>>();
 const teachers = ref<IPaginatedResult<ITeacher>>();
 
 const Subject = ref({
-	id: null,
 	name: null,
-	is_moderated: false
 });
+
+
+const Teacher = ref({
+	full_name: null,
+	date_birth: null,
+});
+
 
 
 const getUniversities = async (queryUrl: string = '') => {
@@ -53,18 +59,20 @@ const createSubject = async () => {
 	const { data } = await apiService.subject.createSubject(Subject.value.name);
 
 	if (data.value) {
-		console.log(1)
-		toast.add({
-			severity: 'success',
-			summary: 'Предмет успешно добавлен',
-			life: 3000,
-		});
-		Subject.value.id = data.value
-		console.log(Subject)
-		summaryCreateForm.subject = Subject;
-		console.log(4);
-		visible.value = false;
-		console.log(5);
+	toast.add({
+	severity: 'success',
+	summary: 'Предмет успешно добавлен',
+	life: 3000,
+	});
+
+	// Добавляем новый предмет в список опций
+	const newSubject = { id: data.value, name: Subject.value.name };
+	subjects.value.result.push(newSubject);
+
+	// Обновляем v-model для Dropdown
+	summaryCreateForm.subject = newSubject;
+
+	visible.value = false;
 	}
 };
 
@@ -75,6 +83,32 @@ const getTeachers = async (queryUrl: string = '') => {
 		teachers.value = data.value;
 	}
 	isLoading.value = pending.value;
+};
+
+
+const createTeacher = async () => {
+	const date = new Date(Teacher.value.date_birth);
+ 	const formattedDate = date.toISOString().split('T')[0];
+ 	Teacher.value.date_birth = formattedDate;
+
+	const { data } = await apiService.teacher.createTeacher(Teacher);
+
+	if (data.value) {
+	toast.add({
+	severity: 'success',
+	summary: 'Преподаватель успешно добавлен',
+	life: 3000,
+	});
+
+	// Добавляем новый предмет в список опций
+	const newTeacher = { id: data.value, full_name: Teacher.value.full_name, date_birth: Teacher.value.date_birth };
+	teachers.value.result.push(newTeacher);
+
+	// Обновляем v-model для Dropdown
+	summaryCreateForm.teacher = newTeacher;
+
+	visible1.value = false;
+	}
 };
 
 await Promise.all([getUniversities(), getSubjects(), getTeachers()]);
@@ -127,6 +161,7 @@ const submitButtonDisabled = computed(
 );
 </script>
 <template>
+<Toast />
 	<Card>
 		<template #title>Создание конспекта</template>
 		<template #content>
@@ -287,6 +322,7 @@ const submitButtonDisabled = computed(
 								<div class="flex flex-col">
 									<InputText
 										id="Преподаватель"
+										v-model="Teacher.full_name"
 										class="flex-auto w-10/10 mb-3"
 										autocomplete="off"
 									/>
@@ -294,7 +330,7 @@ const submitButtonDisabled = computed(
 										<p class="ml--30 font-semibold">Календарь</p>
 										<Calendar
 											id="Календарь"
-											v-model="date"
+											v-model="Teacher.date_birth"
 											class="w-10/10 ml-8"
 											date-format="yy-mm-dd"
 										/>
@@ -312,7 +348,7 @@ const submitButtonDisabled = computed(
 								<Button
 									type="button"
 									label="Добавить"
-									@click="visible1 = false"
+									@click="createTeacher"
 								></Button>
 							</div>
 						</Dialog>

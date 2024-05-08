@@ -36,4 +36,9 @@ interface ISubjectCreate {
 	name: string;
 }
 
-export type { ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate };
+interface ITeacherCreate {
+	full_name: string;
+	date_birth: string
+}
+
+export type { ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate, ITeacherCreate };
