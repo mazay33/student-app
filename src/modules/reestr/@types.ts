@@ -3,11 +3,10 @@ interface IUniversity {
 	name: string;
 	short_name: string;
 }
-
 interface ISubject {
 	id: number;
 	name: string;
-	is_moderated: boolean;
+	is_moderated?: boolean;
 }
 
 interface ITeacher {
@@ -18,5 +17,4 @@ interface ITeacher {
 	subject_ids: number[];
 	university_id: number;
 }
-
 export type { IUniversity, ISubject, ITeacher };

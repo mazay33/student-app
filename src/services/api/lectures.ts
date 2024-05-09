@@ -1,7 +1,7 @@
-import type { UseFetchOptions } from '#app';
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
+import type { UseFetchOptions } from '#app';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { IUpload, ISummaryCreateForm, ILecture } from '~/modules/summary/@types';
 

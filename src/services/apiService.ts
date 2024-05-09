@@ -36,13 +36,10 @@ class ApiService {
 }
 
 let apiServiceInstance: ApiService | undefined;
-
 const useApiService = () => {
 	if (!apiServiceInstance) {
 		apiServiceInstance = new ApiService(new HttpService());
 	}
-
 	return apiServiceInstance;
 };
-
 export default useApiService;

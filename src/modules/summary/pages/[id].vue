@@ -60,7 +60,7 @@ const closeModal = () => {
 		</h1>
 
 		<div class="flex flex-col sm:flex-row">
-			<div class="text-lg font-bold text-center pl-0 sm-pl-3">Автор:</div>
+			<div class="text-base font-bold leading-7 text-gray-900 text-center pl-0 sm-pl-3">Автор:</div>
 
 			<div class="text-lg pl-0 sm-pl-5 flex justify-center">
 				<div class="flex mt-1 sm-mt--2">
@@ -79,18 +79,18 @@ const closeModal = () => {
 		</div>
 
 		<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-			<div class="text-lg font-bold text-center">Вуз:</div>
-			<div class="text-lg pl-0 sm-pl-5 text-center">{{ summary?.university?.name }}</div>
+			<div class="text-base font-bold leading-7 text-gray-900 text-center">Вуз:</div>
+			<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">{{ summary?.university?.name }}</div>
 		</div>
 
 		<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-			<div class="text-lg font-bold text-center">Предмет:</div>
-			<div class="text-lg pl-0 sm-pl-5 text-center">{{ summary?.subject?.name }}</div>
+			<div class="text-base font-bold leading-7 text-gray-900 text-center">Предмет:</div>
+			<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">{{ summary?.subject?.name }}</div>
 		</div>
 
 		<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-			<div class="text-lg font-bold text-center">Преподаватель:</div>
-			<div class="text-lg pl-5 text-center">{{ summary?.teacher?.full_name }}</div>
+			<div class="text-base font-bold leading-7 text-gray-900 text-center">Преподаватель:</div>
+			<div class="text-md leading-7 text-gray-600 pl-5 text-center">{{ summary?.teacher?.full_name }}</div>
 		</div>
 
 		<div
@@ -107,8 +107,9 @@ const closeModal = () => {
 					:key="i"
 				>
 					<template #header>
-						<span class="flex align-items-center gap-2 w-full">
-							<span class="font-bold white-space-nowrap text-lg">{{ lecture.name }}</span>
+						<span class="flex gap-2 w-full">
+							<p class="flex-1 pt-2 font-bold white-space-nowrap text-lg">{{ lecture.name }}</p>
+							<p class="pt-3 font-bold white-space-nowrap text-lg mr-10">{{ lecture.date }}</p>
 						</span>
 					</template>
 
@@ -120,8 +121,8 @@ const closeModal = () => {
 						>
 							<div class="flex">
 								<Button
-									@click="lectionLink(lecture.pdf_file_url)"
 									class="w-full sm:w-46 mr-5"
+									@click="lectionLink(lecture.pdf_file_url)"
 									>Лекция для чтения</Button
 								>
 								<Button
@@ -136,14 +137,14 @@ const closeModal = () => {
 									header="Ссылка на лекцию"
 									:modal="true"
 									:visible="showModal"
-									@hide="closeModal"
 									class="w-5/10 md-w-200"
+									@hide="closeModal"
 								>
 									<div>{{ lectureLink }}</div>
 									<div class="flex mt-3">
 										<Button
-											@click="closeModal"
 											class="p-button-text"
+											@click="closeModal"
 											>Закрыть</Button
 										>
 									</div>
