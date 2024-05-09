@@ -9,7 +9,7 @@ export function useNavigationMenu() {
 				{ label: 'Создать', to: '/summary/create', icon: 'pi pi-file-plus' },
 				authStore.authinticated && {
 					label: 'Мои конспекты',
-					to: '/summary/my',
+					to: '/summary/private',
 					icon: 'pi pi-fw pi-file',
 				},
 			],

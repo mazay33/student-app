@@ -23,6 +23,10 @@ export default defineNuxtConfig({
 	app: {
 		pageTransition: { name: 'page', mode: 'out-in' },
 	},
+	routeRules: {
+		'summary/private/*': { ssr: false },
+		'summary/private/': { ssr: false },
+	},
 
 	modules: [
 		'@nuxtjs/eslint-module',
@@ -43,6 +47,11 @@ export default defineNuxtConfig({
 	eslint: {
 		lintOnStart: false,
 	},
+	// primevue: {
+	// 	options: {
+	// 		locale: ,
+	// 	},
+	// },
 	// content: {
 	// highlight: {
 	// theme: 'one-dark-pro',

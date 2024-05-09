@@ -41,8 +41,11 @@ export default class SummaryApi extends BaseApi {
 		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url);
 	}
 
-	public async getPrivateSummaryById(id: string) {
+	public async getPrivateSummaryById(id: string, options?: UseFetchOptions<ISummary>) {
 		const url = `main/private/summaries/${id}`;
-		return await this.sendRequest<ISummary>(HttpMethod.GET, url);
+		return await this.sendRequest<ISummary>(HttpMethod.GET, url, {
+			server: false,
+			...options,
+		});
 	}
 }

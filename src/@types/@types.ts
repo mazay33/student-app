@@ -9,6 +9,7 @@ interface IPaginatedResult<T> extends IPaginationMeta {
 }
 
 interface IUser {
+	id: string;
 	email: string;
 	nickname: string;
 	image_url: string | null;

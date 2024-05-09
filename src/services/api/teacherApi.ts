@@ -23,9 +23,8 @@ export default class TeacherApi extends BaseApi {
 		});
 	}
 
-	public async createTeacher(Teacher: ITeacherCreate) {
+	public async createTeacher(teacherData: ITeacherCreate) {
 		const url = 'main/private/teachers';
-		console.log(Teacher);
-		return await this.sendRequest<string, ITeacherCreate>(HttpMethod.POST, url, Teacher);
-	   }
+		return await this.sendRequest<string, ITeacherCreate>(HttpMethod.POST, url, teacherData);
+	}
 }

@@ -12,7 +12,11 @@ interface ILecture {
 	description: string;
 	pdf_file_url: string;
 	video_url: string;
-	id?: string;
+	id: string;
+}
+interface ICreateLectureForm extends Omit<ILecture, 'id'> {
+	summary_id: string;
+	date: string;
 }
 
 interface ISummary {
@@ -24,6 +28,7 @@ interface ISummary {
 	teacher?: ITeacher;
 	status?: string;
 	lectures?: ILecture[];
+	lectures_count: number;
 }
 
 interface IUpload {
@@ -38,7 +43,7 @@ interface ISubjectCreate {
 
 interface ITeacherCreate {
 	full_name: string;
-	date_birth: string
+	date_birth: string;
 }
 
-export type { ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate, ITeacherCreate };
+export type { ICreateLectureForm, ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate, ITeacherCreate };

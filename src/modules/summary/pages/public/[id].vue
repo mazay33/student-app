@@ -1,16 +1,9 @@
-<script setup lang="ts">
-definePageMeta({
-	path: '/',
-});
-</script>
-
 <template>
 	<div>
 		<NuxtErrorBoundary>
 			<Card>
-				<template #title> Поиск конспектов</template>
 				<template #content>
-					<SummaryTable />
+					<SummaryView />
 				</template>
 			</Card>
 

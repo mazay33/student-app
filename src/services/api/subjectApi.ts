@@ -23,10 +23,10 @@ export default class SubjectApi extends BaseApi {
 		});
 	}
 
-	public async createSubject(Subject: string) {
+	public async createSubject(name: string) {
 		const url = 'main/private/subjects';
-		return await this.sendRequest<string, ISubjectCreate>(HttpMethod.POST, url, {
-			name: Subject
+		return await this.sendRequest<number, ISubjectCreate>(HttpMethod.POST, url, {
+			name,
 		});
-	   }
+	}
 }

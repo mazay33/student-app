@@ -5,7 +5,7 @@ import TeacherApi from './api/teacherApi';
 import UserApi from './api/userApi';
 import AuthApi from './api/auth';
 import SummaryApi from './api/summary';
-import LectureApi from './api/lectures';
+import LectureApi from './api/lectureApi';
 import AdminApi from './api/admin';
 
 export * from './api/universityApi';
@@ -14,7 +14,7 @@ export * from './api/teacherApi';
 export * from './api/userApi';
 export * from './api/auth';
 export * from './api/summary';
-export * from './api/lectures';
+export * from './api/lectureApi';
 export * from './api/admin';
 
 class ApiService {
@@ -24,7 +24,7 @@ class ApiService {
 	readonly user: UserApi;
 	readonly auth: AuthApi;
 	readonly summary: SummaryApi;
-	readonly lectures: LectureApi;
+	readonly lecture: LectureApi;
 	readonly admin: AdminApi;
 
 	constructor(httpService: HttpService) {
@@ -34,8 +34,8 @@ class ApiService {
 		this.user = new UserApi(httpService);
 		this.auth = new AuthApi(httpService);
 		this.summary = new SummaryApi(httpService);
-		this.lectures = new LectureApi(httpService);
-		this.admin = new AdminApi(httpService)
+		this.lecture = new LectureApi(httpService);
+		this.admin = new AdminApi(httpService);
 	}
 }
 
