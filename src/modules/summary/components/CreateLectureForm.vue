@@ -109,7 +109,7 @@ const clearLectureCreateForm = () => {
 									<InputText
 										v-model="lectureCreateForm.name"
 										type="text"
-										class="w-10/10"
+										class="w-full"
 									/>
 								</div>
 							</div>
@@ -120,28 +120,35 @@ const clearLectureCreateForm = () => {
 									<InputText
 										v-model="lectureCreateForm.description"
 										type="text"
-										class="w-10/10"
+										class="w-full"
 									/>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="flex flex-col sm-flex w-5/10 pr-3 mt-2">
-						<label class="block text-sm font-medium leading-8 text-gray-900">Дата проведения лекции</label>
-						<Calendar
-							v-model="lectureCreateForm.date"
-							show-icon
-							date-format="yy-mm-dd"
-						/>
-						<label class="block text-sm font-medium leading-8 text-gray-900 mt-2"
-							>Ссылка на youtube видео</label
-						>
-						<InputText
-							v-model="lectureCreateForm.video_url"
-							type="text"
-							class="w-10/10"
-						/>
+					<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
+						<div class="sm:col-span-3">
+							<label class="block text-sm font-medium leading-8 text-gray-900"
+								>Дата проведения лекции</label
+							>
+							<Calendar
+								v-model="lectureCreateForm.date"
+								show-icon
+								class="w-full"
+								date-format="yy-mm-dd"
+							/>
+						</div>
+						<div class="sm:col-span-3">
+							<label class="block text-sm font-medium leading-8 text-gray-900"
+								>Ссылка на youtube видео</label
+							>
+							<InputText
+								v-model="lectureCreateForm.video_url"
+								type="text"
+								class="w-full"
+							/>
+						</div>
 					</div>
 
 					<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -153,10 +160,11 @@ const clearLectureCreateForm = () => {
 								<div class="text-center">
 									<div class="mt-4 flex text-sm leading-6 text-gray-600">
 										<label
-											class="relative rounded-md cursor-pointer bg-white font-semibold text-indigo-600 hover:text-indigo-500"
+											class="relative rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500"
 										>
 											<p
 												v-if="!lectureCreateForm.pdf_file_url"
+												class="cursor-pointer"
 												@click="openFileDialog"
 											>
 												Файл с лекцией
