@@ -27,7 +27,7 @@ export const useSummaryCreateFormStore = defineStore(
 
 			if (data.value) {
 				clearSummaryCreateForm();
-				await navigateTo(`/summary/my/${data.value}`);
+				await navigateTo(`/summary/private/${data.value}`);
 			}
 
 			isLoading.value = pending.value;
