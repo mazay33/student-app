@@ -4,6 +4,11 @@ import type { DropdownChangeEvent } from 'primevue/dropdown';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
+import Dialog from 'primevue/dialog';
+import Calendar from 'primevue/calendar';
+
+const visible = ref(false);
+const visible1 = ref(false);
 
 type FetchFunction<T = unknown> = (...args: unknown[]) => Promise<T>;
 
@@ -16,6 +21,18 @@ const isLoading = ref<boolean>(false);
 const universities = ref<IPaginatedResult<IUniversity>>();
 const subjects = ref<IPaginatedResult<ISubject>>();
 const teachers = ref<IPaginatedResult<ITeacher>>();
+
+const Subject = ref({
+	name: null,
+});
+
+
+const Teacher = ref({
+	full_name: null,
+	date_birth: null,
+});
+
+
 
 const getUniversities = async (queryUrl: string = '') => {
 	isLoading.value = true;
@@ -36,6 +53,29 @@ const getSubjects = async (queryUrl: string = '') => {
 	isLoading.value = pending.value;
 };
 
+const toast = useToast();
+
+const createSubject = async () => {
+	const { data } = await apiService.subject.createSubject(Subject.value.name);
+
+	if (data.value) {
+	toast.add({
+	severity: 'success',
+	summary: 'Предмет успешно добавлен',
+	life: 3000,
+	});
+
+	// Добавляем новый предмет в список опций
+	const newSubject = { id: data.value, name: Subject.value.name };
+	subjects.value.result.push(newSubject);
+
+	// Обновляем v-model для Dropdown
+	summaryCreateForm.subject = newSubject;
+
+	visible.value = false;
+	}
+};
+
 const getTeachers = async (queryUrl: string = '') => {
 	isLoading.value = true;
 	const { data, error, pending } = await apiService.teacher.getTeacherList(queryUrl);
@@ -43,6 +83,32 @@ const getTeachers = async (queryUrl: string = '') => {
 		teachers.value = data.value;
 	}
 	isLoading.value = pending.value;
+};
+
+
+const createTeacher = async () => {
+	const date = new Date(Teacher.value.date_birth);
+ 	const formattedDate = date.toISOString().split('T')[0];
+ 	Teacher.value.date_birth = formattedDate;
+
+	const { data } = await apiService.teacher.createTeacher(Teacher);
+
+	if (data.value) {
+	toast.add({
+	severity: 'success',
+	summary: 'Преподаватель успешно добавлен',
+	life: 3000,
+	});
+
+	// Добавляем новый предмет в список опций
+	const newTeacher = { id: data.value, full_name: Teacher.value.full_name, date_birth: Teacher.value.date_birth };
+	teachers.value.result.push(newTeacher);
+
+	// Обновляем v-model для Dropdown
+	summaryCreateForm.teacher = newTeacher;
+
+	visible1.value = false;
+	}
 };
 
 await Promise.all([getUniversities(), getSubjects(), getTeachers()]);
@@ -95,6 +161,7 @@ const submitButtonDisabled = computed(
 );
 </script>
 <template>
+<Toast />
 	<Card>
 		<template #title>Создание конспекта</template>
 		<template #content>
@@ -105,7 +172,7 @@ const submitButtonDisabled = computed(
 							v-model="summaryCreateForm.name"
 							type="text"
 							placeholder="Введите название конспекта..."
-							class="border-1 border-solid border-slate-200 rounded-xl flex-auto flex font-medium"
+							class="border-1 border-solid border-slate-300 rounded-xl flex-auto flex font-normal"
 						/>
 					</div>
 				</StepperPanel>
@@ -155,9 +222,47 @@ const submitButtonDisabled = computed(
 							h-3rem
 							text-sm
 							font-medium
+							@click="visible = true"
 						>
 							Создать новый
 						</Button>
+						<Dialog
+							v-model:visible="visible"
+							modal
+							header="Добавление предмета"
+							:style="{ width: '25rem' }"
+						>
+							<span class="p-text-secondary block mb-5"
+								>При добавлении нового предмета, ваш конспект будет отправлен на модерацию</span
+							>
+							<div class="flex align-items-center gap-3 mb-3">
+								<label
+									for="Предмет"
+									class="font-semibold w-6rem mt-2"
+									>Предмет</label
+								>
+								<InputText
+									id="Предмет"
+									v-model="Subject.name"
+									class="flex-auto"
+									autocomplete="off"
+								/>
+							</div>
+							<div class="flex align-items-center gap-3 mb-5"></div>
+							<div class="flex justify-content-end gap-2">
+								<Button
+									type="button"
+									label="Отменить"
+									severity="secondary"
+									@click="visible = false"
+								></Button>
+								<Button
+									type="button"
+									label="Добавить"
+									@click="createSubject"
+								></Button>
+							</div>
+						</Dialog>
 					</div>
 					<!-- <div
               class="border-2 border-dashed rounded-lg h-50 border-round mt-5 flex-auto flex  font-medium"
@@ -194,9 +299,59 @@ const submitButtonDisabled = computed(
 							text-sm
 							font-medium
 							h-3rem
+							@click="visible1 = true"
 						>
 							Создать нового
 						</Button>
+						<Dialog
+							v-model:visible="visible1"
+							modal
+							header="Добавление преподавателя"
+							:style="{ width: '25rem' }"
+						>
+							<span class="p-text-secondary block mb-5"
+								>При добавлении нового преподавателя, ваш конспект будет отправлен на модерацию</span
+							>
+							<div class="flex align-items-center gap-3 mb-3">
+								<label
+									for="Преподаватель"
+									class="font-semibold w-8rem mt-2"
+									>Преподаватель</label
+								>
+
+								<div class="flex flex-col">
+									<InputText
+										id="Преподаватель"
+										v-model="Teacher.full_name"
+										class="flex-auto w-10/10 mb-3"
+										autocomplete="off"
+									/>
+									<div class="flex">
+										<p class="ml--30 font-semibold">Календарь</p>
+										<Calendar
+											id="Календарь"
+											v-model="Teacher.date_birth"
+											class="w-10/10 ml-8"
+											date-format="yy-mm-dd"
+										/>
+									</div>
+								</div>
+							</div>
+							<div class="flex align-items-center gap-3 mb-5"></div>
+							<div class="flex justify-content-end gap-2">
+								<Button
+									type="button"
+									label="Отменить"
+									severity="secondary"
+									@click="visible1 = false"
+								></Button>
+								<Button
+									type="button"
+									label="Добавить"
+									@click="createTeacher"
+								></Button>
+							</div>
+						</Dialog>
 						<Button
 							:disabled="!submitButtonDisabled"
 							text-sm

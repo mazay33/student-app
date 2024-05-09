@@ -32,4 +32,13 @@ interface IUpload {
 	file_url: string;
 }
 
-export type { ISummaryCreateForm, ISummary, IUpload, ILecture };
+interface ISubjectCreate {
+	name: string;
+}
+
+interface ITeacherCreate {
+	full_name: string;
+	date_birth: string
+}
+
+export type { ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate, ITeacherCreate };

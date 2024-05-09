@@ -5,6 +5,7 @@ import { HttpMethod } from '../httpService';
 import BaseApi from './base';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { ISubject } from '~/modules/reestr/@types';
+import type { ISubjectCreate } from '~/modules/summary/@types';
 
 export default class SubjectApi extends BaseApi {
 	constructor(private httpService: HttpService) {
@@ -21,4 +22,11 @@ export default class SubjectApi extends BaseApi {
 			...options,
 		});
 	}
+
+	public async createSubject(Subject: string) {
+		const url = 'main/private/subjects';
+		return await this.sendRequest<string, ISubjectCreate>(HttpMethod.POST, url, {
+			name: Subject
+		});
+	   }
 }

@@ -5,6 +5,7 @@ import { HttpMethod } from '../httpService';
 import BaseApi from './base';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { ITeacher } from '~/modules/reestr/@types';
+import type { ITeacherCreate } from '~/modules/summary/@types';
 
 export default class TeacherApi extends BaseApi {
 	constructor(private httpService: HttpService) {
@@ -21,4 +22,10 @@ export default class TeacherApi extends BaseApi {
 			...options,
 		});
 	}
+
+	public async createTeacher(Teacher: ITeacherCreate) {
+		const url = 'main/private/teachers';
+		console.log(Teacher);
+		return await this.sendRequest<string, ITeacherCreate>(HttpMethod.POST, url, Teacher);
+	   }
 }
