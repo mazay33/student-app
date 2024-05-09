@@ -4,11 +4,9 @@ import type { DropdownChangeEvent } from 'primevue/dropdown';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
-import Dialog from 'primevue/dialog';
-import Calendar from 'primevue/calendar';
 
-const visible = ref(false);
-const visible1 = ref(false);
+const isNewSubjectModalVisible = ref(false);
+const isNewTeacherModalVisible = ref(false);
 
 type FetchFunction<T = unknown> = (...args: unknown[]) => Promise<T>;
 
@@ -22,21 +20,16 @@ const universities = ref<IPaginatedResult<IUniversity>>();
 const subjects = ref<IPaginatedResult<ISubject>>();
 const teachers = ref<IPaginatedResult<ITeacher>>();
 
-const Subject = ref({
-	name: null,
+const newSubjectName = ref('');
+
+const newTeacher = ref({
+	full_name: '',
+	date_birth: '',
 });
-
-
-const Teacher = ref({
-	full_name: null,
-	date_birth: null,
-});
-
-
 
 const getUniversities = async (queryUrl: string = '') => {
 	isLoading.value = true;
-	const { data, error, pending } = await apiService.university.getUniversityList(queryUrl);
+	const { data, pending } = await apiService.university.getUniversityList(queryUrl);
 	if (data.value) {
 		universities.value = data.value;
 	}
@@ -46,9 +39,17 @@ const getUniversities = async (queryUrl: string = '') => {
 
 const getSubjects = async (queryUrl: string = '') => {
 	isLoading.value = true;
-	const { data, error, pending } = await apiService.subject.getSubjectList(queryUrl);
+	const { data, pending } = await apiService.subject.getSubjectList(queryUrl);
 	if (data.value) {
 		subjects.value = data.value;
+
+		// Если в форме есть новый предмет, который еще не прошел модерацию, то добавляем его в список опций
+		if (
+			summaryCreateForm.subject &&
+			!subjects.value.result.find(subject => subject.id === summaryCreateForm.subject?.id)
+		) {
+			subjects.value.result.push(summaryCreateForm.subject);
+		}
 	}
 	isLoading.value = pending.value;
 };
@@ -56,58 +57,67 @@ const getSubjects = async (queryUrl: string = '') => {
 const toast = useToast();
 
 const createSubject = async () => {
-	const { data } = await apiService.subject.createSubject(Subject.value.name);
+	const { data } = await apiService.subject.createSubject(newSubjectName.value);
 
 	if (data.value) {
-	toast.add({
-	severity: 'success',
-	summary: 'Предмет успешно добавлен',
-	life: 3000,
-	});
+		toast.add({
+			severity: 'success',
+			summary: 'Предмет успешно добавлен',
+			life: 3000,
+		});
 
-	// Добавляем новый предмет в список опций
-	const newSubject = { id: data.value, name: Subject.value.name };
-	subjects.value.result.push(newSubject);
+		subjects.value?.result.push({ id: data.value, name: newSubjectName.value });
+		summaryCreateForm.subject = { id: data.value, name: newSubjectName.value };
 
-	// Обновляем v-model для Dropdown
-	summaryCreateForm.subject = newSubject;
-
-	visible.value = false;
+		isNewSubjectModalVisible.value = false;
 	}
 };
 
 const getTeachers = async (queryUrl: string = '') => {
 	isLoading.value = true;
-	const { data, error, pending } = await apiService.teacher.getTeacherList(queryUrl);
+	const { data, pending } = await apiService.teacher.getTeacherList(queryUrl);
 	if (data.value) {
 		teachers.value = data.value;
+
+		// Если в форме есть новый учитель, который еще не прошел модерацию, то добавляем его в список опций
+		if (
+			summaryCreateForm.teacher &&
+			!teachers.value.result.find(teacher => teacher.id === summaryCreateForm.teacher?.id)
+		) {
+			teachers.value.result.push(summaryCreateForm.teacher);
+		}
 	}
 	isLoading.value = pending.value;
 };
 
-
 const createTeacher = async () => {
-	const date = new Date(Teacher.value.date_birth);
- 	const formattedDate = date.toISOString().split('T')[0];
- 	Teacher.value.date_birth = formattedDate;
+	if (!newTeacher.value.date_birth || !newTeacher.value.full_name) return;
+	newTeacher.value.date_birth = useDateFormat(newTeacher.value.date_birth, 'YYYY-MM-DD').value;
 
-	const { data } = await apiService.teacher.createTeacher(Teacher);
+	const { data } = await apiService.teacher.createTeacher(newTeacher.value);
 
 	if (data.value) {
-	toast.add({
-	severity: 'success',
-	summary: 'Преподаватель успешно добавлен',
-	life: 3000,
-	});
+		toast.add({
+			severity: 'success',
+			summary: 'Преподаватель успешно добавлен',
+			life: 3000,
+		});
 
-	// Добавляем новый предмет в список опций
-	const newTeacher = { id: data.value, full_name: Teacher.value.full_name, date_birth: Teacher.value.date_birth };
-	teachers.value.result.push(newTeacher);
+		teachers.value?.result.push({
+			id: data.value,
+			full_name: newTeacher.value.full_name,
+			date_birth: newTeacher.value.date_birth,
+			is_moderated: false,
+		});
 
-	// Обновляем v-model для Dropdown
-	summaryCreateForm.teacher = newTeacher;
+		summaryCreateForm.teacher = {
+			id: data.value,
+			full_name: newTeacher.value.full_name,
+			date_birth: newTeacher.value.date_birth,
+			is_moderated: false,
+		};
 
-	visible1.value = false;
+		isNewTeacherModalVisible.value = false;
 	}
 };
 
@@ -161,8 +171,8 @@ const submitButtonDisabled = computed(
 );
 </script>
 <template>
-<Toast />
 	<Card>
+		<Toast />
 		<template #title>Создание конспекта</template>
 		<template #content>
 			<Stepper orientation="vertical">
@@ -222,12 +232,12 @@ const submitButtonDisabled = computed(
 							h-3rem
 							text-sm
 							font-medium
-							@click="visible = true"
+							@click="isNewSubjectModalVisible = true"
 						>
 							Создать новый
 						</Button>
 						<Dialog
-							v-model:visible="visible"
+							v-model:visible="isNewSubjectModalVisible"
 							modal
 							header="Добавление предмета"
 							:style="{ width: '25rem' }"
@@ -243,7 +253,7 @@ const submitButtonDisabled = computed(
 								>
 								<InputText
 									id="Предмет"
-									v-model="Subject.name"
+									v-model="newSubjectName"
 									class="flex-auto"
 									autocomplete="off"
 								/>
@@ -254,7 +264,7 @@ const submitButtonDisabled = computed(
 									type="button"
 									label="Отменить"
 									severity="secondary"
-									@click="visible = false"
+									@click="isNewSubjectModalVisible = false"
 								></Button>
 								<Button
 									type="button"
@@ -299,12 +309,12 @@ const submitButtonDisabled = computed(
 							text-sm
 							font-medium
 							h-3rem
-							@click="visible1 = true"
+							@click="isNewTeacherModalVisible = true"
 						>
 							Создать нового
 						</Button>
 						<Dialog
-							v-model:visible="visible1"
+							v-model:visible="isNewTeacherModalVisible"
 							modal
 							header="Добавление преподавателя"
 							:style="{ width: '25rem' }"
@@ -322,7 +332,7 @@ const submitButtonDisabled = computed(
 								<div class="flex flex-col">
 									<InputText
 										id="Преподаватель"
-										v-model="Teacher.full_name"
+										v-model="newTeacher.full_name"
 										class="flex-auto w-10/10 mb-3"
 										autocomplete="off"
 									/>
@@ -330,7 +340,7 @@ const submitButtonDisabled = computed(
 										<p class="ml--30 font-semibold">Календарь</p>
 										<Calendar
 											id="Календарь"
-											v-model="Teacher.date_birth"
+											v-model="newTeacher.date_birth"
 											class="w-10/10 ml-8"
 											date-format="yy-mm-dd"
 										/>
@@ -343,7 +353,7 @@ const submitButtonDisabled = computed(
 									type="button"
 									label="Отменить"
 									severity="secondary"
-									@click="visible1 = false"
+									@click="isNewTeacherModalVisible = false"
 								></Button>
 								<Button
 									type="button"
