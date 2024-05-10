@@ -1,20 +1,30 @@
 <script setup lang="ts">
+import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 
+const props = defineProps<{ user: IUser | null | undefined; isOwnerUser: boolean }>();
+
 const apiService = useApiService();
-
 const toast = useToast();
-
 const authStore = useAuthStore();
-const { user } = storeToRefs(authStore);
 
 const isDisabled = ref(true);
 
+const user = computed({
+	get() {
+		return props.user;
+	},
+	set(value) {
+		if (!props.isOwnerUser) return;
+		authStore.user = value;
+	},
+});
+
 const submitInfo = async () => {
-	if (!user.value || !user.value.description) {
+	if (!props.isOwnerUser || !props.user || !props.user.description) {
 		return;
 	}
-	const { data } = await apiService.user.updateUserInfo(user.value.nickname, user.value.description);
+	const { data } = await apiService.user.updateUserInfo(props.user.nickname, props.user.description);
 
 	if (data.value) {
 		authStore.getMe();
@@ -97,13 +107,14 @@ const toggle = (event: Event) => {
 				</div>
 				<div>
 					<img
-						class="rounded-full mt-5 h-200px w-200px cursor-pointer"
+						class="rounded-full mt-5 h-200px w-200px"
+						:class="isOwnerUser ? 'cursor-pointer' : ''"
 						:src="
 							user.image_url
 								? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
 								: 'https://pinia.vuejs.org/logo.svg'
 						"
-						@click="toggle"
+						@click="isOwnerUser ? toggle($event) : () => {}"
 					/>
 				</div>
 			</div>
@@ -121,7 +132,7 @@ const toggle = (event: Event) => {
 					<div class="flex flex-col gap-2 flex flex-col">
 						<label>Дата создания аккаунта</label>
 						<div class="bg-slate-200 rounded w-60 h-10">
-							<p class="pt-2 pl-3">{{ user.created_at }}</p>
+							<p class="pt-2 pl-3">{{ useDateFormat(user.created_at, 'DD.MM.YYYY').value }}</p>
 						</div>
 					</div>
 				</div>
@@ -150,6 +161,7 @@ const toggle = (event: Event) => {
 				@click="submitInfo"
 			/>
 			<Button
+				v-if="isOwnerUser"
 				id="change_button"
 				label="Изменить"
 				class=""
@@ -169,7 +181,7 @@ const toggle = (event: Event) => {
 			<div
 				v-if="!user.image_url"
 				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
-				@click="openFileDialog"
+				@click="isOwnerUser ? openFileDialog() : () => {}"
 			>
 				<p class="m-0 w-110px">Загрузить фото</p>
 				<i
@@ -180,7 +192,7 @@ const toggle = (event: Event) => {
 			<div
 				v-else
 				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
-				@click="openFileDialog"
+				@click="isOwnerUser ? openFileDialog() : () => {}"
 			>
 				<p class="m-0 w-110px">Изменить фото</p>
 				<i
