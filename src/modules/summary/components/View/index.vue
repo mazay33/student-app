@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import type { ISummary } from '../../@types';
 import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
+
+const deleteDialog = ref(false);
 
 const { copy, copied } = useClipboard();
 
@@ -52,6 +55,18 @@ const getYoutubeId = (url: string) => {
 		/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 	const match = url.match(youtubeRegex);
 	return match ? match[1] : '';
+};
+
+const idDelete = ref('');
+
+const deleteForever = async () => {
+	const { data } = await apiService.lecture.deleteLection(idDelete.value);
+
+	if (data.value) {
+		await getSummary();
+	}
+
+	deleteDialog.value = false;
 };
 </script>
 
@@ -180,6 +195,16 @@ const getYoutubeId = (url: string) => {
 							</div>
 						</div>
 					</div>
+					<Button
+						v-if="isPrivateSummary"
+						class="mt-5 sm-mt-4"
+						severity="danger"
+						@click="
+							deleteDialog = true;
+							idDelete = lecture.id;
+						"
+						>Удалить лекцию</Button
+					>
 				</accordion-tab>
 			</accordion>
 		</div>
@@ -191,6 +216,31 @@ const getYoutubeId = (url: string) => {
 			<p>конспектов пока нет, но вы можете их добавить</p>
 		</div>
 	</div>
+	<Dialog
+		v-model:visible="deleteDialog"
+		modal
+		header="Удаление лекции"
+		:style="{ width: '25rem' }"
+	>
+		<span class="p-text-secondary block mb-5"
+			>Восстановление лекции после удаления невозможно. Пожалуйста подтвердите данное действие</span
+		>
+
+		<div class="flex justify-content-end gap-2">
+			<Button
+				type="button"
+				label="Отменить"
+				severity="secondary"
+				@click="deleteDialog = false"
+			></Button>
+			<Button
+				type="button"
+				class="ml-21"
+				severity="danger"
+				label="Подтвердить"
+				@click="deleteForever"
+			></Button></div
+	></Dialog>
 </template>
 
 <style scoped>
