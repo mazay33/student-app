@@ -208,7 +208,7 @@ const submitButtonDisabled = computed(
 				</StepperPanel>
 
 				<StepperPanel header="Предмет">
-					<div class="flex flex-col sm:flex-row h-8rem sm:h-3rem">
+					<div class="flex flex-col h-8rem sm:h-8rem">
 						<Dropdown
 							v-model="summaryCreateForm.subject"
 							:options="subjects?.result"
@@ -222,12 +222,9 @@ const submitButtonDisabled = computed(
 							@update:model-value="summaryCreateForm.teacher = null"
 						/>
 						<Button
-							mb-3
+							mb-4
 							ml-0
 							mt-3
-							sm:mt-0
-							sm:ml-5
-							sm:mb-0
 							w-36
 							h-3rem
 							text-sm
@@ -274,18 +271,6 @@ const submitButtonDisabled = computed(
 							</div>
 						</Dialog>
 					</div>
-					<!-- <div
-              class="border-2 border-dashed rounded-lg h-50 border-round mt-5 flex-auto flex  font-medium"
-            >
-              <div>
-                <ul flex justify-between>
-                  Название предмета
-                  <div>
-                    <Button ml-190>Сохранить изменения</Button>
-                  </div>
-                </ul>
-              </div>
-            </div> -->
 				</StepperPanel>
 
 				<StepperPanel header="Преподаватель">
@@ -337,7 +322,7 @@ const submitButtonDisabled = computed(
 										autocomplete="off"
 									/>
 									<div class="flex">
-										<p class="ml--30 font-semibold">Календарь</p>
+										<p class="ml--30 font-semibold translate-y-2">Календарь</p>
 										<Calendar
 											id="Календарь"
 											v-model="newTeacher.date_birth"
@@ -378,4 +363,8 @@ const submitButtonDisabled = computed(
 	</Card>
 </template>
 
-<style scoped></style>
+<style>
+span.p-stepper-title {
+	font-size: 15px;
+}
+</style>

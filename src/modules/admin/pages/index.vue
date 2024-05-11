@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import UserApi from "~/services/api/userApi";
-import useApiService from "~/services/apiService";
-import HttpService from "~/services/httpService";
+import UserApi from '~/services/api/userApi';
+import useApiService from '~/services/apiService';
+import HttpService from '~/services/httpService';
+
+import type { IPaginatedResult, IUser } from '~/@types/@types';
 
 definePageMeta({
 	middleware: ['admin-middleware', 'auth-middleware'],
@@ -12,19 +14,190 @@ const apiService = useApiService();
 
 const { user } = storeToRefs(authStore);
 const { data } = await apiService.admin.getAdminSummaries();
+
+const dataFilter = ref<{ [key: string]: any }>({
+	page: 1,
+	page_size: 25,
+	university_id: null,
+	subject_id: null,
+	teacher_id: null,
+});
+
+const expandedRow = ref(null);
+const comment = ref('');
+
+const status = ref({
+	id: null,
+	modearation_comment: null,
+});
+
+const toast = useToast();
+const isLoading = ref<boolean>(false);
+
+const reject = async rowData => {
+	status.value.id = rowData.id;
+	status.value.modearation_comment = comment.value;
+
+	const { data, pending } = await apiService.admin.statusRegjected(status.value);
+
+	if (data.value) {
+		const index = data.result.findIndex(item => item.id === rowData.id);
+		if (index !== -1) {
+			data.result.splice(index, 1);
+		}
+		toast.add({
+			severity: 'success',
+			summary: 'Запрос отклонен',
+			life: 3000,
+		});
+		comment.value = ' ';
+	}
+	isLoading.value = pending.value;
+};
+
+const approve = async rowData => {
+	status.value.id = rowData.id;
+	status.value.modearation_comment = comment.value;
+
+	const { data, pending } = await apiService.admin.statusApproved(status.value);
+
+	if (data.value) {
+		const index = data.result.findIndex(item => item.id === rowData.id);
+		if (index !== -1) {
+			data.result.splice(index, 1);
+		}
+		toast.add({
+			severity: 'success',
+			summary: 'Запрос одобрен',
+			life: 3000,
+		});
+		comment.value = ' ';
+	}
+	isLoading.value = pending.value;
+};
+
+const users = ref<IPaginatedResult<IUser>>();
+const getUsers = async () => {
+	const { data } = await apiService.user.getUserList();
+	if (data.value) {
+		users.value = data.value;
+	}
+};
+await getUsers();
 </script>
 
 <template>
 	<div>
-		<h1>only for admin</h1>
+		<Toast />
 
-		<h2>hello {{ user?.nickname }}</h2>
-		<DataTable :value="data.result" tableStyle="min-width: 50rem">
-			<Column field="name" header="Name"></Column>
-			<Column field="name" header="Name"></Column>
-		</DataTable>
+		<div class="bg-white p-5 shadow-lg rounded-lg">
+			<h2>Administrator {{ user?.nickname }}</h2>
+			<DataTable
+				v-model:expanded-rows="expandedRow"
+				scroll-height="64vh"
+				scrollable
+				show-gridlines
+				:value="data.result"
+			>
+				<Column
+					field="name"
+					header="№"
+					style="width: 1%"
+				>
+					<template #body="slotProps">
+						<div>{{ slotProps.index + 1 }}</div>
+					</template></Column
+				>
+				<Column
+					expander
+					style="width: 5rem"
+				/>
+				<template #expansion="slotProps">
+					<div class="p-3">
+						<h5>Проверка конспекта - {{ slotProps.data.name }}</h5>
+						<div class="flex">
+							<Button
+								class="bg-red-400 border-red-400"
+								@click="reject(slotProps.data)"
+								>Отклонить</Button
+							>
+							<Button
+								class="bg-green-400 border-green-400 ml-5"
+								@click="approve(slotProps.data)"
+								>Одобрить</Button
+							>
+							<InputText
+								v-model="comment"
+								type="text"
+								class="ml-5"
+								placeholder="Комментарий для юзера"
+							/>
+						</div>
+					</div>
+				</template>
+				<Column
+					field="name"
+					header="Название"
+				>
+					<template #body="slotProps">
+						<div>{{ slotProps.data.name }}</div>
+					</template></Column
+				>
+				<Column
+					field="name"
+					header="Наименование вуза"
+					><template #body="slotProps">
+						<div>{{ slotProps.data.university_name }}</div>
+					</template></Column
+				>
+				<Column
+					field="name"
+					header="Предмет"
+					><template #body="slotProps">
+						<div>{{ slotProps.data.subject_name }}</div>
+					</template></Column
+				>
+				<Column
+					field="name"
+					header="Преподователь"
+					><template #body="slotProps">
+						<div>{{ slotProps.data.teacher_full_name }}</div>
+					</template></Column
+				>
+				<Column
+					field="name"
+					header="Пользователь"
+					><template #body="{ data }">
+						<div class="flex items-center gap-2">
+							<img
+								v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url"
+								class="w-10 rounded-full text-center"
+								:src="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url || ''"
+								alt=""
+							/>
+							<span>{{ users?.result.find((user: IUser) => user.id === data.user_id)?.nickname }} </span>
+						</div>
+					</template></Column
+				>
+				<Column
+					field="name"
+					header="Статус"
+					><template #body="slotProps">
+						<div>{{ slotProps.data.status }}</div>
+					</template></Column
+				>
+			</DataTable>
 
-		{{ data }}
+			<Paginator
+				v-if="data?.pages"
+				:rows="data.page_size"
+				:total-records="data?.count"
+				:rows-per-page-options="[10, 25, 50, 100]"
+				@update:rows="dataFilter.page_size = $event"
+				@page="dataFilter.page = $event.page + 1"
+			>
+			</Paginator>
+		</div>
 	</div>
 </template>
 

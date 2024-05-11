@@ -136,11 +136,16 @@ const getYoutubeId = (url: string) => {
 				>
 					<template #header>
 						<span class="flex align-items-center gap-2 w-full">
-							<span class="font-bold white-space-nowrap text-lg">{{ lecture.name }}</span>
+							<span class="font-bold white-space-nowrap text-lg text-sm sm-text-base">{{
+								lecture.name
+							}}</span>
 						</span>
 					</template>
 
 					<div>
+						<p class="font-bold white-space-nowrap text-base mr-3 sm-mr-10">
+							{{ lecture.date }}
+						</p>
 						<div class="italic font-normal text-lg mb-4 w-full md:w-5/10">"{{ lecture.description }}"</div>
 						<div
 							flex
@@ -158,16 +163,16 @@ const getYoutubeId = (url: string) => {
 										value: copied ? 'Скопировано!' : 'Скопировать ссылку',
 										autoHide: false,
 									}"
-									class="bg-green border-green"
+									class="bg-green border-green sm-ml-0 ml-5"
 									@click="copy(lecture.pdf_file_url)"
 								>
-									<i class="pi pi-share-alt pr-2 sm-pr-0"></i>
+									<i class="pi pi-share-alt pr-1 sm-pr-0"></i>
 								</Button>
 							</div>
 
 							<div class="mt-5">
 								<iframe
-									class="w-full lg-w-6/10 h-100 lg-h-130 rounded-md"
+									class="w-full lg-w-6/10 h-70 md-h-100 lg-h-130 rounded-md"
 									:src="'https://www.youtube.com/embed/' + getYoutubeId(lecture.video_url)"
 									frameborder="0"
 									allowfullscreen
