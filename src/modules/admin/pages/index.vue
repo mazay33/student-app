@@ -32,48 +32,41 @@ const status = ref({
 });
 
 const toast = useToast();
-const isLoading = ref<boolean>(false);
 
 const reject = async rowData => {
 	status.value.id = rowData.id;
 	status.value.modearation_comment = comment.value;
 
-	const { data, pending } = await apiService.admin.statusRegjected(status.value);
+	const { data } = await apiService.admin.statusRegjected(status.value);
 
 	if (data.value) {
-		const index = data.result.findIndex(item => item.id === rowData.id);
-		if (index !== -1) {
-			data.result.splice(index, 1);
-		}
 		toast.add({
 			severity: 'success',
 			summary: 'Запрос отклонен',
 			life: 3000,
 		});
 		comment.value = ' ';
+		expandedRow.value = null;
+		await apiService.admin.getAdminSummaries();
 	}
-	isLoading.value = pending.value;
 };
 
 const approve = async rowData => {
 	status.value.id = rowData.id;
 	status.value.modearation_comment = comment.value;
 
-	const { data, pending } = await apiService.admin.statusApproved(status.value);
+	const { data } = await apiService.admin.statusApproved(status.value);
 
 	if (data.value) {
-		const index = data.result.findIndex(item => item.id === rowData.id);
-		if (index !== -1) {
-			data.result.splice(index, 1);
-		}
 		toast.add({
 			severity: 'success',
 			summary: 'Запрос одобрен',
 			life: 3000,
 		});
 		comment.value = ' ';
+		expandedRow.value = null;
+		await apiService.admin.getAdminSummaries();
 	}
-	isLoading.value = pending.value;
 };
 
 const users = ref<IPaginatedResult<IUser>>();
