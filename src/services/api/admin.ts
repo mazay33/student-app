@@ -3,7 +3,7 @@ import { HttpMethod } from '../httpService';
 import BaseApi from './base';
 import type { UseFetchOptions } from '#app';
 import type { IPaginatedResult } from '~/@types/@types';
-import type { IUpload, ISummaryCreateForm, ILecture, ISummary } from '~/modules/summary/@types';
+import type { IUploadCsv, ISummaryCreateForm, ILecture, ISummary } from '~/modules/summary/@types';
 import type { IApproved, IRejected } from '~/modules/reestr/statusTypes';
 
 export default class AdminApi extends BaseApi {
@@ -28,5 +28,10 @@ export default class AdminApi extends BaseApi {
 	public async statusRegjected(statusForm: IRejected) {
 		const url = `main/service/summaries/status/rejected`;
 		return await this.sendRequest<string, IRejected>(HttpMethod.PATCH, url, statusForm);
+	}
+
+	public async uploadCsvFile(uploadCsv: FormData) {
+		const url = `main/service/universities/upload`;
+		return await this.sendRequest<IUploadCsv, File>(HttpMethod.POST, url, uploadCsv);
 	}
 }

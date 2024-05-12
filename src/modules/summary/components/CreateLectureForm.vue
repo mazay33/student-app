@@ -157,33 +157,11 @@ const clearLectureCreateForm = () => {
 						<div>
 							<label class="text-sm font-medium leading-6 text-gray-900">Добавить файл</label>
 							<div class="mt-5 border border-dashed border-gray-900/25 rounded-lg">
-								<div class="flex justify-center mt-5">
-									<div class="flex gap-2">
-										<Button
-											icon="pi pi-cloud-upload"
-											rounded
-											outlined
-											@click="openFileDialog"
-										>
-										</Button>
-
-										<Button
-											icon="pi pi-times"
-											rounded
-											outlined
-											severity="danger"
-											:disabled="!lectureCreateForm.pdf_file_url"
-											@click="lectureCreateForm.pdf_file_url = ''"
-										></Button>
-									</div>
-								</div>
-
 								<div
 									v-if="lectureCreateForm.pdf_file_url"
 									class="mb-5"
 								>
-									<p class="text-center pt-5">Загруженный файл</p>
-									<div class="card w-5/10 sm-w-3/10 m-auto">
+									<div class="card w-5/10 sm-w-3/10 m-auto mt-5">
 										<p class="font-semibold text-center text-indigo-500">{{ lectionName }}</p>
 										<p class="font-light text-sm text-center">
 											Ваш файл смогут просмотреть другие пользователи
@@ -204,7 +182,10 @@ const clearLectureCreateForm = () => {
 
 								<div v-if="!lectureCreateForm.pdf_file_url">
 									<div class="flex flex-col mb-5 mt-5">
-										<i class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500" />
+										<i
+											class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
+											@click="openFileDialog"
+										/>
 
 										<p class="m-auto text-sm">Загрузите pdw файл с лекцией</p>
 									</div>

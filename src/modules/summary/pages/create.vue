@@ -279,7 +279,6 @@ const submitButtonDisabled = computed(
 							v-model="summaryCreateForm.teacher"
 							:loading="isLoading"
 							:options="teachers?.result"
-							:disabled="!summaryCreateForm.subject?.id"
 							option-label="full_name"
 							editable
 							show-clear

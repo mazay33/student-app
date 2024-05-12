@@ -77,6 +77,45 @@ const getUsers = async () => {
 	}
 };
 await getUsers();
+
+const openFileDialog = () => {
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.accept = 'text/csv';
+	input.multiple = false;
+	input.style.display = 'none';
+	input.addEventListener('change', event => {
+		const target = event.target as HTMLInputElement;
+		if (!target.files) {
+			return;
+		}
+
+		uploadCsv(event);
+	});
+	document.body.appendChild(input);
+	input.click();
+	document.body.removeChild(input);
+};
+
+const uploadCsv = async (event: Event) => {
+	const formData = new FormData();
+	const target = event.target as HTMLInputElement;
+
+	if (!event.target || !target.files) {
+		return;
+	}
+	formData.append('file', target.files[0]);
+
+	const { data } = await apiService.admin.uploadCsvFile(formData);
+
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: `Новых вузов добавленно: ${data.value.count_added_universities}`,
+			life: 3000,
+		});
+	}
+};
 </script>
 
 <template>
@@ -84,7 +123,14 @@ await getUsers();
 		<Toast />
 
 		<div class="bg-white p-5 shadow-lg rounded-lg">
-			<h2>Administrator {{ user?.nickname }}</h2>
+			<div class="flex mb-5">
+				<h2 class="flex-1">Администратор: {{ user?.nickname }}</h2>
+				<Button
+					severity="info"
+					@click="openFileDialog"
+					>загрузить справочник</Button
+				>
+			</div>
 			<DataTable
 				v-model:expanded-rows="expandedRow"
 				scroll-height="64vh"

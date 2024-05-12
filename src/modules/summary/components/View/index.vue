@@ -71,9 +71,15 @@ const deleteForever = async () => {
 </script>
 
 <template>
-	<h1 class="text-3xl text-center text-indigo-500 font-semibold mb-10 pt-5">
-		{{ summary?.name }}
-	</h1>
+	<div class="flex justify-center">
+		<h1 class="text-3xl text-indigo-500 font-semibold mb-10 pt-5">
+			{{ summary?.name }}
+		</h1>
+		<i
+			class="pi pi-bookmark mt-7 pl-3 sm-pl-5"
+			style="font-size: 1.8rem"
+		/>
+	</div>
 	<div>
 		<div class="flex flex-col sm:flex-row">
 			<div class="text-base font-bold leading-7 text-gray-900 text-center pl-0 sm-pl-3">Автор:</div>
@@ -87,10 +93,6 @@ const deleteForever = async () => {
 					/>
 					<p class="pt-2 ml-3">{{ user?.nickname }}</p>
 				</div>
-				<i
-					class="pi pi-bookmark pt-3 sm-pt-0 pl-3 sm-pl-5 text-center"
-					style="font-size: 1.8rem"
-				/>
 			</div>
 		</div>
 
