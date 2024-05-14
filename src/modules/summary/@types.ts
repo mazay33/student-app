@@ -37,6 +37,10 @@ interface IUpload {
 	file_url: string;
 }
 
+interface IUploadCsv {
+	count_added_universities: number;
+}
+
 interface ISubjectCreate {
 	name: string;
 }
@@ -45,5 +49,18 @@ interface ITeacherCreate {
 	full_name: string;
 	date_birth: string;
 }
+interface IDeleteLecture {
+	lecture_id: string;
+}
 
-export type { ICreateLectureForm, ISummaryCreateForm, ISummary, IUpload, ILecture, ISubjectCreate, ITeacherCreate };
+export type {
+	ICreateLectureForm,
+	ISummaryCreateForm,
+	ISummary,
+	IUpload,
+	ILecture,
+	ISubjectCreate,
+	ITeacherCreate,
+	IDeleteLecture,
+	IUploadCsv,
+};

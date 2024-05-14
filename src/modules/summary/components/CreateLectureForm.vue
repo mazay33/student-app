@@ -60,6 +60,7 @@ const openFileDialog = () => {
 	input.click();
 	document.body.removeChild(input);
 };
+const lectionName = ref('');
 
 const uploadPdf = async (event: Event) => {
 	const formData = new FormData();
@@ -74,6 +75,7 @@ const uploadPdf = async (event: Event) => {
 
 	if (data.value) {
 		lectureCreateForm.value.pdf_file_url = data.value.file_url;
+		lectionName.value = data.value.name;
 	}
 };
 
@@ -154,25 +156,39 @@ const clearLectureCreateForm = () => {
 					<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
 						<div>
 							<label class="text-sm font-medium leading-6 text-gray-900">Добавить файл</label>
-							<div
-								class="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10"
-							>
-								<div class="text-center">
-									<div class="mt-4 flex text-sm leading-6 text-gray-600">
-										<label
-											class="relative rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500"
-										>
-											<p
-												v-if="!lectureCreateForm.pdf_file_url"
-												class="cursor-pointer"
-												@click="openFileDialog"
-											>
-												Файл с лекцией
-											</p>
-											<p v-else>{{ lectureCreateForm.pdf_file_url }}</p>
-										</label>
+							<div class="mt-5 border border-dashed border-gray-900/25 rounded-lg">
+								<div
+									v-if="lectureCreateForm.pdf_file_url"
+									class="mb-5"
+								>
+									<div class="card w-5/10 sm-w-3/10 m-auto mt-5">
+										<p class="font-semibold text-center text-indigo-500">{{ lectionName }}</p>
+										<p class="font-light text-sm text-center">
+											Ваш файл смогут просмотреть другие пользователи
+										</p>
+
+										<div class="flex justify-center">
+											<Button
+												icon="pi pi-times"
+												rounded
+												outlined
+												severity="danger"
+												:disabled="!lectureCreateForm.pdf_file_url"
+												@click="lectureCreateForm.pdf_file_url = ''"
+											></Button>
+										</div>
 									</div>
-									<p class="text-xs leading-5 text-gray-600">PDF</p>
+								</div>
+
+								<div v-if="!lectureCreateForm.pdf_file_url">
+									<div class="flex flex-col mb-5 mt-5">
+										<i
+											class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
+											@click="openFileDialog"
+										/>
+
+										<p class="m-auto text-sm">Загрузите pdw файл с лекцией</p>
+									</div>
 								</div>
 							</div>
 						</div>

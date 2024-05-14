@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import type { ISummary } from '../../@types';
 import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
+
+const deleteDialog = ref(false);
 
 const { copy, copied } = useClipboard();
 
@@ -53,12 +56,30 @@ const getYoutubeId = (url: string) => {
 	const match = url.match(youtubeRegex);
 	return match ? match[1] : '';
 };
+
+const idDelete = ref('');
+
+const deleteForever = async () => {
+	const { data } = await apiService.lecture.deleteLection(idDelete.value);
+
+	if (data.value) {
+		await getSummary();
+	}
+
+	deleteDialog.value = false;
+};
 </script>
 
 <template>
-	<h1 class="text-3xl text-center text-indigo-500 font-semibold mb-10 pt-5">
-		{{ summary?.name }}
-	</h1>
+	<div class="flex justify-center">
+		<h1 class="text-3xl text-indigo-500 font-semibold mb-10 pt-5">
+			{{ summary?.name }}
+		</h1>
+		<i
+			class="pi pi-bookmark mt-7 pl-3 sm-pl-5"
+			style="font-size: 1.8rem"
+		/>
+	</div>
 	<div>
 		<div class="flex flex-col sm:flex-row">
 			<div class="text-base font-bold leading-7 text-gray-900 text-center pl-0 sm-pl-3">Автор:</div>
@@ -72,10 +93,6 @@ const getYoutubeId = (url: string) => {
 					/>
 					<p class="pt-2 ml-3">{{ user?.nickname }}</p>
 				</div>
-				<i
-					class="pi pi-bookmark pt-3 sm-pt-0 pl-3 sm-pl-5 text-center"
-					style="font-size: 1.8rem"
-				/>
 			</div>
 		</div>
 
@@ -136,11 +153,16 @@ const getYoutubeId = (url: string) => {
 				>
 					<template #header>
 						<span class="flex align-items-center gap-2 w-full">
-							<span class="font-bold white-space-nowrap text-lg">{{ lecture.name }}</span>
+							<span class="font-bold white-space-nowrap text-lg text-sm sm-text-base">{{
+								lecture.name
+							}}</span>
 						</span>
 					</template>
 
 					<div>
+						<p class="font-bold white-space-nowrap text-base mr-3 sm-mr-10">
+							{{ lecture.date }}
+						</p>
 						<div class="italic font-normal text-lg mb-4 w-full md:w-5/10">"{{ lecture.description }}"</div>
 						<div
 							flex
@@ -158,16 +180,16 @@ const getYoutubeId = (url: string) => {
 										value: copied ? 'Скопировано!' : 'Скопировать ссылку',
 										autoHide: false,
 									}"
-									class="bg-green border-green"
+									class="bg-green border-green sm-ml-0 ml-5"
 									@click="copy(lecture.pdf_file_url)"
 								>
-									<i class="pi pi-share-alt pr-2 sm-pr-0"></i>
+									<i class="pi pi-share-alt pr-1 sm-pr-0"></i>
 								</Button>
 							</div>
 
 							<div class="mt-5">
 								<iframe
-									class="w-full lg-w-6/10 h-100 lg-h-130 rounded-md"
+									class="w-full lg-w-6/10 h-70 md-h-100 lg-h-130 rounded-md"
 									:src="'https://www.youtube.com/embed/' + getYoutubeId(lecture.video_url)"
 									frameborder="0"
 									allowfullscreen
@@ -175,6 +197,16 @@ const getYoutubeId = (url: string) => {
 							</div>
 						</div>
 					</div>
+					<Button
+						v-if="isPrivateSummary"
+						class="mt-5 sm-mt-4"
+						severity="danger"
+						@click="
+							deleteDialog = true;
+							idDelete = lecture.id;
+						"
+						>Удалить лекцию</Button
+					>
 				</accordion-tab>
 			</accordion>
 		</div>
@@ -186,6 +218,31 @@ const getYoutubeId = (url: string) => {
 			<p>конспектов пока нет, но вы можете их добавить</p>
 		</div>
 	</div>
+	<Dialog
+		v-model:visible="deleteDialog"
+		modal
+		header="Удаление лекции"
+		:style="{ width: '25rem' }"
+	>
+		<span class="p-text-secondary block mb-5"
+			>Восстановление лекции после удаления невозможно. Пожалуйста подтвердите данное действие</span
+		>
+
+		<div class="flex justify-content-end gap-2">
+			<Button
+				type="button"
+				label="Отменить"
+				severity="secondary"
+				@click="deleteDialog = false"
+			></Button>
+			<Button
+				type="button"
+				class="ml-21"
+				severity="danger"
+				label="Подтвердить"
+				@click="deleteForever"
+			></Button></div
+	></Dialog>
 </template>
 
 <style scoped>
