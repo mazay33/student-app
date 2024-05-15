@@ -1,9 +1,9 @@
-import type { UseFetchOptions } from '#app';
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
+import type { UseFetchOptions } from '#app';
 import type { IPaginatedResult } from '~/@types/@types';
-import type { ISummary, ISummaryCreateForm } from '~/modules/summary/@types';
+import type { ISummary, ISummaryCreateForm, ISummaryEditForm } from '~/modules/summary/@types';
 
 export default class SummaryApi extends BaseApi {
 	constructor(private httpService: HttpService) {
@@ -21,6 +21,17 @@ export default class SummaryApi extends BaseApi {
 			university_id: summaryCreateForm.university?.id,
 			subject_id: summaryCreateForm.subject?.id,
 			teacher_id: summaryCreateForm.teacher?.id,
+		});
+	}
+
+	public async editSummary(summaryEditForm: ISummaryEditForm) {
+		const url = `main/private/summaries`;
+		return await this.sendRequest<string, ISummaryEditForm>(HttpMethod.PATCH, url, {
+			name: summaryEditForm.name,
+			university_id: summaryEditForm.university?.id,
+			subject_id: summaryEditForm.subject?.id,
+			teacher_id: summaryEditForm.teacher?.id,
+			id: summaryEditForm.id,
 		});
 	}
 

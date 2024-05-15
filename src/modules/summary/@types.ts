@@ -7,6 +7,14 @@ interface ISummaryCreateForm {
 	teacher: ITeacher | null;
 }
 
+interface ISummaryEditForm {
+	name: string | null;
+	university: IUniversity | null;
+	subject: ISubject | null;
+	teacher: ITeacher | null;
+	id: string | null;
+}
+
 interface ILecture {
 	name: string;
 	description: string;
@@ -53,6 +61,15 @@ interface IDeleteLecture {
 	lecture_id: string;
 }
 
+interface IEditLecture {
+	name: string;
+	description: string;
+	pdf_file_url: string;
+	video_url: string;
+	id: string;
+	date: string;
+}
+
 export type {
 	ICreateLectureForm,
 	ISummaryCreateForm,
@@ -63,4 +80,6 @@ export type {
 	ITeacherCreate,
 	IDeleteLecture,
 	IUploadCsv,
+	IEditLecture,
+	ISummaryEditForm,
 };

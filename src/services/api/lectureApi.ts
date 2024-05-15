@@ -1,7 +1,7 @@
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
-import type { IUpload, ICreateLectureForm, IDeleteLecture } from '~/modules/summary/@types';
+import type { IUpload, ICreateLectureForm, IDeleteLecture, IEditLecture } from '~/modules/summary/@types';
 
 export default class LectureApi extends BaseApi {
 	constructor(private httpService: HttpService) {
@@ -26,5 +26,10 @@ export default class LectureApi extends BaseApi {
 	public async deleteLection(lecture_id: string = '') {
 		const url = `main/private/lectures/${lecture_id}`;
 		return await this.sendRequest<string, IDeleteLecture>(HttpMethod.DELETE, url);
+	}
+
+	public async editLecture(lectureEditForm: IEditLecture) {
+		const url = `main/private/lectures`;
+		return await this.sendRequest<string, IEditLecture>(HttpMethod.PATCH, url, lectureEditForm);
 	}
 }
