@@ -160,6 +160,7 @@ const onTeacherChange = async (event: DropdownChangeEvent) => {
 
 const submitSummary = async () => {
 	await summaryCreateFormStore.createSummary();
+	await navigateTo(`/summary/private/${data.value}`);
 };
 
 const submitButtonDisabled = computed(

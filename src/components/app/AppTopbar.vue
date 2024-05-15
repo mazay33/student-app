@@ -94,7 +94,7 @@ const items = computed(() => {
 				label: 'Профиль',
 				icon: 'pi pi-user',
 				command: () => {
-					router.push('/profile');
+					router.push(`/profile/${user?.id}`);
 				},
 			},
 			{

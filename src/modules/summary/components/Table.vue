@@ -456,7 +456,9 @@ const clearFilters = () => {
 							:src="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url || ''"
 							alt=""
 						/>
-						<span>{{ users?.result.find((user: IUser) => user.id === data.user_id)?.nickname }} </span>
+						<nuxt-link :to="`/profile/${users?.result.find((user: IUser) => user.id === data.user_id)?.id}`"
+							>{{ users?.result.find((user: IUser) => user.id === data.user_id)?.nickname }}
+						</nuxt-link>
 					</div>
 				</div>
 			</template>
