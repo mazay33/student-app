@@ -92,120 +92,113 @@ const clearLectureCreateForm = () => {
 </script>
 
 <template>
-	<div class="bg-white border-1 mt-5 ml-0 sm-ml-3">
-		<Toast />
-		<form>
+	<Toast />
+	<form>
+		<div>
 			<div>
+				<p class="text-sm leading-6 text-gray-600">Пожалуйста заполните данные о вашей лекции ниже</p>
+				<p class="mt--3 text-sm text-gray-600">
+					Помните что другие пользователи также смогут увидеть данную лекцию
+				</p>
+
 				<div>
-					<h2 class="text-base font-semibold leading-7 text-indigo-500">Добавление лекции</h2>
-					<p class="mt-1 text-sm leading-6 text-gray-600">Пожалуйста заполните данные о вашей лекции ниже</p>
-					<p class="mt--3 text-sm text-gray-600">
-						Помните что другие пользователи также смогут увидеть данную лекцию
-					</p>
+					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
+						<div class="sm:col-span-3">
+							<label class="block text-sm font-medium leading-6 text-gray-900">Название лекции</label>
+							<div>
+								<InputText
+									v-model="lectureCreateForm.name"
+									type="text"
+									class="w-full"
+								/>
+							</div>
+						</div>
 
+						<div class="sm:col-span-3">
+							<label class="block text-sm font-medium leading-6 text-gray-900">Описание</label>
+							<div>
+								<InputText
+									v-model="lectureCreateForm.description"
+									type="text"
+									class="w-full"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
+					<div class="sm:col-span-3">
+						<label class="block text-sm font-medium leading-8 text-gray-900">Дата проведения лекции</label>
+						<Calendar
+							v-model="lectureCreateForm.date"
+							show-icon
+							class="w-full"
+							date-format="yy-mm-dd"
+						/>
+					</div>
+					<div class="sm:col-span-3">
+						<label class="block text-sm font-medium leading-8 text-gray-900">Ссылка на youtube видео</label>
+						<InputText
+							v-model="lectureCreateForm.video_url"
+							type="text"
+							class="w-full"
+						/>
+					</div>
+				</div>
+
+				<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
 					<div>
-						<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
-							<div class="sm:col-span-3">
-								<label class="block text-sm font-medium leading-6 text-gray-900">Название лекции</label>
-								<div>
-									<InputText
-										v-model="lectureCreateForm.name"
-										type="text"
-										class="w-full"
-									/>
+						<label class="text-sm font-medium leading-6 text-gray-900">Добавить файл</label>
+						<div class="mt-5 border border-dashed border-gray-900/25 rounded-lg">
+							<div
+								v-if="lectureCreateForm.pdf_file_url"
+								class="mb-5"
+							>
+								<div class="card w-5/10 sm-w-3/10 m-auto mt-5">
+									<p class="font-semibold text-center text-indigo-500">{{ lectionName }}</p>
+									<p class="font-light text-sm text-center">
+										Ваш файл смогут просмотреть другие пользователи
+									</p>
+
+									<div class="flex justify-center">
+										<Button
+											icon="pi pi-times"
+											rounded
+											outlined
+											severity="danger"
+											:disabled="!lectureCreateForm.pdf_file_url"
+											@click="lectureCreateForm.pdf_file_url = ''"
+										></Button>
+									</div>
 								</div>
 							</div>
 
-							<div class="sm:col-span-3">
-								<label class="block text-sm font-medium leading-6 text-gray-900">Описание</label>
-								<div>
-									<InputText
-										v-model="lectureCreateForm.description"
-										type="text"
-										class="w-full"
+							<div v-if="!lectureCreateForm.pdf_file_url">
+								<div class="flex flex-col mb-5 mt-5">
+									<i
+										class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
+										@click="openFileDialog"
 									/>
-								</div>
-							</div>
-						</div>
-					</div>
 
-					<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
-						<div class="sm:col-span-3">
-							<label class="block text-sm font-medium leading-8 text-gray-900"
-								>Дата проведения лекции</label
-							>
-							<Calendar
-								v-model="lectureCreateForm.date"
-								show-icon
-								class="w-full"
-								date-format="yy-mm-dd"
-							/>
-						</div>
-						<div class="sm:col-span-3">
-							<label class="block text-sm font-medium leading-8 text-gray-900"
-								>Ссылка на youtube видео</label
-							>
-							<InputText
-								v-model="lectureCreateForm.video_url"
-								type="text"
-								class="w-full"
-							/>
-						</div>
-					</div>
-
-					<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
-						<div>
-							<label class="text-sm font-medium leading-6 text-gray-900">Добавить файл</label>
-							<div class="mt-5 border border-dashed border-gray-900/25 rounded-lg">
-								<div
-									v-if="lectureCreateForm.pdf_file_url"
-									class="mb-5"
-								>
-									<div class="card w-5/10 sm-w-3/10 m-auto mt-5">
-										<p class="font-semibold text-center text-indigo-500">{{ lectionName }}</p>
-										<p class="font-light text-sm text-center">
-											Ваш файл смогут просмотреть другие пользователи
-										</p>
-
-										<div class="flex justify-center">
-											<Button
-												icon="pi pi-times"
-												rounded
-												outlined
-												severity="danger"
-												:disabled="!lectureCreateForm.pdf_file_url"
-												@click="lectureCreateForm.pdf_file_url = ''"
-											></Button>
-										</div>
-									</div>
-								</div>
-
-								<div v-if="!lectureCreateForm.pdf_file_url">
-									<div class="flex flex-col mb-5 mt-5">
-										<i
-											class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
-											@click="openFileDialog"
-										/>
-
-										<p class="m-auto text-sm">Загрузите pdw файл с лекцией</p>
-									</div>
+									<p class="m-auto text-sm">Загрузите pdw файл с лекцией</p>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="mt-6 flex items-center justify-end gap-x-6">
-				<Button
-					:disabled="isCreateLectrueButtonDisabled"
-					:loading="isLoading"
-					@click="createLecture"
-				>
-					Сохранить
-				</Button>
-			</div>
-		</form>
-	</div>
+		</div>
+		<div class="mt-6 flex items-center justify-end gap-x-6">
+			<Button
+				:disabled="isCreateLectrueButtonDisabled"
+				:loading="isLoading"
+				@click="createLecture"
+			>
+				Сохранить
+			</Button>
+		</div>
+	</form>
 </template>
 
 <style scoped></style>
