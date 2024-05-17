@@ -6,11 +6,12 @@ import type { IUser, IPaginatedResult } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
+import { getYoutubeId } from '~/helpers';
 
 const deleteDialog = ref(false);
 const editDialog = ref(false);
 
-type FetchFunction<T = unknown> = (...args: unknown[]) => Promise<T>;
+const debounceFetch = createDebounceFetch(250);
 
 const isNewSubjectModalVisible = ref(false);
 const isNewTeacherModalVisible = ref(false);
@@ -61,17 +62,6 @@ const getUser = async () => {
 await getSummary();
 
 const isSummaryCreateLectureFormVisible = ref(false);
-
-// TODO: стоит перенести в общии функции composables, youtubeRegex в общие константы
-// может использоваться во всех компонентах
-const getYoutubeId = (url: string) => {
-	if (!url) return '';
-	const youtubeRegex =
-		// eslint-disable-next-line
-		/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-	const match = url.match(youtubeRegex);
-	return match ? match[1] : '';
-};
 
 const idDelete = ref('');
 
@@ -153,8 +143,6 @@ const uploadPdf = async (event: Event) => {
 		lectionName.value = data.value.file_url;
 	}
 };
-
-//
 
 const isDisabled = ref(true);
 const isEditing = ref(true);
@@ -260,10 +248,6 @@ const createTeacher = async () => {
 };
 
 await Promise.all([getUniversities(), getSubjects(), getTeachers()]);
-
-const debounceFetch = useDebounceFn(async (fetch: FetchFunction) => {
-	await fetch();
-}, 250);
 
 const onUniversityChange = async (event: DropdownChangeEvent) => {
 	if (typeof event.value === 'string') {
@@ -642,14 +626,6 @@ const submitSummary = async () => {
 			<p>конспектов пока нет, но вы можете их добавить</p>
 		</div>
 	</div>
-
-	<!--  -->
-
-	<!--  -->
-
-	<!--  -->
-
-	<!--  -->
 
 	<div v-if="isEditing">
 		<Toast />
