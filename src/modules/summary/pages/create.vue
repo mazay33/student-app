@@ -24,7 +24,6 @@ const newSubjectName = ref('');
 
 const newTeacher = ref({
 	full_name: '',
-	date_birth: '',
 });
 
 const getUniversities = async (queryUrl: string = '') => {
@@ -91,9 +90,6 @@ const getTeachers = async (queryUrl: string = '') => {
 };
 
 const createTeacher = async () => {
-	if (!newTeacher.value.date_birth || !newTeacher.value.full_name) return;
-	newTeacher.value.date_birth = useDateFormat(newTeacher.value.date_birth, 'YYYY-MM-DD').value;
-
 	const { data } = await apiService.teacher.createTeacher(newTeacher.value);
 
 	if (data.value) {
@@ -106,14 +102,12 @@ const createTeacher = async () => {
 		teachers.value?.result.push({
 			id: data.value,
 			full_name: newTeacher.value.full_name,
-			date_birth: newTeacher.value.date_birth,
 			is_moderated: false,
 		});
 
 		summaryCreateForm.teacher = {
 			id: data.value,
 			full_name: newTeacher.value.full_name,
-			date_birth: newTeacher.value.date_birth,
 			is_moderated: false,
 		};
 
@@ -321,15 +315,6 @@ const submitButtonDisabled = computed(
 										class="flex-auto w-10/10 mb-3"
 										autocomplete="off"
 									/>
-									<div class="flex">
-										<p class="ml--30 font-semibold translate-y-2">Календарь</p>
-										<Calendar
-											id="Календарь"
-											v-model="newTeacher.date_birth"
-											class="w-10/10 ml-8"
-											date-format="yy-mm-dd"
-										/>
-									</div>
 								</div>
 							</div>
 							<div class="flex align-items-center gap-3 mb-5"></div>
