@@ -15,6 +15,14 @@ export const useSummaryCreateFormStore = defineStore(
 			teacher: null,
 		});
 
+		const summaryEditForm = reactive<ISummaryEditForm>({
+			name: null,
+			university: null,
+			subject: null,
+			teacher: null,
+			id: null,
+		});
+
 		const clearSummaryCreateForm = () => {
 			summaryCreateForm.name = null;
 			summaryCreateForm.university = null;
@@ -23,6 +31,7 @@ export const useSummaryCreateFormStore = defineStore(
 		};
 
 		const createSummary = async () => {
+			isLoading.value = true;
 			const { data, pending } = await apiService.summary.createSummary(summaryCreateForm);
 
 			if (data.value) {
@@ -33,15 +42,8 @@ export const useSummaryCreateFormStore = defineStore(
 			isLoading.value = pending.value;
 		};
 
-		const summaryEditForm = reactive<ISummaryEditForm>({
-			name: null,
-			university: null,
-			subject: null,
-			teacher: null,
-			id: null,
-		});
-
 		const editSummary = async () => {
+			isLoading.value = true;
 			const { data, pending } = await apiService.summary.editSummary(summaryEditForm);
 
 			isLoading.value = pending.value;

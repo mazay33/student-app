@@ -21,6 +21,7 @@ interface ILecture {
 	pdf_file_url: string;
 	video_url: string;
 	id: string;
+	date: string;
 }
 interface ICreateLectureForm extends Omit<ILecture, 'id'> {
 	summary_id: string;
