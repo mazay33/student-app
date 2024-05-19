@@ -53,13 +53,6 @@ const confirmRegistration = async () => {
 			life: 3000,
 		});
 		authStore.login(email.value, password.value);
-	} else {
-		toast.add({
-			detail: 'Code is not correct',
-			severity: 'error',
-			summary: 'Registration error: ',
-			life: 3000,
-		});
 	}
 
 	if (error.value) {
