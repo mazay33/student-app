@@ -15,8 +15,8 @@ export const fetchWithCookie = async (event: H3Event, url: string) => {
 	/* Modify cookies to include httpOnly and secure attributes */
 	const modifiedCookies = cookies.map(cookie => {
 		// Parse the cookie string
-		const [cookieNameValue, ...attributes] = cookie.split(';');
-		const cookieName = cookieNameValue.split('=')[0];
+		const [cookieNameValue] = cookie.split(';');
+		// const cookieName = cookieNameValue.split('=')[0];
 
 		// Add httpOnly and secure attributes if not present
 		// const hasHttpOnly = attributes.some(

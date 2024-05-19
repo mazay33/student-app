@@ -91,7 +91,7 @@ const checkActiveRoute = item => {
 			<span class="layout-menuitem-text">{{ item.label }}</span>
 			<i
 				v-if="item.items"
-				class="pi pi-fw pi-angle-down layout-submenu-toggler"
+				class="layout-submenu-toggler pi pi-fw pi-angle-down"
 			/>
 		</a>
 		<nuxt-link

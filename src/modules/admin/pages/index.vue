@@ -1,7 +1,6 @@
+<!-- eslint-disable vue/no-template-shadow -->
 <script setup lang="ts">
-import UserApi from '~/services/api/userApi';
 import useApiService from '~/services/apiService';
-import HttpService from '~/services/httpService';
 
 import type { IPaginatedResult, IUser } from '~/@types/@types';
 
@@ -122,8 +121,8 @@ const uploadCsv = async (event: Event) => {
 	<div>
 		<Toast />
 
-		<div class="bg-white p-5 shadow-lg rounded-lg">
-			<div class="flex mb-5">
+		<div class="rounded-lg bg-white p-5 shadow-lg">
+			<div class="mb-5 flex">
 				<h2 class="flex-1">Администратор: {{ user?.nickname }}</h2>
 				<Button
 					severity="info"
@@ -136,7 +135,7 @@ const uploadCsv = async (event: Event) => {
 				scroll-height="64vh"
 				scrollable
 				show-gridlines
-				:value="data.result"
+				:value="data?.result"
 			>
 				<Column
 					field="name"
@@ -156,12 +155,12 @@ const uploadCsv = async (event: Event) => {
 						<h5>Проверка конспекта - {{ slotProps.data.name }}</h5>
 						<div class="flex">
 							<Button
-								class="bg-red-400 border-red-400"
+								class="border-red-400 bg-red-400"
 								@click="reject(slotProps.data)"
 								>Отклонить</Button
 							>
 							<Button
-								class="bg-green-400 border-green-400 ml-5"
+								class="ml-5 border-green-400 bg-green-400"
 								@click="approve(slotProps.data)"
 								>Одобрить</Button
 							>
@@ -206,15 +205,20 @@ const uploadCsv = async (event: Event) => {
 				<Column
 					field="name"
 					header="Пользователь"
-					><template #body="{ data }">
+				>
+					<template #body="{ data: userData }">
 						<div class="flex items-center gap-2">
 							<img
-								v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url"
+								v-if="users?.result.find((user: IUser) => user.id === userData.user_id)?.image_url"
 								class="w-10 rounded-full text-center"
-								:src="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url || ''"
+								:src="
+									users?.result.find((user: IUser) => user.id === userData.user_id)?.image_url || ''
+								"
 								alt=""
 							/>
-							<span>{{ users?.result.find((user: IUser) => user.id === data.user_id)?.nickname }} </span>
+							<span
+								>{{ users?.result.find((user: IUser) => user.id === userData.user_id)?.nickname }}
+							</span>
 						</div>
 					</template></Column
 				>

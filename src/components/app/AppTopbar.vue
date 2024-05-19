@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '~/modules/auth/stores/auth';
-const { layoutConfig, onMenuToggle } = useLayout();
+const { onMenuToggle } = useLayout();
 const outsideClickListener = ref(null);
 const topbarMenuActive = ref(false);
 const router = useRouter();
@@ -20,18 +20,18 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	unbindOutsideClickListener();
 });
-const logoUrl = computed(() => {
-	return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
-});
+// const logoUrl = computed(() => {
+// 	return `/layout/images/${layoutConfig.darkTheme.value ? 'logo-white' : 'logo-dark'}.svg`;
+// });
 
 const onTopBarMenuButton = () => {
 	topbarMenuActive.value = !topbarMenuActive.value;
 };
 
-const onSettingsClick = () => {
-	topbarMenuActive.value = false;
-	router.push('/utilities/documentation');
-};
+// const onSettingsClick = () => {
+// 	topbarMenuActive.value = false;
+// 	router.push('/utilities/documentation');
+// };
 
 const topbarMenuClasses = computed(() => {
 	return {
@@ -73,15 +73,15 @@ const isOutsideClicked = event => {
 	);
 };
 
-const emit = defineEmits(['menuToggle']);
+// const emit = defineEmits(['menuToggle']);
 
-const themeStore = useThemeStore();
-const op = ref<any>(null);
+// const themeStore = useThemeStore();
+// const op = ref<any>(null);
 const isUserMenuActive = ref<any>(null);
 
-function toggle(event: any) {
-	op.value.toggle(event);
-}
+// function toggle(event: any) {
+// 	op.value.toggle(event);
+// }
 
 function toggleUserMenu(event: any) {
 	isUserMenuActive.value.toggle(event);
@@ -130,14 +130,14 @@ const items = computed(() => {
 		</NuxtLink>
 
 		<button
-			class="p-link layout-menu-button layout-topbar-button"
+			class="layout-menu-button layout-topbar-button p-link"
 			@click="onMenuToggle()"
 		>
 			<i class="pi pi-bars" />
 		</button>
 
 		<button
-			class="p-link layout-topbar-menu-button layout-topbar-button"
+			class="p-link layout-topbar-button layout-topbar-menu-button"
 			@click="onTopBarMenuButton()"
 		>
 			<i class="pi pi-ellipsis-v" />
@@ -157,7 +157,7 @@ const items = computed(() => {
 				/>
 				<img
 					v-else
-					class="rounded-full h-40px w-40px cursor-pointer"
+					class="h-40px w-40px cursor-pointer rounded-full"
 					:src="`${userImg.replace('localhost', 'la-parole.ru/api')}`"
 				/>
 				<span>Profile</span>

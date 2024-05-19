@@ -44,7 +44,7 @@ export const useSummaryCreateFormStore = defineStore(
 
 		const editSummary = async () => {
 			isLoading.value = true;
-			const { data, pending } = await apiService.summary.editSummary(summaryEditForm);
+			const { pending } = await apiService.summary.editSummary(summaryEditForm);
 
 			isLoading.value = pending.value;
 		};

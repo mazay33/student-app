@@ -1,5 +1,5 @@
 <script setup>
-import { EditorContent, Editor, Extension } from '@tiptap/vue-3';
+import { EditorContent, Editor } from '@tiptap/vue-3';
 import { Highlight } from '@tiptap/extension-highlight';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { StarterKit } from '@tiptap/starter-kit';
@@ -18,9 +18,9 @@ const props = defineProps({
 
 const editor = ref();
 
-const extensionNames = computed(() => {
-	return props.extensions.map(ext => ext.name);
-});
+// const extensionNames = computed(() => {
+// 	return props.extensions.map(ext => ext.name);
+// });
 
 watch(
 	() => props.modelValue,
@@ -216,7 +216,7 @@ onBeforeUnmount(() => {
 		</Toolbar>
 		<editor-content
 			:editor="editor"
-			class="p-tiptap p-inputtext"
+			class="p-inputtext p-tiptap"
 		/>
 	</div>
 </template>

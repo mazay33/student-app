@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import { resolve, sep, basename, join } from 'pathe';
+import { resolve, sep, basename } from 'pathe';
 import { addPlugin, addLayout, useNuxt } from '@nuxt/kit';
 import { glob } from 'glob';
 
@@ -110,6 +110,7 @@ export default {
 					cwd: `${dirname}/locales`,
 				});
 				for (const file of files) {
+					// eslint-disable-next-line @typescript-eslint/no-var-requires
 					const translation = require(resolve(`${dirname}/locales`, file));
 					additionalMessages.unshift({
 						[file.replace(/.json$/, '')]: {
@@ -241,7 +242,7 @@ export default {
 			...this.registerComposables(),
 		};
 	},
-	setup(options: any, nuxt: any) {
+	setup(_options: any, _nuxt: any) {
 		this.registerAlias();
 		this.registerPlugins();
 		this.registerMiddlewares();

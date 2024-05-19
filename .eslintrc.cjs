@@ -11,7 +11,13 @@ module.exports = {
 		ecmaVersion: 2022,
 		sourceType: 'module',
 	},
-	extends: ['plugin:nuxt/recommended', '@nuxtjs/eslint-config-typescript', 'plugin:prettier/recommended', 'prettier'],
+	extends: [
+		'plugin:nuxt/recommended',
+		'@nuxtjs/eslint-config-typescript',
+		'plugin:prettier/recommended',
+		'prettier',
+		'@unocss',
+	],
 	plugins: ['prettier'],
 	rules: {
 		'no-console': 'off',
@@ -30,7 +36,7 @@ module.exports = {
 		'import/export': 0,
 		'@typescript-eslint/no-unused-vars': 1,
 		'no-unused-vars': 1,
-		'max-len': [2, { code: MAX_LINE_LENGTH, ignoreComments: true }],
+		'max-len': [1, { code: MAX_LINE_LENGTH, ignoreComments: true }],
 		'n/no-path-concat': 0,
 		'vue/multi-word-component-names': 0,
 	},

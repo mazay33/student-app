@@ -102,15 +102,15 @@ const clearLectureCreateForm = () => {
 	<form>
 		<div>
 			<div>
-				<p class="text-sm leading-6 text-gray-600">Пожалуйста заполните данные о вашей лекции ниже</p>
+				<p class="text-sm text-gray-600 leading-6">Пожалуйста заполните данные о вашей лекции ниже</p>
 				<p class="mt--3 text-sm text-gray-600">
 					Помните что другие пользователи также смогут увидеть данную лекцию
 				</p>
 
 				<div>
-					<div class="mt-5 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
+					<div class="grid grid-cols-1 mt-5 gap-x-6 gap-y-3 sm:grid-cols-6">
 						<div class="sm:col-span-3">
-							<label class="block text-sm font-medium leading-6 text-gray-900">Название лекции</label>
+							<label class="block text-sm text-gray-900 font-medium leading-6">Название лекции</label>
 							<div>
 								<InputText
 									v-model="lectureCreateForm.name"
@@ -121,7 +121,7 @@ const clearLectureCreateForm = () => {
 						</div>
 
 						<div class="sm:col-span-3">
-							<label class="block text-sm font-medium leading-6 text-gray-900">Описание</label>
+							<label class="block text-sm text-gray-900 font-medium leading-6">Описание</label>
 							<div>
 								<InputText
 									v-model="lectureCreateForm.description"
@@ -135,7 +135,7 @@ const clearLectureCreateForm = () => {
 
 				<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
 					<div class="sm:col-span-3">
-						<label class="block text-sm font-medium leading-8 text-gray-900">Дата проведения лекции</label>
+						<label class="block text-sm text-gray-900 font-medium leading-8">Дата проведения лекции</label>
 						<Calendar
 							v-model="lectureCreateForm.date"
 							show-icon
@@ -144,7 +144,7 @@ const clearLectureCreateForm = () => {
 						/>
 					</div>
 					<div class="sm:col-span-3">
-						<label class="block text-sm font-medium leading-8 text-gray-900">Ссылка на youtube видео</label>
+						<label class="block text-sm text-gray-900 font-medium leading-8">Ссылка на youtube видео</label>
 						<InputText
 							v-model="lectureCreateForm.video_url"
 							type="text"
@@ -155,23 +155,23 @@ const clearLectureCreateForm = () => {
 
 				<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
 					<div>
-						<label class="text-sm font-medium leading-6 text-gray-900">Добавить файл</label>
-						<div class="mt-5 border border-dashed border-gray-900/25 rounded-lg">
+						<label class="text-sm text-gray-900 font-medium leading-6">Добавить файл</label>
+						<div class="mt-5 border border-gray-900/25 rounded-lg border-dashed">
 							<div
 								v-if="lectureCreateForm.pdf_file_url"
 								class="mb-5"
 							>
-								<div class="card w-5/10 sm-w-3/10 m-auto mt-5">
-									<p class="font-semibold text-center text-indigo-500">{{ lectionName }}</p>
-									<p class="font-light text-sm text-center">
+								<div class="card m-auto mt-5 w-5/10 sm-w-3/10">
+									<p class="text-center text-indigo-500 font-semibold">{{ lectionName }}</p>
+									<p class="text-center text-sm font-light">
 										Ваш файл смогут просмотреть другие пользователи
 									</p>
 
 									<div class="flex justify-center">
 										<Button
 											icon="pi pi-times"
-											rounded
 											outlined
+											rounded
 											severity="danger"
 											:disabled="!lectureCreateForm.pdf_file_url"
 											@click="lectureCreateForm.pdf_file_url = ''"
@@ -181,9 +181,9 @@ const clearLectureCreateForm = () => {
 							</div>
 
 							<div v-if="!lectureCreateForm.pdf_file_url">
-								<div class="flex flex-col mb-5 mt-5">
+								<div class="mb-5 mt-5 flex flex-col">
 									<i
-										class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
+										class="pi pi-cloud-upload m-auto cursor-pointer pb-3 text-6xl text-indigo-500"
 										@click="openFileDialog"
 									/>
 

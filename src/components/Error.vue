@@ -13,10 +13,10 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue';
 
-const props = defineProps({
-	error: Object as PropType<null>,
-	customMessage: String,
-});
+const props = defineProps<{
+	error: string;
+	customMessage: string;
+}>();
 
 const errorMessage = ref('');
 

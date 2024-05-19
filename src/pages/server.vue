@@ -10,10 +10,10 @@ const count = useCounter();
 		<PageView />
 		<h2>Counter (useState)</h2>
 
-		<div class="grid grid-cols-3 w-80 mt-8">
+		<div class="grid grid-cols-3 mt-8 w-80">
 			<Button
 				icon="pi pi-plus"
-				class="p-button-rounded p-button-info"
+				class="p-button-info p-button-rounded"
 				@click="count.inc()"
 			/>
 			<span class="text-4xl">{{ count.count }}</span>

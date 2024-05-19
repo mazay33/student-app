@@ -63,14 +63,14 @@ const resendCode = async () => {
 </script>
 <template>
 	<div>
-		<div class="flex justify-between items-center h-screen overflow-y-hidden">
-			<div class="w-full mx-auto md:w-1/3 p-6 md:p-8">
+		<div class="h-screen flex items-center justify-between overflow-y-hidden">
+			<div class="mx-auto w-full p-6 md:w-1/3 md:p-8">
 				<div class="mb-5">
-					<div class="text-3xl font-medium mb-3">Welcome to our App</div>
-					<span class="font-medium mr-2">Already have an account?</span
+					<div class="mb-3 text-3xl font-medium">Welcome to our App</div>
+					<span class="mr-2 font-medium">Already have an account?</span
 					><nuxtLink
 						to="/auth/login"
-						class="font-medium no-underline text-indigo-500 cursor-pointer"
+						class="cursor-pointer text-indigo-500 font-medium no-underline"
 					>
 						Sign In!
 					</nuxtLink>
@@ -78,7 +78,7 @@ const resendCode = async () => {
 				<div>
 					<label
 						for="email1"
-						class="block font-medium mb-2"
+						class="mb-2 block font-medium"
 					>
 						Email
 					</label>
@@ -87,12 +87,12 @@ const resendCode = async () => {
 						v-model="email"
 						type="text"
 						placeholder="Email address"
-						class="w-full mb-3"
+						class="mb-3 w-full"
 					/>
 
 					<label
 						for="password1"
-						class="block font-medium mb-2"
+						class="mb-2 block font-medium"
 					>
 						Password
 					</label>
@@ -101,10 +101,10 @@ const resendCode = async () => {
 						v-model="password"
 						type="password"
 						placeholder="Password"
-						class="w-full mb-3"
+						class="mb-3 w-full"
 					/>
-					<div class="flex align-items-center justify-content-between mb-6">
-						<a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">
+					<div class="align-items-center justify-content-between mb-6 flex">
+						<a class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline">
 							Forgot password?
 						</a>
 					</div>
@@ -120,9 +120,9 @@ const resendCode = async () => {
 				</div>
 			</div>
 
-			<div class="relative w-1/2 h-full">
+			<div class="relative h-full w-1/2">
 				<img
-					class="absoltue w-full h-full object-cover"
+					class="absoltue h-full w-full object-cover"
 					src="https://blocks.primevue.org/images/blocks/signin/signin.jpg"
 					alt=""
 				/>
@@ -140,8 +140,8 @@ const resendCode = async () => {
 			:style="{ width: '30rem' }"
 		>
 			<div class="flex flex-col items-center">
-				<div class="font-bold text-xl mb-2">Authenticate Your Account</div>
-				<p class="text-coolGray block mb-0">Please enter the code sent to your email.</p>
+				<div class="mb-2 text-xl font-bold">Authenticate Your Account</div>
+				<p class="mb-0 block text-coolGray">Please enter the code sent to your email.</p>
 				<p
 					mb-5
 					text-coolGray
@@ -164,7 +164,7 @@ const resendCode = async () => {
 						</template>
 					</InputOtp>
 				</div>
-				<div class="flex justify-between items-center mt-10 self-stretch">
+				<div class="mt-10 flex items-center self-stretch justify-between">
 					<Button
 						v-if="timerValue == 0"
 						:loading="isLoadingPage"

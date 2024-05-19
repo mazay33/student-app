@@ -1,9 +1,8 @@
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
-import type { UseFetchOptions } from '#app';
 import type { IPaginatedResult } from '~/@types/@types';
-import type { IUploadCsv, ISummaryCreateForm, ILecture, ISummary } from '~/modules/summary/@types';
+import type { IUploadCsv, ISummary } from '~/modules/summary/@types';
 import type { IApproved, IRejected } from '~/modules/reestr/statusTypes';
 
 export default class AdminApi extends BaseApi {
@@ -15,9 +14,9 @@ export default class AdminApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getAdminSummaries(filterQuery: string = '') {
+	public async getAdminSummaries(filterQuery = '') {
 		const url = `main/service/summaries${filterQuery}`;
-		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url);
+		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url, { server: false });
 	}
 
 	public async statusApproved(statusForm: IApproved) {

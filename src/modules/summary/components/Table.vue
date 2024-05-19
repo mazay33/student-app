@@ -36,7 +36,7 @@ const isUniversitiesLoading = ref<boolean>(false);
 
 const getUniversities = async () => {
 	isUniversitiesLoading.value = true;
-	const { data, error, pending } = await apiService.university.getUniversityList(universityQueryUrl.value);
+	const { data, pending } = await apiService.university.getUniversityList(universityQueryUrl.value);
 	if (data.value) {
 		universities.value = data.value;
 	}
@@ -58,7 +58,7 @@ const onUniversityChange = (event: DropdownChangeEvent) => {
 };
 
 const onUniversitiesLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
-	const { first, last } = event;
+	const { last } = event;
 
 	if (universities.value && universities.value.result.length === last && last < universities.value.count) {
 		universityQueryFilter.value.setPageSize(last + 25);
@@ -77,7 +77,7 @@ const isSubjectsLoading = ref<boolean>(false);
 
 const getSubjects = async () => {
 	isSubjectsLoading.value = true;
-	const { data, error, pending } = await apiService.subject.getSubjectList(subjectQueryUrl.value);
+	const { data, pending } = await apiService.subject.getSubjectList(subjectQueryUrl.value);
 	if (data.value) {
 		subjects.value = data.value;
 	}
@@ -99,15 +99,15 @@ const onSubjectChange = (event: DropdownChangeEvent) => {
 	summaryFilter.value.subject_id = event.value?.id;
 };
 
-const onSubjectsLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
-	const { first, last } = event;
+// const onSubjectsLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
+// 	const { first, last } = event;
 
-	if (subjects.value && subjects.value.result.length === last && last < subjects.value.count) {
-		subjectQueryFilter.value.setPageSize(last + 25);
+// 	if (subjects.value && subjects.value.result.length === last && last < subjects.value.count) {
+// 		subjectQueryFilter.value.setPageSize(last + 25);
 
-		await debounceFetch(() => getSubjects());
-	}
-};
+// 		await debounceFetch(() => getSubjects());
+// 	}
+// };
 
 // teachers
 // Логика фильтрации по преподавателям
@@ -118,7 +118,7 @@ const teacherQueryUrl = computed(() => teacherQueryFilter.value.buildUrl());
 const isTeachersLoading = ref<boolean>(false);
 const getTeachers = async () => {
 	isTeachersLoading.value = true;
-	const { data, error, pending } = await apiService.teacher.getTeacherList(teacherQueryUrl.value);
+	const { data, pending } = await apiService.teacher.getTeacherList(teacherQueryUrl.value);
 	if (data.value) {
 		teachers.value = data.value;
 	}
@@ -227,10 +227,10 @@ const clearFilters = () => {
 		<template #empty>
 			<div class="w-full flex flex-col items-center justify-center py-20">
 				<img
-					class="w-90px h-90px text-slate-400"
+					class="h-90px w-90px text-slate-400"
 					src="~/assets/images/empty.svg"
 				/>
-				<div class="text-slate-400 text-2xl mt-4">Конспекты не найдены</div>
+				<div class="mt-4 text-2xl text-slate-400">Конспекты не найдены</div>
 			</div>
 		</template>
 		<Column
@@ -274,7 +274,7 @@ const clearFilters = () => {
 				>
 					<nuxt-link
 						:to="isPrivateSummary ? `/summary/private/${data.id}` : `/summary/public/${data.id}`"
-						class="text-indigo-500 cursor-pointer"
+						class="cursor-pointer text-indigo-500"
 					>
 						<Badge
 							v-if="isPrivateSummary"

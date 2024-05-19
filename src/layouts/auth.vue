@@ -17,7 +17,7 @@
 <script setup lang="ts">
 const themeStore = useThemeStore();
 
-const { layoutConfig, layoutState, isSidebarActive } = useLayout();
+const { layoutConfig, layoutState } = useLayout();
 
 const containerClass = computed(() => {
 	return {

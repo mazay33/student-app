@@ -16,7 +16,7 @@ export default class TeacherApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getTeacherList(filterQuery: string = '', options?: UseFetchOptions<IPaginatedResult<ITeacher>>) {
+	public async getTeacherList(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<ITeacher>>) {
 		const url = `main/public/teachers${filterQuery}`;
 		return await this.sendRequest<IPaginatedResult<ITeacher>>(HttpMethod.GET, url, {
 			...options,

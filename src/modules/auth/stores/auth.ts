@@ -10,6 +10,7 @@ export const useAuthStore = defineStore(
 		const user = ref<IUser | null>();
 		const isAuthinticated = computed<boolean>(() => !!user.value);
 		const isAdmin = computed<boolean>(() => !!user.value && user.value.is_superuser);
+		const refreshingError = ref<boolean>(false);
 
 		const getMe = async () => {
 			isLoading.value = true;
@@ -44,6 +45,8 @@ export const useAuthStore = defineStore(
 
 			if (error.value) {
 				user.value = null;
+				refreshingError.value = true;
+				return;
 			}
 
 			isLoading.value = pending.value;
@@ -63,6 +66,7 @@ export const useAuthStore = defineStore(
 			isLoading: computed(() => isLoading.value),
 			authinticated: isAuthinticated,
 			isAdmin,
+			refreshingError: computed(() => refreshingError.value),
 
 			login,
 			refresh,

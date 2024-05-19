@@ -5,10 +5,10 @@ const pageview = data.value?.pageview;
 </script>
 
 <template>
-	<div class="text-gray:80 text-2xl">
+	<div class="text-2xl text-gray:80">
 		<span
-			font-500
 			text-gray
+			font-500
 			>{{ pageview }}</span
 		>
 		page views since

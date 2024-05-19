@@ -69,7 +69,7 @@ const subjects = ref<IPaginatedResult<ISubject>>();
 const teachers = ref<IPaginatedResult<ITeacher>>();
 
 // TODO: вынести логику фильтров в отдельную функцию, а то многа кода + переиспользуется в разных компонентах
-const getUniversities = async (queryUrl: string = '') => {
+const getUniversities = async (queryUrl = '') => {
 	isLoading.value = true;
 	const { data, pending } = await apiService.university.getUniversityList(queryUrl);
 	if (data.value) {
@@ -79,7 +79,7 @@ const getUniversities = async (queryUrl: string = '') => {
 	isLoading.value = pending.value;
 };
 
-const getSubjects = async (queryUrl: string = '') => {
+const getSubjects = async (queryUrl = '') => {
 	isLoading.value = true;
 	const { data, pending } = await apiService.subject.getSubjectList(queryUrl);
 	if (data.value) {
@@ -113,7 +113,7 @@ const createSubject = async () => {
 	}
 };
 
-const getTeachers = async (queryUrl: string = '') => {
+const getTeachers = async (queryUrl = '') => {
 	isLoading.value = true;
 	const { data, pending } = await apiService.teacher.getTeacherList(queryUrl);
 	if (data.value) {
@@ -235,57 +235,57 @@ const showComment = event => {
 		<!-- Отображение информации конспекта -->
 		<!-- TODO: перенести в отдельный компонент, вынести логику  -->
 		<div v-if="isEditing">
-			<div class="flex justify-center items-center gap-4 mb-10">
+			<div class="mb-10 flex items-center justify-center gap-4">
 				<i class="pi pi-bookmark pt-2 text-3xl" />
-				<h1 class="text-3xl text-indigo-500 font-semibold p-0 m-0">
+				<h1 class="m-0 p-0 text-3xl text-indigo-500 font-semibold">
 					{{ summary?.name }}
 				</h1>
 			</div>
 			<div>
 				<div class="flex flex-col sm:flex-row">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center pl-0 sm-pl-3">Автор:</div>
+					<div class="pl-0 text-center text-base text-gray-900 font-bold leading-7 sm-pl-3">Автор:</div>
 
-					<div class="text-lg pl-0 sm-pl-5 flex justify-center">
-						<div class="flex mt-1 sm-mt--2">
+					<div class="flex justify-center pl-0 text-lg sm-pl-5">
+						<div class="mt-1 flex sm-mt--2">
 							<img
 								v-if="user?.image_url"
 								class="w-10 rounded-full text-center"
 								:src="user.image_url"
 							/>
-							<p class="pt-2 ml-3">{{ user?.nickname }}</p>
+							<p class="ml-3 pt-2">{{ user?.nickname }}</p>
 						</div>
 					</div>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center">Вуз:</div>
-					<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Вуз:</div>
+					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
 						{{ summary?.university?.name }}
 					</div>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center">Предмет:</div>
-					<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Предмет:</div>
+					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
 						{{ summary?.subject?.name }}
 					</div>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
 					<div class="flex flex-1 flex-col sm:flex-row">
-						<div class="text-base font-bold leading-7 text-gray-900 text-center">Преподаватель:</div>
-						<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">
+						<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
+						<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
 							{{ summary?.teacher?.full_name }}
 						</div>
 					</div>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
 					<div
 						v-if="isPrivateSummary"
 						class="flex flex-1 flex-col sm:flex-row"
 					>
-						<div class="text-base font-bold leading-7 text-gray-900 text-center sm-mt-1 mb-1">
+						<div class="mb-1 text-center text-base text-gray-900 font-bold leading-7 sm-mt-1">
 							Комментарии:
 						</div>
 						<div class="m-auto sm-ml-2">
@@ -301,7 +301,7 @@ const showComment = event => {
 										<p class="mt-2">{{ summary?.status }}</p>
 										<p class="mt-1">{{ summary?.moderation_comment }}</p>
 
-										<div class="flex align-items-center gap-2 mt-3">
+										<div class="align-items-center mt-3 flex gap-2">
 											<Button
 												label="Cancel"
 												outlined
@@ -319,13 +319,13 @@ const showComment = event => {
 
 					<Button
 						v-if="isPrivateSummary"
-						class="bg-green border-green mt-5 sm-mt-0 m-auto sm-mr-10 h-9"
+						class="m-auto mt-5 h-9 border-green bg-green sm-mr-10 sm-mt-0"
 						@click="isSummaryCreateLectureFormVisible = !isSummaryCreateLectureFormVisible"
 						>{{ isSummaryCreateLectureFormVisible ? 'Отменить добавление' : 'Добавить лекцию' }}</Button
 					>
 					<Button
 						v-if="isPrivateSummary"
-						class="mt-5 sm-mt-0 m-auto translate-x--0 sm-translate-x--5 h-9"
+						class="m-auto mt-5 h-9 translate-x--0 sm-mt-0 sm-translate-x--5"
 						@click="
 							isDisabled = !isDisabled;
 							isEditing = !isEditing;
@@ -334,7 +334,7 @@ const showComment = event => {
 					>
 					<Button
 						v-else-if="!isPrivateSummary && authStore.user?.id === summary?.user_id"
-						class="bg-green border-green m-auto sm-ml-0"
+						class="m-auto border-green bg-green sm-ml-0"
 						@click="useRouter().push({ path: `/summary/private/${summary?.id}` })"
 						>Редактировать</Button
 					>
@@ -343,12 +343,12 @@ const showComment = event => {
 		</div>
 		<!-- Отображение редактирования информации конспекта -->
 		<div v-else>
-			<div class="flex justify-center items-center gap-4 mb-10">
+			<div class="mb-10 flex items-center justify-center gap-4">
 				<Toast />
 				<i class="pi pi-bookmark text-3xl" />
 				<InputText
 					v-model="summaryEditForm.name"
-					class="text-3xl text-indigo-500 font-semibold bg-white shadow-none text-center w-full sm-w-4/10"
+					class="w-full bg-white text-center text-3xl text-indigo-500 font-semibold shadow-none sm-w-4/10"
 					:class="[isDisabled ? 'border-white' : 'border-blue']"
 					:disabled="isDisabled"
 				>
@@ -356,22 +356,22 @@ const showComment = event => {
 			</div>
 			<div>
 				<div class="flex flex-col sm:flex-row">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center pl-0 sm-pl-3">Автор:</div>
+					<div class="pl-0 text-center text-base text-gray-900 font-bold leading-7 sm-pl-3">Автор:</div>
 
-					<div class="text-lg pl-0 sm-pl-5 flex justify-center">
-						<div class="flex mt-1 sm-mt--2">
+					<div class="flex justify-center pl-0 text-lg sm-pl-5">
+						<div class="mt-1 flex sm-mt--2">
 							<img
 								v-if="user?.image_url"
 								class="w-10 rounded-full text-center"
 								:src="user.image_url"
 							/>
-							<p class="pt-2 ml-3">{{ user?.nickname }}</p>
+							<p class="ml-3 pt-2">{{ user?.nickname }}</p>
 						</div>
 					</div>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center">Вуз:</div>
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Вуз:</div>
 					<Dropdown
 						v-model="summaryEditForm.university"
 						option-label="name"
@@ -379,7 +379,7 @@ const showComment = event => {
 						:options="universities?.result"
 						editable
 						:show-clear="!isDisabled"
-						class="text-md leading-7 text-gray-600 pl-5 shadow-none bg-white ml-0 sm-ml-5"
+						class="text-md ml-0 bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
 						:class="[isDisabled ? 'border-white' : 'border-blue']"
 						:disabled="isDisabled"
 						required
@@ -388,8 +388,8 @@ const showComment = event => {
 					</Dropdown>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
-					<div class="text-base font-bold leading-7 text-gray-900 text-center">Предмет:</div>
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Предмет:</div>
 					<div class="flex">
 						<Dropdown
 							v-model="summaryEditForm.subject"
@@ -398,7 +398,7 @@ const showComment = event => {
 							:loading="isLoading"
 							editable
 							:show-clear="!isDisabled"
-							class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5 w-full"
+							class="text-md ml-0 w-full bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
 							:class="[isDisabled ? 'border-white' : 'border-blue']"
 							:disabled="isDisabled"
 							@change="onSubjectChange($event)"
@@ -419,13 +419,13 @@ const showComment = event => {
 						header="Добавление предмета"
 						:style="{ width: '25rem' }"
 					>
-						<span class="p-text-secondary block mb-5"
+						<span class="p-text-secondary mb-5 block"
 							>При добавлении нового предмета, ваш конспект будет отправлен на модерацию</span
 						>
-						<div class="flex align-items-center gap-3 mb-3">
+						<div class="align-items-center mb-3 flex gap-3">
 							<label
 								for="Предмет"
-								class="font-semibold w-6rem mt-2"
+								class="mt-2 w-6rem font-semibold"
 								>Предмет</label
 							>
 							<InputText
@@ -435,8 +435,8 @@ const showComment = event => {
 								autocomplete="off"
 							/>
 						</div>
-						<div class="flex align-items-center gap-3 mb-5"></div>
-						<div class="flex justify-content-end gap-2">
+						<div class="align-items-center mb-5 flex gap-3"></div>
+						<div class="justify-content-end flex gap-2">
 							<Button
 								type="button"
 								label="Отменить"
@@ -452,9 +452,9 @@ const showComment = event => {
 					</Dialog>
 				</div>
 
-				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
 					<div class="flex flex-1 flex-col sm:flex-row">
-						<div class="text-base font-bold leading-7 text-gray-900 text-center">Преподаватель:</div>
+						<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
 						<div class="flex">
 							<Dropdown
 								v-model="summaryEditForm.teacher"
@@ -463,7 +463,7 @@ const showComment = event => {
 								option-label="full_name"
 								editable
 								:show-clear="!isDisabled"
-								class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5 w-full"
+								class="text-md ml-0 w-full bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
 								:class="[isDisabled ? 'border-white' : 'border-blue']"
 								:disabled="isDisabled"
 								@change="onTeacherChange($event)"
@@ -484,13 +484,13 @@ const showComment = event => {
 							header="Добавление преподавателя"
 							:style="{ width: '25rem' }"
 						>
-							<span class="p-text-secondary block mb-5"
+							<span class="p-text-secondary mb-5 block"
 								>При добавлении нового преподавателя, ваш конспект будет отправлен на модерацию</span
 							>
-							<div class="flex align-items-center gap-3 mb-3">
+							<div class="align-items-center mb-3 flex gap-3">
 								<label
 									for="Преподаватель"
-									class="font-semibold w-8rem mt-2"
+									class="mt-2 w-8rem font-semibold"
 									>Преподаватель</label
 								>
 
@@ -498,13 +498,13 @@ const showComment = event => {
 									<InputText
 										id="Преподаватель"
 										v-model="newTeacher.full_name"
-										class="flex-auto w-10/10 mb-3"
+										class="mb-3 w-10/10 flex-auto"
 										autocomplete="off"
 									/>
 								</div>
 							</div>
-							<div class="flex align-items-center gap-3 mb-5"></div>
-							<div class="flex justify-content-end gap-2">
+							<div class="align-items-center mb-5 flex gap-3"></div>
+							<div class="justify-content-end flex gap-2">
 								<Button
 									type="button"
 									label="Отменить"
@@ -521,20 +521,20 @@ const showComment = event => {
 					</div>
 					<Button
 						v-if="isPrivateSummary && !isDisabled"
-						class="mt-5 sm-mt-0 m-auto sm-mr-4 sm-ml-5"
+						class="m-auto mt-5 sm-ml-5 sm-mr-4 sm-mt-0"
 						@click="submitSummary"
 						>Сохранить</Button
 					>
 
 					<Button
 						v-else-if="!isPrivateSummary && authStore.user?.id === summary?.user_id"
-						class="bg-green border-green mt-5 sm-mt-0 m-auto"
+						class="m-auto mt-5 border-green bg-green sm-mt-0"
 						@click="useRouter().push({ path: `/summary/private/${summary?.id}` })"
 						>Редактировать</Button
 					>
 					<Button
 						v-if="isPrivateSummary"
-						class="bg-gray border-gray mt-5 sm-mt-0 m-auto"
+						class="m-auto mt-5 border-gray bg-gray sm-mt-0"
 						@click="
 							isDisabled = !isDisabled;
 							isEditing = !isEditing;
@@ -551,7 +551,7 @@ const showComment = event => {
 			class="mt-8 border border-indigo-500 border-solid"
 		>
 			<template #header>
-				<div class="text-xl text-indigo-500 font-semibold pl-6 pt-4">Добавление лекции</div>
+				<div class="pl-6 pt-4 text-xl text-indigo-500 font-semibold">Добавление лекции</div>
 			</template>
 			<template #content>
 				<SummaryCreateLectureForm
@@ -568,7 +568,7 @@ const showComment = event => {
 			class="mt-8"
 		>
 			<template #header>
-				<div class="text-xl text-indigo-500 font-semibold pl-6 pt-4">Лекции</div>
+				<div class="pl-6 pt-4 text-xl text-indigo-500 font-semibold">Лекции</div>
 			</template>
 			<template #content>
 				<SummaryViewLecture
@@ -581,7 +581,7 @@ const showComment = event => {
 
 		<div
 			v-else
-			class="mt-15 mb-10 text-2xl text-center text-indigo-600 font-semibold"
+			class="mb-10 mt-15 text-center text-2xl text-indigo-600 font-semibold"
 		>
 			<p>Лекций пока нет, но вы можете их добавить</p>
 		</div>

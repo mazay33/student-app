@@ -1,7 +1,8 @@
+import type { UseFetchOptions } from '#app';
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
-import type { UseFetchOptions } from '#app';
+
 import type { IPaginatedResult } from '~/@types/@types';
 import type { ISummary, ISummaryCreateForm, ISummaryEditForm } from '~/modules/summary/@types';
 
@@ -35,7 +36,7 @@ export default class SummaryApi extends BaseApi {
 		});
 	}
 
-	public async getPublicSummaries(filterQuery: string = '', options?: UseFetchOptions<IPaginatedResult<ISummary[]>>) {
+	public async getPublicSummaries(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<ISummary[]>>) {
 		const url = `main/public/summaries${filterQuery}`;
 		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url, {
 			...options,
@@ -47,7 +48,7 @@ export default class SummaryApi extends BaseApi {
 		return await this.sendRequest<ISummary>(HttpMethod.GET, url);
 	}
 
-	public async getPrivateSummaries(filterQuery: string = '') {
+	public async getPrivateSummaries(filterQuery = '') {
 		const url = `main/private/summaries${filterQuery}`;
 		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url);
 	}

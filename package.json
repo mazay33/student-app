@@ -18,6 +18,8 @@
 		"test:coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
+		"@alexanderniebuhr/eslint-config": "^1.4.0",
+		"@alexanderniebuhr/prettier-plugin-unocss": "^0.0.4",
 		"@formkit/nuxt": "1.5.2",
 		"@iconify-json/carbon": "^1.1.31",
 		"@iconify-json/mdi": "^1.1.64",
@@ -39,6 +41,7 @@
 		"@tiptap/starter-kit": "^2.2.4",
 		"@tiptap/vue-3": "^2.2.4",
 		"@typescript-eslint/parser": "^7.8.0",
+		"@unocss/eslint-config": "^0.60.2",
 		"@unocss/nuxt": "^0.58.4",
 		"@vitejs/plugin-vue": "^5.0.4",
 		"@vitest/ui": "^1.4.0",

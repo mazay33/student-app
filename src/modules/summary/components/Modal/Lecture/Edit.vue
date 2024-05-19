@@ -55,28 +55,28 @@ const uploadPdf = async (event: Event) => {
 
 <template>
 	<div>
-		<span class="p-text-secondary block mb-5">Обновите информацию о вашей лекции</span>
-		<div class="flex align-items-center gap-3 mb-3">
-			<div class="flex flex-col sm-flex-row w-full">
-				<label class="font-semibold w-10rem mb-2 sm-mt-2">Название лекции</label>
+		<span class="p-text-secondary mb-5 block">Обновите информацию о вашей лекции</span>
+		<div class="align-items-center mb-3 flex gap-3">
+			<div class="w-full flex flex-col sm-flex-row">
+				<label class="mb-2 w-10rem font-semibold sm-mt-2">Название лекции</label>
 				<InputText
 					v-model="lectureEditForm.name"
 					class="flex-auto"
 				></InputText>
 			</div>
 		</div>
-		<div class="flex align-items-center gap-3 mb-3">
-			<div class="flex flex-col sm-flex-row w-full">
-				<label class="font-semibold w-10rem mb-2 sm-mt-2">Описание</label>
+		<div class="align-items-center mb-3 flex gap-3">
+			<div class="w-full flex flex-col sm-flex-row">
+				<label class="mb-2 w-10rem font-semibold sm-mt-2">Описание</label>
 				<InputText
 					v-model="lectureEditForm.description"
 					class="flex-auto"
 				/>
 			</div>
 		</div>
-		<div class="flex align-items-center gap-3 mb-3">
-			<div class="flex flex-col sm-flex-row w-full">
-				<label class="font-semibold w-10rem mb-2 sm-mt-2">Дата лекции</label>
+		<div class="align-items-center mb-3 flex gap-3">
+			<div class="w-full flex flex-col sm-flex-row">
+				<label class="mb-2 w-10rem font-semibold sm-mt-2">Дата лекции</label>
 				<Calendar
 					v-model="lectureEditForm.date"
 					date-format="yy-mm-dd"
@@ -84,42 +84,42 @@ const uploadPdf = async (event: Event) => {
 				/>
 			</div>
 		</div>
-		<div class="flex align-items-center gap-3 mb-3">
-			<div class="flex flex-col sm-flex-row w-full">
-				<label class="font-semibold w-10rem mb-2 sm-mt-2">youtube ссылка</label>
+		<div class="align-items-center mb-3 flex gap-3">
+			<div class="w-full flex flex-col sm-flex-row">
+				<label class="mb-2 w-10rem font-semibold sm-mt-2">youtube ссылка</label>
 				<InputText
 					v-model="lectureEditForm.video_url"
 					class="flex-auto"
 				/>
 			</div>
 		</div>
-		<div class="flex align-items-center gap-3 mb-5">
-			<div class="flex flex-col sm-flex-row w-full">
-				<label class="font-semibold w-10rem mb-2 sm-mt-2">PDF файл</label>
+		<div class="align-items-center mb-5 flex gap-3">
+			<div class="w-full flex flex-col sm-flex-row">
+				<label class="mb-2 w-10rem font-semibold sm-mt-2">PDF файл</label>
 				<div class="flex flex-col">
 					<div class="flex">
-						<div class="card w-75 m-auto">
+						<div class="card m-auto w-75">
 							<div
 								v-if="!lectureEditForm.pdf_file_url"
 								class="m-auto"
 							>
 								<div class="flex flex-col">
 									<i
-										class="pi pi-cloud-upload text-6xl m-auto pb-3 text-indigo-500 cursor-pointer"
+										class="pi pi-cloud-upload m-auto cursor-pointer pb-3 text-6xl text-indigo-500"
 										@click="openFileDialog"
 									/>
 									<p class="m-auto text-sm">Загрузите новый pdw файл</p>
 								</div>
 							</div>
 							<div v-else>
-								<div class="card w-9/10 m-auto mt-5">
-									<p class="font-semibold font-xs text-center text-indigo-500">файл с лекцией</p>
+								<div class="card m-auto mt-5 w-9/10">
+									<p class="font-xs text-center text-indigo-500 font-semibold">файл с лекцией</p>
 
 									<div class="flex justify-center">
 										<Button
 											icon="pi pi-times"
-											rounded
 											outlined
+											rounded
 											severity="danger"
 											:disabled="!lectureEditForm.pdf_file_url"
 											@click="lectureEditForm.pdf_file_url = ''"

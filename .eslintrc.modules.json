@@ -11,8 +11,6 @@
     "usePrimeDataTable": "readonly",
     "ExpiringStorage": "readonly",
     "QueryBuilder": "readonly",
-    "useCounterStore": "readonly",
-    "useDataStore": "readonly",
     "updateTheme": "readonly",
     "useThemeStore": "readonly",
     "usePrimeVue": "readonly",

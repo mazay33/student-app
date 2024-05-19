@@ -69,32 +69,32 @@ const deleteLecture = async () => {
 			:key="i"
 		>
 			<template #header>
-				<span class="flex align-items-center gap-2 w-full">
-					<span class="font-bold white-space-nowrap text-lg text-sm sm-text-base">{{
+				<span class="align-items-center w-full flex gap-2">
+					<span class="white-space-nowrap text-lg text-sm font-bold sm-text-base">{{
 						lectureItem.name
 					}}</span>
 				</span>
 			</template>
 
 			<div>
-				<p class="font-bold white-space-nowrap text-base mr-3 sm-mr-10">
+				<p class="white-space-nowrap mr-3 text-base font-bold sm-mr-10">
 					{{ lectureItem.date }}
 				</p>
-				<div class="italic font-normal text-lg mb-4 w-full md:w-5/10">"{{ lectureItem.description }}"</div>
+				<div class="mb-4 w-full text-lg font-normal italic md:w-5/10">"{{ lectureItem.description }}"</div>
 				<div class="flex flex-col">
 					<div class="flex">
 						<nuxt-link
 							target="_blank"
 							:to="lectureItem.pdf_file_url"
 						>
-							<Button class="w-full sm:w-46 mr-5">Лекция для чтения</Button>
+							<Button class="mr-5 w-full sm:w-46">Лекция для чтения</Button>
 						</nuxt-link>
 						<Button
 							v-tooltip="{
 								value: copied ? 'Скопировано!' : 'Скопировать ссылку',
 								autoHide: false,
 							}"
-							class="bg-green border-green sm-ml-0 ml-5"
+							class="ml-5 border-green bg-green sm-ml-0"
 							@click="copy(lectureItem.pdf_file_url)"
 						>
 							<i class="pi pi-share-alt pr-1 sm-pr-0"></i>
@@ -104,7 +104,7 @@ const deleteLecture = async () => {
 					<div class="mt-5">
 						<div v-if="lectureItem.video_url">
 							<iframe
-								class="w-full lg-w-6/10 h-70 md-h-100 lg-h-130 rounded-md"
+								class="h-70 w-full rounded-md lg-h-130 lg-w-6/10 md-h-100"
 								:src="'https://www.youtube.com/embed/' + getYoutubeId(lectureItem.video_url)"
 								frameborder="0"
 								allowfullscreen
@@ -123,7 +123,7 @@ const deleteLecture = async () => {
 			>
 			<Button
 				v-if="isPrivateSummary"
-				class="mt-5 sm-mt-4 ml-0 sm-ml-5"
+				class="ml-0 mt-5 sm-ml-5 sm-mt-4"
 				severity="info"
 				@click="openEditLectureModal(lectureItem)"
 				>Редактировать лекцию</Button
@@ -141,7 +141,7 @@ const deleteLecture = async () => {
 		<SummaryModalLectureDelete />
 
 		<template #footer>
-			<div class="flex justify-content-end gap-2">
+			<div class="justify-content-end flex gap-2">
 				<Button
 					type="button"
 					label="Отменить"
@@ -172,7 +172,7 @@ const deleteLecture = async () => {
 		/>
 
 		<template #footer>
-			<div class="flex justify-content-end gap-2">
+			<div class="justify-content-end flex gap-2">
 				<Button
 					type="button"
 					label="Отменить"

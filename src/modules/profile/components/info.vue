@@ -88,26 +88,26 @@ const toggle = (event: Event) => {
 
 	<div
 		v-if="user"
-		class="flex items-center gap-5 flex-col sm:flex-row gap-5 mt-7 justify-between"
+		class="mt-7 flex flex-col items-center justify-between gap-5 gap-5 sm:flex-row"
 	>
 		<div
 			flex
 			flex-col
 			sm:flex-row
 		>
-			<div class="text-center mt--10">
+			<div class="mt--10 text-center">
 				<div class="w-5/10 text-black">
 					<InputText
 						v-model="user.nickname"
 						type="text"
 						:disabled="isDisabled"
-						class="w-60 shadow-none text-black bg-white text-center font-bold border-1"
+						class="w-60 border-1 bg-white text-center text-black font-bold shadow-none"
 						:class="[isDisabled ? 'border-white' : 'border-blue']"
 					/>
 				</div>
 				<div>
 					<img
-						class="rounded-full mt-5 h-200px w-200px"
+						class="mt-5 h-200px w-200px rounded-full"
 						:class="isOwnerUser ? 'cursor-pointer' : ''"
 						:src="
 							user.image_url
@@ -121,28 +121,28 @@ const toggle = (event: Event) => {
 
 			<div sm:ml-7>
 				<div class="flex">
-					<div class="flex flex-col gap-2 flex flex-col">
+					<div class="flex flex flex-col flex-col gap-2">
 						<label>Email</label>
-						<div class="bg-slate-200 rounded w-60 h-10">
-							<p class="pt-2 pl-3">{{ user.email }}</p>
+						<div class="h-10 w-60 rounded bg-slate-200">
+							<p class="pl-3 pt-2">{{ user.email }}</p>
 						</div>
 					</div>
 				</div>
-				<div class="flex mt-6">
-					<div class="flex flex-col gap-2 flex flex-col">
+				<div class="mt-6 flex">
+					<div class="flex flex flex-col flex-col gap-2">
 						<label>Дата создания аккаунта</label>
-						<div class="bg-slate-200 rounded w-60 h-10">
-							<p class="pt-2 pl-3">{{ useDateFormat(user.created_at, 'DD.MM.YYYY').value }}</p>
+						<div class="h-10 w-60 rounded bg-slate-200">
+							<p class="pl-3 pt-2">{{ useDateFormat(user.created_at, 'DD.MM.YYYY').value }}</p>
 						</div>
 					</div>
 				</div>
-				<div class="flex mt-6">
-					<div class="flex flex-col gap-2 flex flex-col mb-5">
+				<div class="mt-6 flex">
+					<div class="mb-5 flex flex flex-col flex-col gap-2">
 						<label for="username">описание</label>
 						<InputText
 							v-model="user.description"
 							type="text"
-							class="placeholder:text-slate-700 shadow-none border-1 rounded w-60 h-10"
+							class="h-10 w-60 border-1 rounded shadow-none placeholder:text-slate-700"
 							:class="[isDisabled ? 'border-white' : 'border-blue']"
 							placeholder="Some info about..."
 							:disabled="isDisabled"
@@ -152,7 +152,7 @@ const toggle = (event: Event) => {
 			</div>
 		</div>
 
-		<div class="flex items-center justify-center gap-5 flex-col xl:flex-row md:gap-5 sm:mt-48">
+		<div class="flex flex-col items-center justify-center gap-5 sm:mt-48 xl:flex-row md:gap-5">
 			<Button
 				id="disnone"
 				label="обновить данные"
@@ -180,7 +180,7 @@ const toggle = (event: Event) => {
 		>
 			<div
 				v-if="!user.image_url"
-				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
+				class="overlay-tab"
 				@click="isOwnerUser ? openFileDialog() : () => {}"
 			>
 				<p class="m-0 w-110px">Загрузить фото</p>
@@ -191,7 +191,7 @@ const toggle = (event: Event) => {
 			</div>
 			<div
 				v-else
-				class="flex cursor-pointer items-center justify-between p-1 py-2 border-t-none border-b border-l-none border-r-none border-solid border-gray-300 hover:text-indigo-500 duration-200"
+				class="overlay-tab"
 				@click="isOwnerUser ? openFileDialog() : () => {}"
 			>
 				<p class="m-0 w-110px">Изменить фото</p>
@@ -200,9 +200,7 @@ const toggle = (event: Event) => {
 					style="font-size: 1rem"
 				/>
 			</div>
-			<div
-				class="flex items-center justify-between p-1 py-2 text-red hover:text-red-700 duration-200 cursor-pointer"
-			>
+			<div class="overlay-tab overlay-tab--delete">
 				<p class="m-0 w-110px">Удалить фото</p>
 				<i
 					class="pi pi-trash"
@@ -225,6 +223,14 @@ const toggle = (event: Event) => {
 
 	&::after {
 		margin-left: 47px;
+	}
+}
+
+.overlay-tab {
+	@apply flex cursor-pointer items-center justify-between border-b border-gray-300
+	border-solid border-l-none border-r-none border-t-none p-1 py-2 duration-200 hover:text-indigo-500;
+	&--delete {
+		@apply text-red duration-200 hover:text-red-700 border-b-none;
 	}
 }
 </style>

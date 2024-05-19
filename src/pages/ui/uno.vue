@@ -7,26 +7,26 @@ const config = useRuntimeConfig();
 		<h5>UnoCSS</h5>
 		<div
 			h-full
-			text-center
 			flex
 			select-none
+			text-center
 			all:transition-400
 		>
 			<div ma>
 				<div
-					text-5xl
-					fw100
+					animate-5s
 					animate-bounce-alt
 					animate-count-infinite
-					animate-5s
+					text-5xl
+					fw100
 				>
 					unocss
 				</div>
 				<div
-					op30
+					m1
 					text-lg
 					fw300
-					m1
+					op30
 				>
 					The instant on-demand Atomic CSS engine.
 				</div>
@@ -49,11 +49,11 @@ const config = useRuntimeConfig();
 		</div>
 		<div
 			bottom-5
-			right-0
 			left-0
+			right-0
 			text-center
-			op30
 			fw300
+			op30
 		>
 			on-demand · instant · fully customizable
 		</div>
@@ -68,7 +68,7 @@ const config = useRuntimeConfig();
 					href="../__unocss"
 					target="_blank"
 				>
-					<div class="i-mdi-information text-4xl text-green-600-500-500" />
+					<div class="i-mdi-information text-green-600-500-500 text-4xl" />
 				</a>
 				<article class="pt-4 text-base prose prose-truegray xl:text-xl">
 					View, play and analyse rules and setup ...

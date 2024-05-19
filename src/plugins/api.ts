@@ -2,7 +2,6 @@ import { fetchWithCookie } from '~/composables/useFetchCookie';
 
 export default defineNuxtPlugin(() => {
 	let isRefreshing = false;
-	const config = useRuntimeConfig();
 
 	const $api = $fetch.create({
 		baseURL: 'https://auth.24konspect.ru/api/',
@@ -11,24 +10,21 @@ export default defineNuxtPlugin(() => {
 		credentials: 'include',
 		headers: useRequestHeaders(['cookie']),
 
-		async onRequest({ request, options, error }) {
+		onRequest({ options }) {
 			options.headers = {
 				...options.headers,
 				...useRequestHeaders(['cookie']),
 			};
 		},
 
-		async onResponseError({ response, options, error }) {
+		async onResponseError({ response }) {
 			if (response.status === 401 && !isRefreshing) {
-				const authStore = useAuthStore();
-				const { refresh } = authStore;
-
 				isRefreshing = true;
 
 				if (process.server) {
 					const event = useRequestEvent();
 
-					const { data, status } = await useAsyncData(
+					const { status } = await useAsyncData(
 						async () => await fetchWithCookie(event!, 'https://auth.24konspect.ru/api/public/auth/refresh'),
 					);
 
@@ -41,7 +37,11 @@ export default defineNuxtPlugin(() => {
 					isRefreshing = false;
 				}
 				if (process.client) {
-					await refresh();
+					await useAuthStore().refresh();
+
+					if (useAuthStore().refreshingError) {
+						return;
+					}
 
 					isRefreshing = false;
 				}
