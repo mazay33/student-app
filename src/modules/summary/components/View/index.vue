@@ -217,6 +217,15 @@ const submitSummary = async () => {
 		});
 	}
 };
+
+const confirm = useConfirm();
+
+const showComment = event => {
+	confirm.require({
+		target: event.currentTarget,
+		group: 'headless',
+	});
+};
 </script>
 
 <template>
@@ -265,26 +274,58 @@ const submitSummary = async () => {
 				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
 					<div class="flex flex-1 flex-col sm:flex-row">
 						<div class="text-base font-bold leading-7 text-gray-900 text-center">Преподаватель:</div>
-						<div class="text-md leading-7 text-gray-600 pl-5 text-center">
+						<div class="text-md leading-7 text-gray-600 pl-0 sm-pl-5 text-center">
 							{{ summary?.teacher?.full_name }}
 						</div>
 					</div>
-					<Button
-						v-if="isPrivateSummary && !isDisabled"
-						class="mt-5 sm-mt-0 m-auto translate-x--0 sm-translate-x--5"
-						@click="submitSummary"
-						>Сохранить изменения</Button
+				</div>
+
+				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
+					<div
+						v-if="isPrivateSummary"
+						class="flex flex-1 flex-col sm:flex-row"
 					>
+						<div class="text-base font-bold leading-7 text-gray-900 text-center sm-mt-1 mb-1">
+							Комментарии:
+						</div>
+						<div class="m-auto sm-ml-2">
+							<Button
+								severity="info"
+								@click="showComment($event)"
+								>+</Button
+							>
+							<ConfirmPopup group="headless">
+								<template #container="{ rejectCallback }">
+									<div class="border-round p-3">
+										<span class="font-bold">Комментарий администратора:</span>
+										<p class="mt-2">{{ summary?.status }}</p>
+										<p class="mt-1">{{ summary?.moderation_comment }}</p>
+
+										<div class="flex align-items-center gap-2 mt-3">
+											<Button
+												label="Cancel"
+												outlined
+												severity="secondary"
+												size="small"
+												text
+												@click="rejectCallback"
+											></Button>
+										</div>
+									</div>
+								</template>
+							</ConfirmPopup>
+						</div>
+					</div>
 
 					<Button
 						v-if="isPrivateSummary"
-						class="bg-green border-green mt-5 sm-mt-0 m-auto sm-mr-10"
+						class="bg-green border-green mt-5 sm-mt-0 m-auto sm-mr-10 h-9"
 						@click="isSummaryCreateLectureFormVisible = !isSummaryCreateLectureFormVisible"
 						>{{ isSummaryCreateLectureFormVisible ? 'Отменить добавление' : 'Добавить лекцию' }}</Button
 					>
 					<Button
 						v-if="isPrivateSummary"
-						class="mt-5 sm-mt-0 m-auto translate-x--0 sm-translate-x--5"
+						class="mt-5 sm-mt-0 m-auto translate-x--0 sm-translate-x--5 h-9"
 						@click="
 							isDisabled = !isDisabled;
 							isEditing = !isEditing;
@@ -293,7 +334,7 @@ const submitSummary = async () => {
 					>
 					<Button
 						v-else-if="!isPrivateSummary && authStore.user?.id === summary?.user_id"
-						class="bg-green border-green mt-5 sm-mt-0 m-auto"
+						class="bg-green border-green m-auto sm-ml-0"
 						@click="useRouter().push({ path: `/summary/private/${summary?.id}` })"
 						>Редактировать</Button
 					>

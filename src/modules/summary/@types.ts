@@ -38,6 +38,7 @@ interface ISummary {
 	status?: string;
 	lectures?: ILecture[];
 	lectures_count: number;
+	moderation_comment?: string;
 }
 
 interface IUpload {
