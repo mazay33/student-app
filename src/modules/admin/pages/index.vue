@@ -26,14 +26,14 @@ const comment = ref('');
 
 const status = ref({
 	id: null,
-	modearation_comment: null,
+	moderation_comment: null,
 });
 
 const toast = useToast();
 
 const reject = async rowData => {
 	status.value.id = rowData.id;
-	status.value.modearation_comment = comment.value;
+	status.value.moderation_comment = comment.value;
 
 	const { data } = await apiService.admin.statusRegjected(status.value);
 
@@ -51,7 +51,7 @@ const reject = async rowData => {
 
 const approve = async rowData => {
 	status.value.id = rowData.id;
-	status.value.modearation_comment = comment.value;
+	status.value.moderation_comment = comment.value;
 
 	const { data } = await apiService.admin.statusApproved(status.value);
 

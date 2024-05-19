@@ -234,6 +234,7 @@ const showComment = event => {
 
 		<!-- Отображение информации конспекта -->
 		<!-- TODO: перенести в отдельный компонент, вынести логику  -->
+
 		<div v-if="isEditing">
 			<div class="mb-10 flex items-center justify-center gap-4">
 				<i class="pi pi-bookmark pt-2 text-3xl" />
@@ -298,12 +299,11 @@ const showComment = event => {
 								<template #container="{ rejectCallback }">
 									<div class="border-round p-3">
 										<span class="font-bold">Комментарий администратора:</span>
-										<p class="mt-2">{{ summary?.status }}</p>
-										<p class="mt-1">{{ summary?.moderation_comment }}</p>
+										<p class="mt-2">{{ summary?.moderation_comment }}</p>
 
-										<div class="align-items-center mt-3 flex gap-2">
+										<div class="align-items-center mt--1 flex gap-2">
 											<Button
-												label="Cancel"
+												label="Закрыть"
 												outlined
 												severity="secondary"
 												size="small"
