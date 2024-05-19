@@ -74,7 +74,7 @@ export default class AuthApi extends BaseApi {
 	}
 
 	public async confirmRegistration(code: string) {
-		const url = 'public/users/registration/confirm/;';
+		const url = 'public/users/registration/confirm';
 		return await this.sendRequest<boolean, { code: string }>(HttpMethod.PATCH, url, {
 			code,
 		});

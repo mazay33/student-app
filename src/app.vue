@@ -2,8 +2,12 @@
 useHead({
 	title: 'Student App',
 });
+const route = useRoute();
 const authStore = useAuthStore();
-await authStore.getMe();
+
+if (!route.path.includes('/auth')) {
+	await authStore.getMe();
+}
 </script>
 
 <template>

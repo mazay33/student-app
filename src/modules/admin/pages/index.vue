@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-template-shadow -->
 <script setup lang="ts">
 import useApiService from '~/services/apiService';
 
