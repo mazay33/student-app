@@ -39,7 +39,13 @@ const createLecture = async () => {
 };
 
 const isCreateLectrueButtonDisabled = computed(() => {
-	return !lectureCreateForm.value.name || !lectureCreateForm.value.date || !lectureCreateForm.value.summary_id;
+	return (
+		!lectureCreateForm.value.name ||
+		!lectureCreateForm.value.date ||
+		!lectureCreateForm.value.summary_id ||
+		!lectureCreateForm.value.description ||
+		!lectureCreateForm.value.pdf_file_url
+	);
 });
 
 const openFileDialog = () => {

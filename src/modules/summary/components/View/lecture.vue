@@ -102,12 +102,15 @@ const deleteLecture = async () => {
 					</div>
 
 					<div class="mt-5">
-						<iframe
-							class="w-full lg-w-6/10 h-70 md-h-100 lg-h-130 rounded-md"
-							:src="'https://www.youtube.com/embed/' + getYoutubeId(lectureItem.video_url)"
-							frameborder="0"
-							allowfullscreen
-						/>
+						<div v-if="lectureItem.video_url">
+							<iframe
+								class="w-full lg-w-6/10 h-70 md-h-100 lg-h-130 rounded-md"
+								:src="'https://www.youtube.com/embed/' + getYoutubeId(lectureItem.video_url)"
+								frameborder="0"
+								allowfullscreen
+							/>
+						</div>
+						<div v-else>тут могла бы быть видео-лекция</div>
 					</div>
 				</div>
 			</div>
@@ -161,7 +164,7 @@ const deleteLecture = async () => {
 		v-model:visible="isLectureEditModalVisible"
 		modal
 		header="Редактирование лекции"
-		:style="{ width: '33rem' }"
+		:style="{ width: '75%' }"
 	>
 		<SummaryModalLectureEdit
 			v-if="lecture"

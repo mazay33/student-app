@@ -28,7 +28,6 @@ const newSubjectName = ref('');
 
 const newTeacher = ref({
 	full_name: '',
-	date_birth: '',
 });
 
 const getSummary = async () => {
@@ -132,9 +131,6 @@ const getTeachers = async (queryUrl: string = '') => {
 };
 
 const createTeacher = async () => {
-	if (!newTeacher.value.date_birth || !newTeacher.value.full_name) return;
-	newTeacher.value.date_birth = useDateFormat(newTeacher.value.date_birth, 'YYYY-MM-DD').value;
-
 	const { data } = await apiService.teacher.createTeacher(newTeacher.value);
 
 	if (data.value) {
@@ -147,14 +143,12 @@ const createTeacher = async () => {
 		teachers.value?.result.push({
 			id: data.value,
 			full_name: newTeacher.value.full_name,
-			date_birth: newTeacher.value.date_birth,
 			is_moderated: false,
 		});
 
 		summaryEditForm.teacher = {
 			id: data.value,
 			full_name: newTeacher.value.full_name,
-			date_birth: newTeacher.value.date_birth,
 			is_moderated: false,
 		};
 
@@ -355,31 +349,29 @@ const submitSummary = async () => {
 
 				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
 					<div class="text-base font-bold leading-7 text-gray-900 text-center">Предмет:</div>
-					<Dropdown
-						v-model="summaryEditForm.subject"
-						:options="subjects?.result"
-						option-label="name"
-						:loading="isLoading"
-						editable
-						:show-clear="!isDisabled"
-						class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5"
-						:class="[isDisabled ? 'border-white' : 'border-blue']"
-						:disabled="isDisabled"
-						@change="onSubjectChange($event)"
-					>
-					</Dropdown>
-					<Button
-						w-11
-						m-auto
-						mt-2
-						sm-ml-2
-						sm-mt-0
-						text-sm
-						font-medium
-						@click="isNewSubjectModalVisible = true"
-					>
-						+
-					</Button>
+					<div class="flex">
+						<Dropdown
+							v-model="summaryEditForm.subject"
+							:options="subjects?.result"
+							option-label="name"
+							:loading="isLoading"
+							editable
+							:show-clear="!isDisabled"
+							class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5 w-full"
+							:class="[isDisabled ? 'border-white' : 'border-blue']"
+							:disabled="isDisabled"
+							@change="onSubjectChange($event)"
+						>
+						</Dropdown>
+						<Button
+							ml-2
+							text-sm
+							font-medium
+							@click="isNewSubjectModalVisible = true"
+						>
+							+
+						</Button>
+					</div>
 					<Dialog
 						v-model:visible="isNewSubjectModalVisible"
 						modal
@@ -422,31 +414,29 @@ const submitSummary = async () => {
 				<div class="flex flex-col sm:flex-row mt-3 pl-0 sm-pl-3">
 					<div class="flex flex-1 flex-col sm:flex-row">
 						<div class="text-base font-bold leading-7 text-gray-900 text-center">Преподаватель:</div>
-						<Dropdown
-							v-model="summaryEditForm.teacher"
-							:loading="isLoading"
-							:options="teachers?.result"
-							option-label="full_name"
-							editable
-							:show-clear="!isDisabled"
-							class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5"
-							:class="[isDisabled ? 'border-white' : 'border-blue']"
-							:disabled="isDisabled"
-							@change="onTeacherChange($event)"
-						>
-						</Dropdown>
-						<Button
-							w-11
-							m-auto
-							mt-2
-							sm-ml-2
-							sm-mt-0
-							text-sm
-							font-medium
-							@click="isNewTeacherModalVisible = true"
-						>
-							+
-						</Button>
+						<div class="flex">
+							<Dropdown
+								v-model="summaryEditForm.teacher"
+								:loading="isLoading"
+								:options="teachers?.result"
+								option-label="full_name"
+								editable
+								:show-clear="!isDisabled"
+								class="text-md leading-7 text-gray-600 pl-5 bg-white shadow-none ml-0 sm-ml-5 w-full"
+								:class="[isDisabled ? 'border-white' : 'border-blue']"
+								:disabled="isDisabled"
+								@change="onTeacherChange($event)"
+							>
+							</Dropdown>
+							<Button
+								ml-2
+								text-sm
+								font-medium
+								@click="isNewTeacherModalVisible = true"
+							>
+								+
+							</Button>
+						</div>
 						<Dialog
 							v-model:visible="isNewTeacherModalVisible"
 							modal
@@ -470,15 +460,6 @@ const submitSummary = async () => {
 										class="flex-auto w-10/10 mb-3"
 										autocomplete="off"
 									/>
-									<div class="flex">
-										<p class="ml--30 font-semibold translate-y-2">Календарь</p>
-										<Calendar
-											id="Календарь"
-											v-model="newTeacher.date_birth"
-											class="w-10/10 ml-8"
-											date-format="yy-mm-dd"
-										/>
-									</div>
 								</div>
 							</div>
 							<div class="flex align-items-center gap-3 mb-5"></div>
@@ -561,7 +542,7 @@ const submitSummary = async () => {
 			v-else
 			class="mt-15 mb-10 text-2xl text-center text-indigo-600 font-semibold"
 		>
-			<p>конспектов пока нет, но вы можете их добавить</p>
+			<p>Лекций пока нет, но вы можете их добавить</p>
 		</div>
 	</div>
 </template>
