@@ -49,14 +49,11 @@ export const useAuthStore = defineStore(
 		const refresh = async () => {
 			isLoading.value = true;
 			const { error, pending } = await apiService.auth.refresh();
-
+			isLoading.value = pending.value;
 			if (error.value) {
 				user.value = null;
 				refreshingError.value = true;
-				return;
 			}
-
-			isLoading.value = pending.value;
 		};
 
 		const logout = async () => {
