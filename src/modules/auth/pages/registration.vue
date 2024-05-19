@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { processErrors } from '~/helpers';
 import useApiService from '~/services/apiService';
 
 definePageMeta({
 	layout: 'auth',
 });
+
+const toast = useToast();
 
 const apiService = useApiService();
 
@@ -20,11 +23,20 @@ const isLoadingPage = ref(false);
 
 const registration = async () => {
 	isLoadingPage.value = true;
-	const { data, pending } = await apiService.auth.registration(email.value, password.value);
+	const { data, pending, error } = await apiService.auth.registration(email.value, password.value);
 
 	if (data.value) {
 		id.value = data.value.id;
 		codeConfirmDialog.value = true;
+	}
+
+	if (error.value) {
+		toast.add({
+			detail: processErrors(error.value.data.detail),
+			severity: 'error',
+			summary: 'Registration error: ',
+			life: 3000,
+		});
 	}
 
 	isLoadingPage.value = pending.value;
@@ -32,12 +44,32 @@ const registration = async () => {
 
 const confirmRegistration = async () => {
 	isLoadingPage.value = true;
-	const { data, pending } = await apiService.auth.confirmRegistration(codeConfirmationValue.value);
+	const { data, pending, error } = await apiService.auth.confirmRegistration(codeConfirmationValue.value);
 
 	if (data.value) {
+		toast.add({
+			summary: 'Регистрация прошла успешно',
+			severity: 'success',
+			life: 3000,
+		});
 		authStore.login(email.value, password.value);
+	} else {
+		toast.add({
+			detail: 'Code is not correct',
+			severity: 'error',
+			summary: 'Registration error: ',
+			life: 3000,
+		});
 	}
 
+	if (error.value) {
+		toast.add({
+			detail: processErrors(error.value.data.detail),
+			severity: 'error',
+			summary: 'Registration error: ',
+			life: 3000,
+		});
+	}
 	isLoadingPage.value = pending.value;
 };
 
@@ -63,6 +95,7 @@ const resendCode = async () => {
 </script>
 <template>
 	<div>
+		<Toast />
 		<div class="h-screen flex items-center justify-between overflow-y-hidden">
 			<div class="mx-auto w-full p-6 md:w-1/3 md:p-8">
 				<div class="mb-5">

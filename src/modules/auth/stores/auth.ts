@@ -1,4 +1,5 @@
 import type { IUser } from '~/@types/@types';
+import { processErrors } from '~/helpers';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
@@ -11,6 +12,7 @@ export const useAuthStore = defineStore(
 		const isAuthinticated = computed<boolean>(() => !!user.value);
 		const isAdmin = computed<boolean>(() => !!user.value && user.value.is_superuser);
 		const refreshingError = ref<boolean>(false);
+		const loginErrorMessage = ref<string | null>(null);
 
 		const getMe = async () => {
 			isLoading.value = true;
@@ -29,11 +31,16 @@ export const useAuthStore = defineStore(
 
 		const login = async (email: string, password: string) => {
 			isLoading.value = true;
-			const { data, pending } = await apiService.auth.login(email, password);
+			const { data, error, pending } = await apiService.auth.login(email, password);
 
 			if (data.value) {
+				loginErrorMessage.value = null;
 				await getMe();
 				await navigateTo('/');
+			}
+
+			if (error.value) {
+				loginErrorMessage.value = processErrors(error.value.data.detail);
 			}
 
 			isLoading.value = pending.value;
@@ -67,6 +74,7 @@ export const useAuthStore = defineStore(
 			authinticated: isAuthinticated,
 			isAdmin,
 			refreshingError: computed(() => refreshingError.value),
+			loginErrorMessage: computed(() => loginErrorMessage.value),
 
 			login,
 			refresh,
