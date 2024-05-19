@@ -1,11 +1,11 @@
 interface IApproved {
 	id: string;
-	modearation_comment: string;
+	moderation_comment: string;
 }
 
 interface IRejected {
 	id: string;
-	modearation_comment: string;
+	moderation_comment: string;
 }
 
 export type { IApproved, IRejected };

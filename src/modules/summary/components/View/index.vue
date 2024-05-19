@@ -234,6 +234,7 @@ const showComment = event => {
 
 		<!-- Отображение информации конспекта -->
 		<!-- TODO: перенести в отдельный компонент, вынести логику  -->
+
 		<div v-if="isEditing">
 			<div class="mb-10 flex items-center justify-center gap-4">
 				<i class="pi pi-bookmark pt-2 text-3xl" />
