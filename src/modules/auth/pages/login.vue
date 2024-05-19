@@ -13,6 +13,12 @@ const password = ref<string>('');
 const login = () => {
 	authStore.login(email.value, password.value);
 };
+
+const handleKeydown = (e: KeyboardEvent) => {
+	if (e.key === 'Enter') {
+		login();
+	}
+};
 </script>
 <template>
 	<div class="flex justify-between items-center h-screen overflow-y-hidden">
@@ -27,7 +33,7 @@ const login = () => {
 					Create today!
 				</nuxtLink>
 			</div>
-			<div>
+			<div @keydown="handleKeydown">
 				<label
 					for="email1"
 					class="block font-medium mb-2"
