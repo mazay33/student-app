@@ -195,6 +195,8 @@ const initEditForm = () => {
 	summaryEditForm.summary = summary.value.summary;
 	summaryEditForm.university = summary.value.university;
 	summaryEditForm.subject = summary.value.subject;
+	summaryEditForm.name = summary.value?.name;
+	summaryEditForm.teacher = summary.value?.teacher;
 };
 
 initEditForm();
@@ -208,6 +210,8 @@ const submitSummary = async () => {
 			summary: 'Конспект успешно изменнен',
 			life: 3000,
 		});
+		isDisabled.value = !isDisabled.value;
+		isEditing.value = !isEditing.value;
 		await getSummary();
 	} else {
 		toast.add({
@@ -273,11 +277,9 @@ const showComment = event => {
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="flex flex-1 flex-col sm:flex-row">
-						<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
-						<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
-							{{ summary?.teacher?.full_name }}
-						</div>
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
+					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
+						{{ summary?.teacher?.full_name }}
 					</div>
 				</div>
 
@@ -293,11 +295,36 @@ const showComment = event => {
 							<Button
 								severity="info"
 								@click="showComment($event)"
-								>+</Button
-							>
+								class="pi pi-angle-down w-12"
+							></Button>
 							<ConfirmPopup group="headless">
 								<template #container="{ rejectCallback }">
 									<div class="border-round p-3">
+										<div class="flex">
+											<p class="font-bold">Статус конспекта:</p>
+											<p
+												class="ml-2"
+												v-if="summary?.status === 'approved'"
+												style="color: green"
+											>
+												Одобрен
+											</p>
+											<p
+												class="ml-2"
+												v-if="summary?.status === 'rejected'"
+												style="color: red"
+											>
+												Отклонен
+											</p>
+											<p
+												class="ml-2"
+												v-if="summary?.status === 'on_moderation'"
+												style="color: orange"
+											>
+												На модерации
+											</p>
+										</div>
+
 										<span class="font-bold">Комментарий администратора:</span>
 										<p class="mt-2">{{ summary?.moderation_comment }}</p>
 
