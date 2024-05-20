@@ -163,10 +163,9 @@ const toggle = (event: Event) => {
 			<Button
 				v-if="isOwnerUser"
 				id="change_button"
-				label="Изменить"
-				class=""
 				@click="isDisabled = !isDisabled"
-			/>
+				>{{ isDisabled ? `Изменить` : 'Отменить' }}</Button
+			>
 		</div>
 	</div>
 	<OverlayPanel
