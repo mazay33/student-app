@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 definePageMeta({
 	layout: 'auth',
 });
@@ -6,8 +8,17 @@ definePageMeta({
 const authStore = useAuthStore();
 const toast = useToast();
 
-const email = ref<string>('');
-const password = ref<string>('');
+const { errors, defineField } = useForm({
+	validationSchema: yup.object({
+		email: yup.string().email().required(),
+		password: yup.string().required(),
+	}),
+});
+
+const [email, emailAttrs] = defineField('email', {
+	validateOnModelUpdate: false,
+});
+const [password, passwordAttrs] = defineField('password');
 
 const login = async () => {
 	await authStore.login(email.value, password.value);
@@ -27,6 +38,10 @@ const handleKeydown = (e: KeyboardEvent) => {
 		login();
 	}
 };
+
+const isSignInButtonDisabled = computed(() => {
+	return !email.value || !password.value || Object.keys(errors.value).length > 0;
+});
 </script>
 <template>
 	<div>
@@ -45,34 +60,49 @@ const handleKeydown = (e: KeyboardEvent) => {
 					</nuxtLink>
 				</div>
 				<div @keydown="handleKeydown">
-					<label
-						for="email1"
-						class="mb-2 block font-medium"
-					>
-						Email
-					</label>
-					<InputText
-						id="email1"
-						v-model="email"
-						type="text"
-						placeholder="Email address"
-						class="mb-3 w-full"
-					/>
+					<div class="relative mb-2">
+						<label
+							for="email"
+							class="mb-2 block font-medium"
+						>
+							Email
+						</label>
+						<InputText
+							id="email"
+							v-model="email"
+							v-bind="emailAttrs"
+							type="text"
+							placeholder="Email address"
+							class="mb-3 w-full"
+							:invalid="!!errors.email"
+						/>
+						<span class="absolute left-1 w-full text-xs text-red-500 -bottom-[6px]">{{
+							errors.email
+						}}</span>
+					</div>
 
-					<label
-						for="password1"
-						class="mb-2 block font-medium"
-					>
-						Password
-					</label>
-					<InputText
-						id="password1"
-						v-model="password"
-						type="password"
-						placeholder="Password"
-						class="mb-3 w-full"
-					/>
-					<div class="justify-content-between align-items-center mb-6 flex">
+					<div class="relative mb-2">
+						<label
+							for="password"
+							class="mb-2 block font-medium"
+						>
+							Password
+						</label>
+						<InputText
+							id="password"
+							v-model="password"
+							type="password"
+							placeholder="Password"
+							class="mb-3 w-full"
+							v-bind="passwordAttrs"
+							:invalid="!!errors.password"
+						/>
+						<span class="absolute left-1 w-full text-xs text-red-500 -bottom-[6px]">{{
+							errors.password
+						}}</span>
+					</div>
+
+					<div class="my-4">
 						<a class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline">
 							Forgot password?
 						</a>
@@ -84,6 +114,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 						icon="pi pi-user"
 						class="w-full"
 						:loading="authStore.isLoading"
+						:disabled="isSignInButtonDisabled"
 						@click="login()"
 					/>
 				</div>
