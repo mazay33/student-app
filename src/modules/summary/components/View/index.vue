@@ -282,6 +282,30 @@ const showComment = event => {
 						{{ summary?.teacher?.full_name }}
 					</div>
 				</div>
+				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
+					<div class="text-center text-base text-gray-900 font-bold leading-7">Статус конспекта:</div>
+					<div
+						v-if="summary?.status === 'approved'"
+						style="color: green"
+						class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5"
+					>
+						Одобрен
+					</div>
+					<div
+						v-if="summary?.status === 'rejected'"
+						style="color: red"
+						class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5"
+					>
+						Отклонён
+					</div>
+					<div
+						v-if="summary?.status === 'on_moderation'"
+						style="color: orange"
+						class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5"
+					>
+						На модерации
+					</div>
+				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
 					<div
@@ -298,46 +322,10 @@ const showComment = event => {
 								class="pi pi-angle-down w-12"
 							></Button>
 							<ConfirmPopup group="headless">
-								<template #container="{ rejectCallback }">
+								<template #container="{}">
 									<div class="border-round p-3">
-										<div class="flex">
-											<p class="font-bold">Статус конспекта:</p>
-											<p
-												class="ml-2"
-												v-if="summary?.status === 'approved'"
-												style="color: green"
-											>
-												Одобрен
-											</p>
-											<p
-												class="ml-2"
-												v-if="summary?.status === 'rejected'"
-												style="color: red"
-											>
-												Отклонен
-											</p>
-											<p
-												class="ml-2"
-												v-if="summary?.status === 'on_moderation'"
-												style="color: orange"
-											>
-												На модерации
-											</p>
-										</div>
-
 										<span class="font-bold">Комментарий администратора:</span>
 										<p class="mt-2">{{ summary?.moderation_comment }}</p>
-
-										<div class="align-items-center mt--1 flex gap-2">
-											<Button
-												label="Закрыть"
-												outlined
-												severity="secondary"
-												size="small"
-												text
-												@click="rejectCallback"
-											></Button>
-										</div>
 									</div>
 								</template>
 							</ConfirmPopup>
@@ -595,7 +583,7 @@ const showComment = event => {
 			class="mt-8"
 		>
 			<template #header>
-				<div class="pl-6 pt-4 text-xl text-indigo-500 font-semibold">Лекции</div>
+				<div class="pl-6 pt-4 text-xl text-indigo-500 font-semibold text-center">Лекции</div>
 			</template>
 			<template #content>
 				<SummaryViewLecture

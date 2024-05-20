@@ -5,6 +5,8 @@ import type { IPaginatedResult } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
 
+const authStore = useAuthStore();
+
 const isNewSubjectModalVisible = ref(false);
 const isNewTeacherModalVisible = ref(false);
 
@@ -164,11 +166,57 @@ const submitButtonDisabled = computed(
 		summaryCreateForm.subject?.id &&
 		summaryCreateForm.teacher?.id,
 );
+
+const router = useRouter();
+
+const isNeedLogin = ref(false);
+const isAllowedCreate = ref(true);
+
+const checkLogin = async () => {
+	const { data, error, pending } = await apiService.auth.getMe();
+	if (!data.value) {
+		isNeedLogin.value = true;
+		isAllowedCreate.value = false;
+	}
+};
+
+const goToLogin = async () => {
+	router.push('/auth/login');
+};
+
+onMounted(async () => {
+	await checkLogin();
+	console.log(isNeedLogin.value);
+});
 </script>
 <template>
+	<Dialog
+		v-model:visible="isNeedLogin"
+		modal
+		header="Ошибка авторизации"
+		:style="{ width: '25rem' }"
+	>
+		<span class="p-text-secondary block mb-5">Чтобы создать конспект необходимо войти в свой аккаунт</span>
+		<div class="flex align-items-center gap-3 mb-3"></div>
+
+		<div class="flex justify-content-end gap-2">
+			<Button
+				type="button"
+				label="Закрыть"
+				severity="secondary"
+				@click="isNeedLogin = false"
+			></Button>
+			<Button
+				type="button"
+				label="Войти"
+				@click="goToLogin()"
+			></Button>
+		</div>
+	</Dialog>
 	<Card>
 		<Toast />
 		<template #title>Создание конспекта</template>
+
 		<template #content>
 			<Stepper orientation="vertical">
 				<StepperPanel header="Конспект">
@@ -333,7 +381,7 @@ const submitButtonDisabled = computed(
 							</div>
 						</Dialog>
 						<Button
-							:disabled="!submitButtonDisabled"
+							:disabled="!submitButtonDisabled || !isAllowedCreate"
 							h-3rem
 							text-sm
 							font-medium
