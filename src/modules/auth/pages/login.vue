@@ -1,3 +1,4 @@
+html
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
@@ -10,8 +11,8 @@ const toast = useToast();
 
 const { errors, defineField } = useForm({
 	validationSchema: yup.object({
-		email: yup.string().email().required(),
-		password: yup.string().required(),
+		email: yup.string().required('Поле обязательно для заполнения'),
+		password: yup.string().required('Поле обязательно для заполнения'),
 	}),
 });
 
@@ -20,17 +21,20 @@ const [email, emailAttrs] = defineField('email', {
 });
 const [password, passwordAttrs] = defineField('password');
 
+const isLoading = ref(false);
 const login = async () => {
-	await authStore.login(email.value, password.value);
+	isLoading.value = true;
+	await authStore.login(email.value.trim().toLowerCase(), password.value);
 
 	if (authStore.loginErrorMessage) {
 		toast.add({
 			severity: 'error',
 			detail: authStore.loginErrorMessage,
-			summary: 'Login error: ',
+			summary: 'Ошибка входа: ',
 			life: 3000,
 		});
 	}
+	isLoading.value = false;
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -50,13 +54,13 @@ const isSignInButtonDisabled = computed(() => {
 		<div class="h-screen flex items-center justify-between overflow-y-hidden">
 			<div class="mx-auto w-full p-6 md:w-1/3 md:p-8">
 				<div class="mb-5">
-					<div class="mb-3 text-3xl font-medium">Welcome Back</div>
-					<span class="mr-2 font-medium">Already have an account?</span
-					><nuxtLink
+					<div class="mb-3 text-3xl font-medium">Войти в приложение</div>
+					<span class="mr-2 font-medium">Еще нет аккаунта?</span>
+					<nuxtLink
 						to="/auth/registration"
 						class="cursor-pointer text-indigo-500 font-medium no-underline"
 					>
-						Create today!
+						Создайте сегодня!
 					</nuxtLink>
 				</div>
 				<div @keydown="handleKeydown">
@@ -65,14 +69,14 @@ const isSignInButtonDisabled = computed(() => {
 							for="email"
 							class="mb-2 block font-medium"
 						>
-							Email
+							Логин
 						</label>
 						<InputText
 							id="email"
 							v-model="email"
 							v-bind="emailAttrs"
 							type="text"
-							placeholder="Email address"
+							placeholder="Электронная почта / Никнейм"
 							class="mb-3 w-full"
 							:invalid="!!errors.email"
 						/>
@@ -86,17 +90,18 @@ const isSignInButtonDisabled = computed(() => {
 							for="password"
 							class="mb-2 block font-medium"
 						>
-							Password
+							Пароль
 						</label>
-						<InputText
-							id="password"
+						<Password
 							v-model="password"
-							type="password"
-							placeholder="Password"
 							class="mb-3 w-full"
 							v-bind="passwordAttrs"
+							placeholder="Пароль"
 							:invalid="!!errors.password"
-						/>
+							toggle-mask
+							:feedback="false"
+						>
+						</Password>
 						<span class="absolute left-1 w-full text-xs text-red-500 -bottom-[6px]">{{
 							errors.password
 						}}</span>
@@ -104,16 +109,16 @@ const isSignInButtonDisabled = computed(() => {
 
 					<div class="my-4">
 						<a class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline">
-							Forgot password?
+							Забыли пароль?
 						</a>
 					</div>
 
 					<Button
 						type="submit"
-						label="Sign In"
+						label="Войти"
 						icon="pi pi-user"
 						class="w-full"
-						:loading="authStore.isLoading"
+						:loading="isLoading"
 						:disabled="isSignInButtonDisabled"
 						@click="login()"
 					/>
