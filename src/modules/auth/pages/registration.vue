@@ -119,7 +119,7 @@ const isSignUpButtonDisabled = computed(() => {
 		<div class="h-screen flex items-center justify-between overflow-y-hidden">
 			<div class="mx-auto w-full p-6 md:w-1/3 md:p-8">
 				<div class="mb-5">
-					<div class="mb-3 text-3xl font-medium">Добро пожаловать в наше приложение</div>
+					<div class="mb-3 text-3xl font-medium">Добро пожаловать</div>
 					<span class="mr-2 font-medium">Уже есть аккаунт?</span>
 					<nuxtLink
 						to="/auth/login"

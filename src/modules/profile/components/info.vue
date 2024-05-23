@@ -77,9 +77,60 @@ const openFileDialog = () => {
 };
 
 const avatarOverlayPanel = ref();
+const MenuOverlayPanel = ref();
 
 const toggle = (event: Event) => {
 	avatarOverlayPanel.value.toggle(event);
+};
+
+const passwords = ref({
+	old_password: null,
+	new_password: null,
+});
+
+const updatePasswords = ref(false);
+
+const updatePassword = async () => {
+	const { data } = await apiService.auth.updatePassword(passwords.value);
+
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Пароль успешно обновлен',
+			life: 3000,
+		});
+		updatePasswords.value = false;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Старый пароль некорректен',
+			life: 3000,
+		});
+	}
+};
+
+const deactivateUser = ref(false);
+
+const deleteUser = async () => {
+	const { data } = await apiService.auth.deactivateUser(user.value?.email);
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Аккаунт деактивирован',
+			life: 3000,
+		});
+		deactivateUser.value = false;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'ошибка деактивации',
+			life: 3000,
+		});
+	}
+};
+
+const toggleMenu = (event: Event) => {
+	MenuOverlayPanel.value.toggle(event);
 };
 </script>
 
@@ -153,6 +204,71 @@ const toggle = (event: Event) => {
 		</div>
 
 		<div class="flex flex-col items-center justify-center gap-5 sm:mt-48 xl:flex-row md:gap-5">
+			<Dialog
+				v-model:visible="updatePasswords"
+				modal
+				header="Обновление пароля"
+				:style="{ width: '25rem' }"
+			>
+				<span class="p-text-secondary block mb-5">Пожалуйста введите новый пароль</span>
+				<div class="flex flex-col align-items-center gap-3 mb-3">
+					<label class="font-semibold w-9rem">Старый пароль</label>
+					<InputText
+						class="flex-auto"
+						autocomplete="off"
+						v-model="passwords.old_password"
+					/>
+				</div>
+				<div class="flex flex-col align-items-center gap-3 mb-5">
+					<label class="font-semibold w-9rem">Новый пароль</label>
+					<InputText
+						class="flex-auto"
+						autocomplete="off"
+						v-model="passwords.new_password"
+					/>
+				</div>
+
+				<div class="flex justify-content-end gap-2">
+					<Button
+						type="button"
+						label="Отменить"
+						severity="secondary"
+						@click="updatePasswords = false"
+					></Button>
+					<Button
+						type="button"
+						label="Сохранить"
+						@click="updatePassword"
+					></Button>
+				</div>
+			</Dialog>
+
+			<Dialog
+				v-model:visible="deactivateUser"
+				modal
+				header="Деактивация аккаунта"
+				:style="{ width: '25rem' }"
+			>
+				<span class="p-text-secondary block mb-5"
+					>После деактивации вы сможете восстановить свой аккаунт. Подтвердите пожалуйста данное
+					действие</span
+				>
+
+				<div class="flex justify-content-end gap-2">
+					<Button
+						type="button"
+						label="Отменить"
+						severity="success"
+						@click="deactivateUser = false"
+					></Button>
+					<Button
+						type="button"
+						label="Деактивировать"
+						severity="danger"
+						@click="deleteUser"
+					></Button>
+				</div>
+			</Dialog>
 			<Button
 				id="disnone"
 				label="обновить данные"
@@ -164,8 +280,14 @@ const toggle = (event: Event) => {
 				v-if="isOwnerUser"
 				id="change_button"
 				@click="isDisabled = !isDisabled"
-				>{{ isDisabled ? `Изменить` : 'Отменить' }}</Button
+				:class="[isDisabled ? 'hidden' : '']"
+				>Отменить</Button
 			>
+			<Button
+				severity="success"
+				icon="pi pi-cog"
+				@click="isOwnerUser ? toggleMenu($event) : () => {}"
+			></Button>
 		</div>
 	</div>
 	<OverlayPanel
@@ -201,6 +323,54 @@ const toggle = (event: Event) => {
 			</div>
 			<div class="overlay-tab overlay-tab--delete">
 				<p class="m-0 w-110px">Удалить фото</p>
+				<i
+					class="pi pi-trash"
+					style="font-size: 1rem"
+				/>
+			</div>
+		</div>
+	</OverlayPanel>
+
+	<OverlayPanel
+		ref="MenuOverlayPanel"
+		class="sm-ml-7 ml-0"
+		append-to="div"
+	>
+		<div
+			v-if="user"
+			class="w-175px"
+		>
+			<div class="overlay-tab">
+				<p
+					class="m-0 w-full"
+					@click="isDisabled = !isDisabled"
+				>
+					Изменить данные
+				</p>
+				<i
+					class="pi pi-pen-to-square"
+					style="font-size: 1rem"
+				/>
+			</div>
+			<div class="overlay-tab">
+				<p
+					class="m-0 w-full"
+					@click="updatePasswords = !updatePasswords"
+				>
+					Сменить пароль
+				</p>
+				<i
+					class="pi pi-wrench"
+					style="font-size: 1rem"
+				/>
+			</div>
+			<div class="overlay-tab overlay-tab--delete">
+				<p
+					class="m-0 w-full"
+					@click="deactivateUser = !deactivateUser"
+				>
+					Деактивация аккаунта
+				</p>
 				<i
 					class="pi pi-trash"
 					style="font-size: 1rem"

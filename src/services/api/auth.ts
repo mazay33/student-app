@@ -1,8 +1,8 @@
-import type { UseFetchOptions } from '#app';
-
+import { string } from 'yup';
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
+import type { UseFetchOptions } from '#app';
 import type { IUser } from '~/@types/@types';
 
 interface IAuthLoginResponse {
@@ -22,6 +22,11 @@ interface IRegistrationResponseData {
 interface IRegistrationRequestData {
 	email: string;
 	password: string;
+}
+
+interface IUpdatePassword {
+	old_password: string;
+	new_password: string;
 }
 
 export default class AuthApi extends BaseApi {
@@ -96,5 +101,25 @@ export default class AuthApi extends BaseApi {
 	public async logout() {
 		const url = 'private/auth/logout';
 		return await this.sendRequest<{ message: string }, Record<string, never>>(HttpMethod.POST, url, {});
+	}
+
+	public async resetPassword(email: string) {
+		const url = `public/users/password/reset`;
+		return await this.sendRequest<boolean, { email: string }>(HttpMethod.PATCH, url, { email });
+	}
+
+	public async updatePassword(updatePassword: IUpdatePassword) {
+		const url = 'private/users/update/password';
+		return await this.sendRequest<boolean, IUpdatePassword>(HttpMethod.PATCH, url, updatePassword);
+	}
+
+	public async deactivateUser(email: string) {
+		const url = 'private/users/deactivate';
+		return await this.sendRequest<boolean, { email: string }>(HttpMethod.POST, url, { email });
+	}
+
+	public async activateUser(email: string) {
+		const url = 'public/users/activate';
+		return await this.sendRequest<boolean, { emai: string }>(HttpMethod.POST, url, { email });
 	}
 }

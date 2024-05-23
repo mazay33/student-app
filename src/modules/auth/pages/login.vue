@@ -2,6 +2,10 @@ html
 <script setup lang="ts">
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
+import useApiService from '~/services/apiService';
+
+const apiService = useApiService();
+
 definePageMeta({
 	layout: 'auth',
 });
@@ -46,6 +50,47 @@ const handleKeydown = (e: KeyboardEvent) => {
 const isSignInButtonDisabled = computed(() => {
 	return !email.value || !password.value || Object.keys(errors.value).length > 0;
 });
+
+const isForgot = ref(false);
+const forgotEmail = ref('');
+
+const resetPassword = async () => {
+	const { data } = await apiService.auth.resetPassword(forgotEmail.value);
+
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Пароль успешно сброшен',
+			life: 3000,
+		});
+		isForgot.value = false;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Произошла ошибка',
+			life: 3000,
+		});
+	}
+};
+const isActivate = ref(false);
+const activateEmail = ref('');
+const activateUser = async () => {
+	const { data } = await apiService.auth.activateUser(activateEmail.value);
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Аккаунт восстановлен',
+			life: 3000,
+		});
+		isActivate.value = false;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Произошла ошибка',
+			life: 3000,
+		});
+	}
+};
 </script>
 <template>
 	<div>
@@ -107,10 +152,89 @@ const isSignInButtonDisabled = computed(() => {
 						}}</span>
 					</div>
 
-					<div class="my-4">
-						<a class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline">
+					<div class="my-4 flex">
+						<a
+							@click="isForgot = !isForgot"
+							class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline"
+						>
 							Забыли пароль?
 						</a>
+
+						<Dialog
+							v-model:visible="isForgot"
+							modal
+							header="Сброс пароля"
+							:style="{ width: '27rem' }"
+						>
+							<span class="p-text-secondary block mb-5"
+								>После сброса пароля на ваш email придёт письмо с инструкцией</span
+							>
+
+							<div class="flex align-items-center gap-3 mb-5">
+								<label
+									for="email"
+									class="font-semibold w-6rem mt-2"
+									>Ваш Email</label
+								>
+								<InputText
+									class="flex-auto"
+									v-model="forgotEmail"
+								/>
+							</div>
+							<div class="flex justify-content-end gap-2">
+								<Button
+									type="button"
+									label="Закрыть"
+									severity="secondary"
+									@click="isForgot = false"
+								></Button>
+								<Button
+									type="button"
+									label="Сбросить пароль"
+									@click="resetPassword"
+								></Button>
+							</div>
+						</Dialog>
+						<a
+							class="flex-1 ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline"
+							@click="isActivate = !isActivate"
+							>Восстановить аккаунт</a
+						>
+						<Dialog
+							v-model:visible="isActivate"
+							modal
+							header="Активация аккаунта"
+							:style="{ width: '27rem' }"
+						>
+							<span class="p-text-secondary block mb-5"
+								>Для восстановления аккаунта пожалуйста укажите его Email</span
+							>
+
+							<div class="flex align-items-center gap-3 mb-5">
+								<label
+									for="email"
+									class="font-semibold w-6rem mt-2"
+									>Email</label
+								>
+								<InputText
+									class="flex-auto"
+									v-model="activateEmail"
+								/>
+							</div>
+							<div class="flex justify-content-end gap-2">
+								<Button
+									type="button"
+									label="Закрыть"
+									severity="secondary"
+									@click="isActivate = false"
+								></Button>
+								<Button
+									type="button"
+									label="Восстановить"
+									@click="activateUser"
+								></Button>
+							</div>
+						</Dialog>
 					</div>
 
 					<Button
