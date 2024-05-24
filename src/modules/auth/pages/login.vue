@@ -72,22 +72,62 @@ const resetPassword = async () => {
 		});
 	}
 };
+
+const timer = ref<number>(0);
+
+const startTimer = () => {
+	timer.value = 60;
+	const interval = setInterval(() => {
+		if (timer.value > 0) {
+			timer.value -= 1;
+		} else {
+			clearInterval(interval);
+		}
+	}, 1000);
+};
+
+const submiteForgotCode = ref(false);
+
 const isActivate = ref(false);
 const activateEmail = ref('');
+
 const activateUser = async () => {
 	const { data } = await apiService.auth.activateUser(activateEmail.value);
 	if (data.value) {
 		toast.add({
 			severity: 'success',
-			summary: 'Аккаунт восстановлен',
-			life: 3000,
+			summary: 'Код для восстановления отправлен',
+			life: 3500,
 		});
 		isActivate.value = false;
+		submiteForgotCode.value = true;
+		startTimer();
 	} else {
 		toast.add({
 			severity: 'error',
 			summary: 'Произошла ошибка',
 			life: 3000,
+		});
+	}
+};
+
+const code = ref('');
+
+const confirmUser = async () => {
+	const { data } = await apiService.auth.confirmUser(code.value);
+
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Аккаунт успешно восстановлен',
+			life: 3500,
+		});
+		submiteForgotCode.value = !submiteForgotCode.value;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Введён неверный код',
+			life: 3500,
 		});
 	}
 };
@@ -207,20 +247,18 @@ const activateUser = async () => {
 							:style="{ width: '27rem' }"
 						>
 							<span class="p-text-secondary block mb-5"
-								>Для восстановления аккаунта пожалуйста укажите его Email</span
+								>Для восстановления аккаунта пожалуйста укажите Email, туда придёт письмо с
+								инструкцией</span
 							>
 
 							<div class="flex align-items-center gap-3 mb-5">
-								<label
-									for="email"
-									class="font-semibold w-6rem mt-2"
-									>Email</label
-								>
+								<label class="font-semibold w-4rem mt-2">Email</label>
 								<InputText
 									class="flex-auto"
 									v-model="activateEmail"
 								/>
 							</div>
+
 							<div class="flex justify-content-end gap-2">
 								<Button
 									type="button"
@@ -230,9 +268,48 @@ const activateUser = async () => {
 								></Button>
 								<Button
 									type="button"
-									label="Восстановить"
+									label="Отправить код"
 									@click="activateUser"
 								></Button>
+							</div>
+						</Dialog>
+						<Dialog
+							v-model:visible="submiteForgotCode"
+							modal
+							:closable="false"
+							class="w-28rem"
+						>
+							<div class="flex justify-content-center">
+								<div class="flex flex-col align-items-center">
+									<div class="font-bold text-xl mb-2 text-center">Подтверждение аккаунта</div>
+									<p class="text-color-secondary text-coolGray mb-3 text-center">
+										Пожалуйста, введите код, отправленный на вашу электронную почту.
+									</p>
+									<p class="mb-5 text-coolGray text-center">{{ email }}</p>
+									<InputOtp
+										:length="6"
+										class="justify-center"
+										v-model="code"
+									/>
+									<div class="flex mt-7">
+										<Button
+											v-if="timer == 0"
+											label="Отправить код еще раз"
+											link
+											@click="activateUser()"
+										></Button>
+										<div
+											v-else
+											class="text-gray-500 flex-1 mt-1"
+										>
+											{{ timer }} Секунд осталось
+										</div>
+										<Button
+											label="Подтвердить код"
+											@click="confirmUser()"
+										></Button>
+									</div>
+								</div>
 							</div>
 						</Dialog>
 					</div>
@@ -260,4 +337,40 @@ const activateUser = async () => {
 	</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.custom-otp-input {
+	width: 48px;
+	height: 48px;
+	font-size: 24px;
+	appearance: none;
+	text-align: center;
+	transition: all 0.2s;
+	border-radius: 0;
+	border: 1px solid var(--surface-400);
+	background: transparent;
+	outline-offset: -2px;
+	outline-color: transparent;
+	border-right: 0 none;
+	transition: outline-color 0.3s;
+	color: var(--text-color);
+}
+
+.custom-otp-input:focus {
+	outline: 2px solid var(--primary-color);
+}
+
+.custom-otp-input:first-child,
+.custom-otp-input:nth-child(5) {
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+}
+
+.custom-otp-input:nth-child(3),
+.custom-otp-input:last-child {
+	border-top-right-radius: 12px;
+	border-bottom-right-radius: 12px;
+	border-right-width: 1px;
+	border-right-style: solid;
+	border-color: var(--surface-400);
+}
+</style>

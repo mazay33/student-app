@@ -225,54 +225,43 @@ const isSignUpButtonDisabled = computed(() => {
 			label="Показать"
 			@click="codeConfirmDialog = true"
 		/>
+
 		<Dialog
 			v-model:visible="codeConfirmDialog"
-			:closable="false"
 			modal
-			:style="{ width: '30rem' }"
+			:closable="false"
+			class="w-28rem"
 		>
-			<div class="flex flex-col items-center">
-				<div class="mb-2 text-xl font-bold">Подтвердите ваш аккаунт</div>
-				<p class="mb-0 block text-coolGray">Пожалуйста, введите код, отправленный на вашу электронную почту.</p>
-				<p class="mb-5 text-coolGray">
-					{{ email }}
-				</p>
-				<div class="flex justify-center">
+			<div class="flex justify-content-center">
+				<div class="flex flex-col align-items-center">
+					<div class="font-bold text-xl mb-2 text-center">Подтвердите ваш аккаунт</div>
+					<p class="text-color-secondary text-coolGray mb-3 text-center">
+						Пожалуйста, введите код, отправленный на вашу электронную почту.
+					</p>
+					<p class="mb-5 text-coolGray text-center">{{ email }}</p>
 					<InputOtp
-						v-model="codeConfirmationValue"
 						:length="6"
-						integer-only
-					>
-						<template #default="{ attrs, events }">
-							<input
-								type="text"
-								v-bind="attrs"
-								class="custom-otp-input"
-								v-on="events"
-							/>
-						</template>
-					</InputOtp>
-				</div>
-				<div class="mt-10 flex items-center self-stretch justify-between">
-					<Button
-						v-if="timerValue == 0"
-						:loading="isLoadingPage"
-						label="Отправить код повторно"
-						link
-						class="p-0"
-						@click="resendCode"
+						class="justify-center"
+						v-model="codeConfirmationValue"
 					/>
-					<div
-						v-else
-						class="text-gray-500"
-					>
-						{{ timerValue }} секунд осталось
+					<div class="flex mt-7">
+						<Button
+							v-if="timerValue == 0"
+							label="Отправить код еще раз"
+							link
+							@click="resendCode"
+						></Button>
+						<div
+							v-else
+							class="text-gray-500 flex-1 mt-1"
+						>
+							{{ timerValue }} Секунд осталось
+						</div>
+						<Button
+							label="Подтвердить код"
+							@click="confirmRegistration"
+						></Button>
 					</div>
-					<Button
-						:loading="isLoadingPage"
-						label="Отправить код"
-						@click="confirmRegistration"
-					/>
 				</div>
 			</div>
 		</Dialog>

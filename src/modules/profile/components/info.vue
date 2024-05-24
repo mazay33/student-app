@@ -284,6 +284,7 @@ const toggleMenu = (event: Event) => {
 				>Отменить</Button
 			>
 			<Button
+				v-if="isOwnerUser"
 				severity="success"
 				icon="pi pi-cog"
 				@click="isOwnerUser ? toggleMenu($event) : () => {}"

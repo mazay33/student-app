@@ -161,8 +161,10 @@ const clearLectureCreateForm = () => {
 								v-if="lectureCreateForm.pdf_file_url"
 								class="mb-5"
 							>
-								<div class="card m-auto mt-5 w-5/10 sm-w-3/10">
-									<p class="text-center text-indigo-500 font-semibold">{{ lectionName }}</p>
+								<div class="card m-auto mt-5 w-7/10 sm-w-3/10">
+									<p class="lecture-name text-center text-indigo-500 font-semibold">
+										{{ lectionName }}
+									</p>
 									<p class="text-center text-sm font-light">
 										Ваш файл смогут просмотреть другие пользователи
 									</p>
@@ -207,4 +209,9 @@ const clearLectureCreateForm = () => {
 	</form>
 </template>
 
-<style scoped></style>
+<style scoped>
+.lecture-name {
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+</style>

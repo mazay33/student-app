@@ -122,4 +122,9 @@ export default class AuthApi extends BaseApi {
 		const url = 'public/users/activate';
 		return await this.sendRequest<boolean, { emai: string }>(HttpMethod.POST, url, { email });
 	}
+
+	public async confirmUser(code: string) {
+		const url = 'public/users/activate/confirm';
+		return await this.sendRequest<boolean, { code: string }>(HttpMethod.PATCH, url, { code });
+	}
 }
