@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps<{ user: IUser | null | undefined; isOwnerUser: boolean }>();
 
@@ -120,6 +123,7 @@ const deleteUser = async () => {
 			life: 3000,
 		});
 		deactivateUser.value = false;
+		await navigateTo(`/auth/login`);
 	} else {
 		toast.add({
 			severity: 'error',
@@ -136,7 +140,6 @@ const toggleMenu = (event: Event) => {
 
 <template>
 	<Toast />
-
 	<div
 		v-if="user"
 		class="mt-7 flex flex-col items-center justify-between gap-5 gap-5 sm:flex-row"
