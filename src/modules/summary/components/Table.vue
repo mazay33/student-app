@@ -214,6 +214,20 @@ const clearFilters = () => {
 		teacher_id: null,
 	};
 };
+
+const universityDropdown = ref();
+const onUniversityFocus = () => {
+	universityDropdown.value.$data.overlayVisible = true;
+};
+const subjectDropdown = ref();
+const onSubjectFocus = () => {
+	subjectDropdown.value.$data.overlayVisible = true;
+};
+const teacherDropdown = ref();
+
+const onTeacherFocus = () => {
+	teacherDropdown.value.$data.overlayVisible = true;
+};
 </script>
 
 <template>
@@ -327,6 +341,7 @@ const clearFilters = () => {
 			</template>
 			<template #filter>
 				<Dropdown
+					ref="universityDropdown"
 					v-model="university"
 					option-label="short_name"
 					:loading="isUniversitiesLoading"
@@ -343,6 +358,7 @@ const clearFilters = () => {
 					}"
 					@input="onUniversityInput($event)"
 					@change="onUniversityChange($event)"
+					@focus="onUniversityFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
@@ -373,6 +389,7 @@ const clearFilters = () => {
 			</template>
 			<template #filter>
 				<Dropdown
+					ref="subjectDropdown"
 					v-model="subject"
 					option-label="name"
 					:loading="isSubjectsLoading"
@@ -383,6 +400,7 @@ const clearFilters = () => {
 					empty-message="Ничего не найдено"
 					@input="onSubjectInput($event)"
 					@change="onSubjectChange($event)"
+					@focus="onSubjectFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
@@ -413,6 +431,7 @@ const clearFilters = () => {
 			</template>
 			<template #filter>
 				<Dropdown
+					ref="teacherDropdown"
 					v-model="teacher"
 					option-label="full_name"
 					:loading="isSummariesLoading"
@@ -423,6 +442,7 @@ const clearFilters = () => {
 					empty-message="Ничего не найдено"
 					@input="onTeacherInput($event)"
 					@change="onTeacherChange($event)"
+					@focus="onTeacherFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
