@@ -176,16 +176,51 @@ const summaryQueryUrl = computed(() => {
 });
 
 const getSummaries = async () => {
-	const { data, error } = isPrivateSummary.value
-		? await apiService.summary.getPrivateSummaries(summaryQueryUrl.value)
-		: await apiService.summary.getPublicSummaries(summaryQueryUrl.value);
+	// Создаем переменную для хранения таймера
+	let loadingTimeout;
+	let isLoadingSet = false;
 
-	if (data.value) {
-		summaries.value = data.value;
-	}
+	// Устанавливаем таймер на 300 мс
+	const timeoutPromise = new Promise<void>(resolve => {
+		loadingTimeout = setTimeout(() => {
+			isSummariesLoading.value = true;
+			isLoadingSet = true;
+			resolve();
+		}, 300);
+	});
 
-	if (error.value) {
-		throw new Error(error.value.message);
+	// Выполняем запрос
+	const requestPromise = isPrivateSummary.value
+		? apiService.summary.getPrivateSummaries(summaryQueryUrl.value)
+		: apiService.summary.getPublicSummaries(summaryQueryUrl.value);
+
+	try {
+		// Ждем либо завершения запроса, либо таймера
+		await Promise.race([requestPromise, timeoutPromise]);
+
+		// После завершения запроса очищаем таймер
+		clearTimeout(loadingTimeout);
+
+		// Если таймер не установил isSummariesLoading в true, устанавливаем его в false
+		if (!isLoadingSet) {
+			isSummariesLoading.value = false;
+		}
+
+		// Обрабатываем результат запроса
+		const { data, error } = await requestPromise;
+
+		if (data?.value) {
+			summaries.value = data.value;
+		}
+
+		if (error?.value) {
+			throw new Error(error.value.message);
+		}
+	} catch (error) {
+		console.error('Error fetching summaries:', error);
+	} finally {
+		// Устанавливаем isSummariesLoading в false после завершения обработки запроса
+		isSummariesLoading.value = false;
 	}
 };
 
@@ -264,7 +299,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 
 				<div v-else>{{ slotProps.index + 1 }}</div>
 			</template>
@@ -289,7 +327,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="{ data }: { data: ISummary }">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 				<div
 					v-else
 					class="flex"
@@ -341,7 +382,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 
 				<div v-else>
 					{{ slotProps.data.university_name }}
@@ -391,7 +435,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 				<div v-else>
 					{{ slotProps.data.subject_name }}
 				</div>
@@ -433,7 +480,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 				<div v-else>
 					{{ slotProps.data.teacher_full_name }}
 				</div>
@@ -476,7 +526,10 @@ const onTeacherFocus = () => {
 			:show-clear-button="false"
 		>
 			<template #body="{ data }: { data: ISummary }">
-				<Skeleton v-if="isSummariesLoading" />
+				<Skeleton
+					v-if="isSummariesLoading"
+					height="35px"
+				/>
 				<div v-else>
 					<div class="flex items-center gap-2">
 						<img
