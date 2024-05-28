@@ -33,6 +33,7 @@ const university = ref<IUniversity | null>(null);
 const universityQueryFilter = ref(new QueryBuilder().setPageSize(25));
 const universityQueryUrl = computed(() => universityQueryFilter.value.buildUrl());
 const isUniversitiesLoading = ref<boolean>(false);
+const universityPending = ref(false);
 
 const getUniversities = async () => {
 	isUniversitiesLoading.value = true;
@@ -61,9 +62,16 @@ const onUniversitiesLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => 
 	const { last } = event;
 
 	if (universities.value && universities.value.result.length === last && last < universities.value.count) {
-		universityQueryFilter.value.setPageSize(last + 25);
+		// Проверяем, идет ли уже запрос
+		if (!isUniversitiesLoading.value) {
+			universityQueryFilter.value.setPageSize(last + 25);
 
-		await debounceFetch(() => getUniversities());
+			try {
+				await getUniversities();
+			} finally {
+				isUniversitiesLoading.value = false; // Сбрасываем флаг после завершения запроса
+			}
+		}
 	}
 };
 
@@ -355,6 +363,7 @@ const onTeacherFocus = () => {
 						loading: isUniversitiesLoading,
 						onLazyLoad: onUniversitiesLazyScrollLoad,
 						itemSize: 25,
+						showLoader: true,
 					}"
 					@input="onUniversityInput($event)"
 					@change="onUniversityChange($event)"
@@ -520,4 +529,8 @@ const onTeacherFocus = () => {
 	</Paginator>
 </template>
 
-<style></style>
+<style lang="scss">
+.p-component-overlay {
+	@apply bg-white;
+}
+</style>
