@@ -184,9 +184,13 @@ const goToLogin = async () => {
 	router.push('/auth/login');
 };
 
+const goToSearch = async () => {
+	await router.push(`/`);
+	location.reload();
+};
+
 onMounted(async () => {
 	await checkLogin();
-	console.log(isNeedLogin.value);
 });
 </script>
 <template>
@@ -194,6 +198,7 @@ onMounted(async () => {
 		v-model:visible="isNeedLogin"
 		modal
 		header="Ошибка авторизации"
+		:closable="false"
 		:style="{ width: '25rem' }"
 	>
 		<span class="p-text-secondary block mb-5">Чтобы создать конспект необходимо войти в свой аккаунт</span>
@@ -204,7 +209,7 @@ onMounted(async () => {
 				type="button"
 				label="Закрыть"
 				severity="secondary"
-				@click="isNeedLogin = false"
+				@click="goToSearch()"
 			></Button>
 			<Button
 				type="button"

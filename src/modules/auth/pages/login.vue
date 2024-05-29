@@ -192,10 +192,10 @@ const confirmUser = async () => {
 						}}</span>
 					</div>
 
-					<div class="my-4 flex">
+					<div class="my-4 flex flex-col sm-flex-row">
 						<a
 							@click="isForgot = !isForgot"
-							class="ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline"
+							class="flex-1 mb-5 sm-mb-0 cursor-pointer text-blue-500 font-medium no-underline"
 						>
 							Забыли пароль?
 						</a>
@@ -236,7 +236,7 @@ const confirmUser = async () => {
 							</div>
 						</Dialog>
 						<a
-							class="flex-1 ml-2 cursor-pointer text-right text-blue-500 font-medium no-underline"
+							class="cursor-pointer text-blue-500 font-medium no-underline"
 							@click="isActivate = !isActivate"
 							>Восстановить аккаунт</a
 						>
@@ -300,7 +300,7 @@ const confirmUser = async () => {
 										></Button>
 										<div
 											v-else
-											class="text-gray-500 flex-1 mt-1"
+											class="text-gray-500 flex-1 mt-2"
 										>
 											{{ timer }} Секунд осталось
 										</div>

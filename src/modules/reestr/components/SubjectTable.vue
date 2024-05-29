@@ -9,6 +9,8 @@ const apiService = useApiService();
 const filter = ref<{ [key: string]: any }>({
 	page: 1,
 	page_size: 25,
+	sort_by: '',
+	sort_type: 'asc',
 });
 
 const searchFilter = ref({
@@ -19,7 +21,8 @@ const filterUrl = computed(() =>
 	new QueryBuilder()
 		.setPage(filter.value.page)
 		.setPageSize(filter.value.page_size)
-
+		.setSortBy(filter.value.sort_by)
+		.setSortType(filter.value.sort_type)
 		.setFilter('name', searchFilter.value.name)
 		.buildUrl(),
 );
@@ -71,6 +74,11 @@ watch(
 		:loading="isLoading"
 		show-gridlines
 		:value="subject?.result"
+		removable-sort
+		lazy
+		@sort="() => {}"
+		@update:sort-field="filter.sort_by = $event"
+		@update:sort-order="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
 	>
 		<template #header>
 			<div>
@@ -97,7 +105,8 @@ watch(
 		</Column>
 
 		<Column
-			field="full_name"
+			sortable
+			field="name"
 			header="Название"
 			style="width: 95%"
 		>

@@ -376,7 +376,7 @@ const onTeacherFocus = () => {
 
 		<Column
 			field="full_name"
-			header="Наименование вуза"
+			header="ВУЗ"
 			:show-filter-menu="false"
 			:show-filter-operators="false"
 			:show-clear-button="false"
@@ -520,7 +520,7 @@ const onTeacherFocus = () => {
 			v-if="!isPrivateSummary"
 			field="full_name"
 			header="Пользователь"
-			style="width: 20%"
+			style="width: 15%"
 			:show-filter-menu="false"
 			:show-filter-operators="false"
 			:show-clear-button="false"
@@ -532,15 +532,12 @@ const onTeacherFocus = () => {
 				/>
 				<div v-else>
 					<div class="flex items-center gap-2">
-						<img
-							v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url"
-							class="w-10 rounded-full text-center"
-							:src="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url || ''"
-							alt=""
-						/>
-						<nuxt-link :to="`/profile/${users?.result.find((user: IUser) => user.id === data.user_id)?.id}`"
+						<nuxt-link
+							v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.nickname"
+							:to="`/profile/${users?.result.find((user: IUser) => user.id === data.user_id)?.id}`"
 							>{{ users?.result.find((user: IUser) => user.id === data.user_id)?.nickname }}
 						</nuxt-link>
+						<div v-else>Аккаунт удален</div>
 					</div>
 				</div>
 			</template>

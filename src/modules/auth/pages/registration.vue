@@ -253,7 +253,7 @@ const isSignUpButtonDisabled = computed(() => {
 						></Button>
 						<div
 							v-else
-							class="text-gray-500 flex-1 mt-1"
+							class="text-gray-500 flex-1 mt-2"
 						>
 							{{ timerValue }} Секунд осталось
 						</div>

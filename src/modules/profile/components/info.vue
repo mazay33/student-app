@@ -2,6 +2,7 @@
 import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '~/modules/auth/stores/auth';
 
 const router = useRouter();
 
@@ -119,10 +120,11 @@ const deleteUser = async () => {
 	if (data.value) {
 		toast.add({
 			severity: 'success',
-			summary: 'Аккаунт деактивирован',
+			summary: 'Аккаунт удалён',
 			life: 3000,
 		});
 		deactivateUser.value = false;
+		useAuthStore().logout();
 		await navigateTo(`/auth/login`);
 	} else {
 		toast.add({
@@ -192,7 +194,7 @@ const toggleMenu = (event: Event) => {
 				</div>
 				<div class="mt-6 flex">
 					<div class="mb-5 flex flex flex-col flex-col gap-2">
-						<label for="username">описание</label>
+						<label for="username">Описание</label>
 						<InputText
 							v-model="user.description"
 							type="text"
@@ -249,12 +251,11 @@ const toggleMenu = (event: Event) => {
 			<Dialog
 				v-model:visible="deactivateUser"
 				modal
-				header="Деактивация аккаунта"
+				header="Удаление аккаунта"
 				:style="{ width: '25rem' }"
 			>
 				<span class="p-text-secondary block mb-5"
-					>После деактивации вы сможете восстановить свой аккаунт. Подтвердите пожалуйста данное
-					действие</span
+					>После удаления аккаунта вы сможете восстановить его. Пожалуйста подтвердите данное действие</span
 				>
 
 				<div class="flex justify-content-end gap-2">
@@ -266,7 +267,7 @@ const toggleMenu = (event: Event) => {
 					></Button>
 					<Button
 						type="button"
-						label="Деактивировать"
+						label="Удалить"
 						severity="danger"
 						@click="deleteUser"
 					></Button>
@@ -284,11 +285,11 @@ const toggleMenu = (event: Event) => {
 				id="change_button"
 				@click="isDisabled = !isDisabled"
 				:class="[isDisabled ? 'hidden' : '']"
+				class="bg-gray border-gray"
 				>Отменить</Button
 			>
 			<Button
 				v-if="isOwnerUser"
-				severity="success"
 				icon="pi pi-cog"
 				@click="isOwnerUser ? toggleMenu($event) : () => {}"
 			></Button>
@@ -373,7 +374,7 @@ const toggleMenu = (event: Event) => {
 					class="m-0 w-full"
 					@click="deactivateUser = !deactivateUser"
 				>
-					Деактивация аккаунта
+					Удалить аккаунт
 				</p>
 				<i
 					class="pi pi-trash"

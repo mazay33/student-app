@@ -2,12 +2,15 @@
 import type { IPaginatedResult, IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 import QueryBuilder from '~/utils/QueryBuilder';
+import type { ISummary } from '../@types';
 
 const apiService = useApiService();
 
 const filter = ref<{ [key: string]: any }>({
 	page: 1,
 	page_size: 25,
+	sort_by: '',
+	sort_type: 'asc',
 });
 
 const searchFilter = ref({
@@ -18,7 +21,8 @@ const filterUrl = computed(() =>
 	new QueryBuilder()
 		.setPage(filter.value.page)
 		.setPageSize(filter.value.page_size)
-
+		.setSortBy(filter.value.sort_by)
+		.setSortType(filter.value.sort_type)
 		.setFilter('nickname', searchFilter.value.nickname)
 		.buildUrl(),
 );
@@ -101,7 +105,9 @@ watch(
 			style="width: 95%"
 		>
 			<template #body="slotProps">
-				{{ slotProps.data.nickname }}
+				<nuxt-link :to="`/profile/${slotProps.data.id}`">
+					{{ slotProps.data.nickname }}
+				</nuxt-link>
 			</template>
 		</Column>
 	</DataTable>

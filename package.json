@@ -1,6 +1,6 @@
 {
-	"name": "app-name",
-	"version": "0.0.1",
+	"name": "konspect",
+	"version": "",
 	"license": "MIT",
 	"scripts": {
 		"build": "nuxi build",
