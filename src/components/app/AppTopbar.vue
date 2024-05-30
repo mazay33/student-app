@@ -126,7 +126,7 @@ const items = computed(() => {
 			to="/"
 			class="layout-topbar-logo"
 		>
-			<span class="text-[var(--primary-color)]">Конспект</span>
+			<img class="mt--1" src="~/assets/images/logo.png"
 		</NuxtLink>
 
 		<button

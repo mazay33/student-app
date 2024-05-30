@@ -3,6 +3,8 @@ import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '~/modules/auth/stores/auth';
+import { useForm } from 'vee-validate';
+import * as yup from 'yup';
 
 const router = useRouter();
 
@@ -138,6 +140,22 @@ const deleteUser = async () => {
 const toggleMenu = (event: Event) => {
 	MenuOverlayPanel.value.toggle(event);
 };
+
+const { errors, defineField } = useForm({
+	validationSchema: yup.object({
+		password: yup
+			.string()
+			.required('Поле обязательно для заполнения')
+			.min(8, 'Пароль должен быть больше 8 символов')
+			.matches(/[a-zа-яё]/, 'Пароль должен содержать хотя бы одну строчную букву')
+			.matches(/[A-ZА-ЯЁ]/, 'Пароль должен содержать хотя бы одну заглавную букву')
+			.matches(/\d/, 'Пароль должен содержать хотя бы одну цифру'),
+	}),
+});
+
+const [password, passwordAttrs] = defineField('password', {
+	validateOnModelUpdate: false,
+});
 </script>
 
 <template>
@@ -224,13 +242,52 @@ const toggleMenu = (event: Event) => {
 						v-model="passwords.old_password"
 					/>
 				</div>
-				<div class="flex flex-col align-items-center gap-3 mb-5">
-					<label class="font-semibold w-9rem">Новый пароль</label>
-					<InputText
-						class="flex-auto"
-						autocomplete="off"
+				<div class="relative mb-2">
+					<label
+						for="password"
+						class="mb-2 block font-medium"
+					>
+						Пароль
+					</label>
+
+					<Password
 						v-model="passwords.new_password"
-					/>
+						class="mb-3 w-full"
+						v-bind="passwordAttrs"
+						placeholder="Пароль"
+						:invalid="!!errors.password"
+						weak-label="Слабый пароль"
+						medium-label="Средный пароль"
+						strong-label="Сильный пароль"
+						prompt-label="Пожалуйста, введите пароль"
+						toggle-mask
+					>
+						<template #header>
+							<h6>Выберите пароль</h6>
+						</template>
+						<template #footer>
+							<Divider />
+							<p class="mt-2">Рекомендации</p>
+							<ul
+								class="ml-2 mt-0 pl-2"
+								style="line-height: 1.5"
+							>
+								<li :class="password.match(/[a-zа-яё]/) ? 'text-green-500' : 'text-red-500'">
+									Как минимум одна строчная буква
+								</li>
+								<li :class="password.match(/[A-ZА-ЯЁ]/) ? 'text-green-500' : 'text-red-500'">
+									Как минимум одна заглавная буква
+								</li>
+								<li :class="password.match(/\d/) ? 'text-green-500' : 'text-red-500'">
+									Как минимум одна цифра
+								</li>
+								<li :class="password.length >= 8 ? 'text-green-500' : 'text-red-500'">
+									Минимум 8 символов
+								</li>
+							</ul>
+						</template>
+					</Password>
+					<span class="absolute left-1 w-full text-xs text-red-500 -bottom-[6px]">{{ errors.password }}</span>
 				</div>
 
 				<div class="flex justify-content-end gap-2">
@@ -405,6 +462,29 @@ const toggleMenu = (event: Event) => {
 	border-solid border-l-none border-r-none border-t-none p-1 py-2 duration-200 hover:text-indigo-500;
 	&--delete {
 		@apply text-red duration-200 hover:text-red-700 border-b-none;
+	}
+}
+
+.custom-otp-input {
+	width: 40px;
+	margin-right: 8px;
+	font-size: 36px;
+	text-align: center;
+	background: transparent;
+	border: 0 none;
+	border-bottom: 2px solid var(--surface-500);
+	transition: all 0.2s;
+	appearance: none;
+}
+
+.custom-otp-input:focus {
+	border-bottom-color: var(--primary-color);
+	outline: 0 none;
+}
+
+.p-password {
+	&-input {
+		@apply w-full;
 	}
 }
 </style>
