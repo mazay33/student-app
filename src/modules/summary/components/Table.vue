@@ -108,24 +108,13 @@ const { data: summaries, pending } = await apiService.summary[
 });
 
 const clearFilters = () => {
-	searchName.value = '';
 	university.value = null;
+
 	subject.value = null;
+
 	teacher.value = null;
-};
 
-const universityDropdown = ref();
-const onUniversityFocus = () => {
-	universityDropdown.value.$data.overlayVisible = !universityDropdown.value.$data.overlayVisible;
-};
-const subjectDropdown = ref();
-const onSubjectFocus = () => {
-	subjectDropdown.value.$data.overlayVisible = !subjectDropdown.value.$data.overlayVisible;
-};
-const teacherDropdown = ref();
-
-const onTeacherFocus = () => {
-	teacherDropdown.value.$data.overlayVisible = !teacherDropdown.value.$data.overlayVisible;
+	searchName.value = '';
 };
 </script>
 
@@ -261,35 +250,19 @@ const onTeacherFocus = () => {
 				</div>
 			</template>
 			<template #filter>
-				<Dropdown
-					ref="universityDropdown"
+				<UiDropdownFilter
 					v-model="university"
-					option-label="short_name"
+					:options="universities"
 					:loading="universitiesPending"
-					:options="universities?.result"
-					show-clear
-					editable
+					option-label="short_name"
 					placeholder="Введите название вуза..."
-					empty-message="Ничего не найдено"
-					:virtual-scroller-options="{
-						lazy: true,
-						loading: universitiesPending,
-						onLazyLoad: onUniversitiesLazyScrollLoad,
-						itemSize: 25,
-						showLoader: true,
-					}"
-					@input="onUniversityInput($event)"
-					@click="onUniversityFocus()"
+					@input="onUniversityInput"
+					@lazy-scroll-load="onUniversitiesLazyScrollLoad"
+					@@update:input-value="universityName = $event"
+					@@update:model-value="university = $event"
 				>
-					<template #clearicon="{ clearCallback }">
-						<i
-							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), (universityName = '')"
-					/></template>
-					<template #option="{ option }: { option: IUniversity }">
-						{{ option.short_name }} - {{ option.name }}
-					</template>
-				</Dropdown>
+					<template #customOption="{ option }"> {{ option.short_name }} - {{ option.name }} </template>
+				</UiDropdownFilter>
 			</template>
 		</Column>
 
@@ -310,29 +283,16 @@ const onTeacherFocus = () => {
 				</div>
 			</template>
 			<template #filter>
-				<Dropdown
-					ref="subjectDropdown"
+				<UiDropdownFilter
 					v-model="subject"
-					option-label="name"
-					:options="subjects?.result"
-					editable
-					show-clear
+					:options="subjects"
 					:loading="subjectsPending"
+					option-label="name"
 					placeholder="Введите название предмета..."
-					empty-message="Ничего не найдено"
-					@input="onSubjectInput($event)"
-					@click="onSubjectFocus()"
-				>
-					<template #clearicon="{ clearCallback }">
-						<i
-							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), (subjectName = '')"
-						/>
-					</template>
-					<template #option="{ option }: { option: ISubject }">
-						{{ option.name }}
-					</template>
-				</Dropdown>
+					@input="onSubjectInput"
+					@@update:input-value="subjectName = $event"
+					@@update:model-value="subject = $event"
+				/>
 			</template>
 		</Column>
 
@@ -354,29 +314,16 @@ const onTeacherFocus = () => {
 				</div>
 			</template>
 			<template #filter>
-				<Dropdown
-					ref="teacherDropdown"
+				<UiDropdownFilter
 					v-model="teacher"
-					option-label="full_name"
+					:options="teachers"
 					:loading="teachersPending"
-					:options="teachers?.result"
-					editable
-					show-clear
-					placeholder="Введите имя преподователя..."
-					empty-message="Ничего не найдено"
-					@click="onTeacherFocus()"
-					@input="onTeacherInput($event)"
-				>
-					<template #clearicon="{ clearCallback }">
-						<i
-							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), (teacherName = '')"
-						/>
-					</template>
-					<template #option="{ option }: { option: ITeacher }">
-						{{ option.full_name }}
-					</template>
-				</Dropdown>
+					option-label="full_name"
+					placeholder="Введите имя преподавателя..."
+					@input="onTeacherInput"
+					@@update:input-value="teacherName = $event"
+					@@update:model-value="teacher = $event"
+				/>
 			</template>
 		</Column>
 
