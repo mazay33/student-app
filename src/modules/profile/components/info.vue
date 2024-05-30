@@ -156,6 +156,26 @@ const { errors, defineField } = useForm({
 const [password, passwordAttrs] = defineField('password', {
 	validateOnModelUpdate: false,
 });
+
+const isAgree = ref(true);
+
+const isSignUpButtonDisabled = computed(() => {
+	if (
+		passwords.value.new_password.length >= 8 ||
+		passwords.value.new_password.match(/\d/) ||
+		passwords.value.new_password.match(/[a-zа-яё]/) ||
+		passwords.value.new_password.match(/[A-ZA-ЯЁ]/)
+	) {
+		isAgree.value = false;
+	}
+});
+
+watch(
+	() => passwords.value.new_password,
+	() => {
+		isSignUpButtonDisabled.value;
+	},
+);
 </script>
 
 <template>
@@ -240,6 +260,7 @@ const [password, passwordAttrs] = defineField('password', {
 						class="flex-auto"
 						autocomplete="off"
 						v-model="passwords.old_password"
+						placeholder="Старый пароль"
 					/>
 				</div>
 				<div class="relative mb-2">
@@ -247,18 +268,13 @@ const [password, passwordAttrs] = defineField('password', {
 						for="password"
 						class="mb-2 block font-medium"
 					>
-						Пароль
+						Новый пароль
 					</label>
 
 					<Password
 						v-model="passwords.new_password"
 						class="mb-3 w-full"
-						v-bind="passwordAttrs"
-						placeholder="Пароль"
-						:invalid="!!errors.password"
-						weak-label="Слабый пароль"
-						medium-label="Средный пароль"
-						strong-label="Сильный пароль"
+						placeholder="Новый пароль"
 						prompt-label="Пожалуйста, введите пароль"
 						toggle-mask
 					>
@@ -272,16 +288,24 @@ const [password, passwordAttrs] = defineField('password', {
 								class="ml-2 mt-0 pl-2"
 								style="line-height: 1.5"
 							>
-								<li :class="password.match(/[a-zа-яё]/) ? 'text-green-500' : 'text-red-500'">
+								<li
+									:class="
+										passwords.new_password.match(/[a-zа-яё]/) ? 'text-green-500' : 'text-red-500'
+									"
+								>
 									Как минимум одна строчная буква
 								</li>
-								<li :class="password.match(/[A-ZА-ЯЁ]/) ? 'text-green-500' : 'text-red-500'">
+								<li
+									:class="
+										passwords.new_password.match(/[A-ZА-ЯЁ]/) ? 'text-green-500' : 'text-red-500'
+									"
+								>
 									Как минимум одна заглавная буква
 								</li>
-								<li :class="password.match(/\d/) ? 'text-green-500' : 'text-red-500'">
+								<li :class="passwords.new_password.match(/\d/) ? 'text-green-500' : 'text-red-500'">
 									Как минимум одна цифра
 								</li>
-								<li :class="password.length >= 8 ? 'text-green-500' : 'text-red-500'">
+								<li :class="passwords.new_password.length >= 8 ? 'text-green-500' : 'text-red-500'">
 									Минимум 8 символов
 								</li>
 							</ul>
@@ -298,8 +322,9 @@ const [password, passwordAttrs] = defineField('password', {
 						@click="updatePasswords = false"
 					></Button>
 					<Button
+						:disabled="isAgree"
 						type="button"
-						label="Сохранить"
+						label="Сохранить1"
 						@click="updatePassword"
 					></Button>
 				</div>
