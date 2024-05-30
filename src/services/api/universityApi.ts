@@ -15,10 +15,9 @@ export default class UniversityApi extends BaseApi {
 	}
 
 	public async getUniversityList(
-		filterQuery = '',
 		options?: UseFetchOptions<IPaginatedResult<IUniversity>>,
 	): HttpReturnType<IPaginatedResult<IUniversity>> {
-		const url = `main/public/universities${filterQuery}`;
+		const url = `main/public/universities`;
 		return await this.sendRequest<IPaginatedResult<IUniversity>>(HttpMethod.GET, url, {
 			...options,
 		});

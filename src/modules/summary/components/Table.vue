@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { DropdownChangeEvent } from 'primevue/dropdown';
 import type { VirtualScrollerLazyEvent } from 'primevue/virtualscroller';
 import type { ISummary } from '../@types';
-import type { IPaginatedResult, IUser } from '~/@types/@types';
+import type { IUser } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
-import QueryBuilder from '~/utils/QueryBuilder';
 
 const route = useRoute();
 
@@ -15,261 +13,119 @@ const route = useRoute();
 const isPrivateSummary = ref(route.path === '/summary/private');
 
 const apiService = useApiService();
-const debounceFetch = createDebounceFetch(500);
 
-const users = ref<IPaginatedResult<IUser>>();
-const getUsers = async () => {
-	const { data } = await apiService.user.getUserList();
-	if (data.value) {
-		users.value = data.value;
-	}
-};
-await getUsers();
+const { data: users } = await apiService.user.getUserList('', { lazy: true });
 
 // university
 // Логика фильтрации по университетам
-const universities = ref<IPaginatedResult<IUniversity>>();
 const university = ref<IUniversity | null>(null);
-const universityQueryFilter = ref(new QueryBuilder().setPageSize(25));
-const universityQueryUrl = computed(() => universityQueryFilter.value.buildUrl());
-const isUniversitiesLoading = ref<boolean>(false);
-const universityPending = ref(false);
+const universitiesPageSize = ref<number>(25);
+const universityName = ref<string>();
+const debouncedUniversityName = debouncedRef(universityName, 500);
 
-const getUniversities = async () => {
-	isUniversitiesLoading.value = true;
-	const { data, pending } = await apiService.university.getUniversityList(universityQueryUrl.value);
-	if (data.value) {
-		universities.value = data.value;
-	}
-	isUniversitiesLoading.value = pending.value;
-};
+const { data: universities, pending: universitiesPending } = await apiService.university.getUniversityList({
+	lazy: true,
+	query: {
+		name: debouncedUniversityName,
+		page_size: universitiesPageSize,
+	},
+});
 
-await getUniversities();
-
-const onUniversityInput = async (event: InputEvent) => {
+const onUniversityInput = (event: InputEvent) => {
 	const target = event.target as HTMLInputElement;
-
-	universityQueryFilter.value.setFilter('name', target.value);
-
-	await debounceFetch(() => getUniversities());
+	universityName.value = target.value;
 };
 
-const onUniversityChange = (event: DropdownChangeEvent) => {
-	summaryFilter.value.university_id = event.value?.id;
-};
-
-const onUniversitiesLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
+const onUniversitiesLazyScrollLoad = (event: VirtualScrollerLazyEvent) => {
 	const { last } = event;
 
 	if (universities.value && universities.value.result.length === last && last < universities.value.count) {
 		// Проверяем, идет ли уже запрос
-		if (!isUniversitiesLoading.value) {
-			universityQueryFilter.value.setPageSize(last + 25);
-
-			try {
-				await getUniversities();
-			} finally {
-				isUniversitiesLoading.value = false; // Сбрасываем флаг после завершения запроса
-			}
+		if (!universitiesPending.value) {
+			universitiesPageSize.value = last + 25;
 		}
 	}
 };
 
 // subjects
 // Логика фильтрации по предметам
-const subjects = ref<IPaginatedResult<ISubject>>();
 const subject = ref<ISubject | null>(null);
-const subjectQueryFilter = ref(new QueryBuilder().setPageSize(25));
-const subjectQueryUrl = computed(() => subjectQueryFilter.value.buildUrl());
-const isSubjectsLoading = ref<boolean>(false);
+const subjectName = ref<string>();
+const debouncedSubjectName = debouncedRef(subjectName, 500);
 
-const getSubjects = async () => {
-	isSubjectsLoading.value = true;
-	const { data, pending } = await apiService.subject.getSubjectList(subjectQueryUrl.value);
-	if (data.value) {
-		subjects.value = data.value;
-	}
+const { data: subjects, pending: subjectsPending } = await apiService.subject.getSubjectList('', {
+	lazy: true,
+	query: {
+		name: debouncedSubjectName,
+	},
+});
 
-	isSubjectsLoading.value = pending.value;
-};
-
-await getSubjects();
-
-const onSubjectInput = async (event: InputEvent) => {
+const onSubjectInput = (event: InputEvent) => {
 	const target = event.target as HTMLInputElement;
-
-	subjectQueryFilter.value.setFilter('name', target.value);
-
-	await debounceFetch(() => getSubjects());
+	subjectName.value = target.value;
 };
-
-const onSubjectChange = (event: DropdownChangeEvent) => {
-	summaryFilter.value.subject_id = event.value?.id;
-};
-
-// const onSubjectsLazyScrollLoad = async (event: VirtualScrollerLazyEvent) => {
-// 	const { first, last } = event;
-
-// 	if (subjects.value && subjects.value.result.length === last && last < subjects.value.count) {
-// 		subjectQueryFilter.value.setPageSize(last + 25);
-
-// 		await debounceFetch(() => getSubjects());
-// 	}
-// };
 
 // teachers
 // Логика фильтрации по преподавателям
-const teachers = ref<IPaginatedResult<ITeacher>>();
 const teacher = ref<ITeacher | null>(null);
-const teacherQueryFilter = ref(new QueryBuilder().setPageSize(25));
-const teacherQueryUrl = computed(() => teacherQueryFilter.value.buildUrl());
-const isTeachersLoading = ref<boolean>(false);
-const getTeachers = async () => {
-	isTeachersLoading.value = true;
-	const { data, pending } = await apiService.teacher.getTeacherList(teacherQueryUrl.value);
-	if (data.value) {
-		teachers.value = data.value;
-	}
+const teacherName = ref<string>();
+const debouncedTeacherName = debouncedRef(teacherName, 500);
 
-	isTeachersLoading.value = pending.value;
-};
+const { data: teachers, pending: teachersPending } = await apiService.teacher.getTeacherList('', {
+	lazy: true,
+	query: {
+		full_name: debouncedTeacherName,
+	},
+});
 
-await getTeachers();
-
-const onTeacherInput = async (event: InputEvent) => {
+const onTeacherInput = (event: InputEvent) => {
 	const target = event.target as HTMLInputElement;
-
-	teacherQueryFilter.value.setFilter('full_name', target.value);
-
-	await debounceFetch(() => getTeachers());
-};
-
-const onTeacherChange = (event: DropdownChangeEvent) => {
-	summaryFilter.value.teacher_id = event.value?.id;
+	teacherName.value = target.value;
 };
 
 // summaries
 // Логика конснпектов
-const summaries = ref<IPaginatedResult<ISummary[]>>();
-const isSummariesLoading = ref<boolean>(false);
+const page = ref(1);
+const pageSize = ref(25);
+const subjectId = computed(() => subject.value?.id);
+const universityId = computed(() => university.value?.id);
+const teacherId = computed(() => teacher.value?.id);
+const searchName = ref('');
+const debouncedSearchName = refDebounced(searchName, 500);
 
-const summaryFilter = ref<{ [key: string]: any }>({
-	page: 1,
-	page_size: 25,
-	university_id: null,
-	subject_id: null,
-	teacher_id: null,
-});
-const summarySearchFilter = ref({
-	name: '',
-});
-
-const summaryQueryUrl = computed(() => {
-	return new QueryBuilder()
-		.setPage(summaryFilter.value.page)
-		.setPageSize(summaryFilter.value.page_size)
-		.setFilter('name', summarySearchFilter.value.name)
-		.setFilter('university_id', summaryFilter.value.university_id)
-		.setFilter('subject_id', summaryFilter.value.subject_id)
-		.setFilter('teacher_id', summaryFilter.value.teacher_id)
-		.buildUrl();
-});
-
-const getSummaries = async () => {
-	// Создаем переменную для хранения таймера
-	let loadingTimeout;
-	let isLoadingSet = false;
-
-	// Устанавливаем таймер на 300 мс
-	const timeoutPromise = new Promise<void>(resolve => {
-		loadingTimeout = setTimeout(() => {
-			isSummariesLoading.value = true;
-			isLoadingSet = true;
-			resolve();
-		}, 300);
-	});
-
-	// Выполняем запрос
-	const requestPromise = isPrivateSummary.value
-		? apiService.summary.getPrivateSummaries(summaryQueryUrl.value)
-		: apiService.summary.getPublicSummaries(summaryQueryUrl.value);
-
-	try {
-		// Ждем либо завершения запроса, либо таймера
-		await Promise.race([requestPromise, timeoutPromise]);
-
-		// После завершения запроса очищаем таймер
-		clearTimeout(loadingTimeout);
-
-		// Если таймер не установил isSummariesLoading в true, устанавливаем его в false
-		if (!isLoadingSet) {
-			isSummariesLoading.value = false;
-		}
-
-		// Обрабатываем результат запроса
-		const { data, error } = await requestPromise;
-
-		if (data?.value) {
-			summaries.value = data.value;
-		}
-
-		if (error?.value) {
-			throw new Error(error.value.message);
-		}
-	} catch (error) {
-		console.error('Error fetching summaries:', error);
-	} finally {
-		// Устанавливаем isSummariesLoading в false после завершения обработки запроса
-		isSummariesLoading.value = false;
-	}
-};
-
-await getSummaries();
-
-watch(
-	() => summaryFilter.value,
-	async () => {
-		await getSummaries();
+const { data: summaries, pending } = await apiService.summary[
+	isPrivateSummary.value ? 'getPrivateSummaries' : 'getPublicSummaries'
+]({
+	lazy: true,
+	query: {
+		page,
+		page_size: pageSize,
+		subject_id: subjectId,
+		university_id: universityId,
+		teacher_id: teacherId,
+		name: debouncedSearchName,
 	},
-	{ deep: true },
-);
-
-watch(
-	() => summarySearchFilter.value,
-	async () => {
-		await debounceFetch(() => getSummaries());
-	},
-	{ deep: true },
-);
+});
 
 const clearFilters = () => {
+	searchName.value = '';
 	university.value = null;
 	subject.value = null;
 	teacher.value = null;
-
-	summarySearchFilter.value.name = '';
-
-	summaryFilter.value = {
-		page: 1,
-		page_size: 25,
-		university_id: null,
-		subject_id: null,
-		teacher_id: null,
-	};
 };
 
 const universityDropdown = ref();
 const onUniversityFocus = () => {
-	universityDropdown.value.$data.overlayVisible = true;
+	universityDropdown.value.$data.overlayVisible = !universityDropdown.value.$data.overlayVisible;
 };
 const subjectDropdown = ref();
 const onSubjectFocus = () => {
-	subjectDropdown.value.$data.overlayVisible = true;
+	subjectDropdown.value.$data.overlayVisible = !subjectDropdown.value.$data.overlayVisible;
 };
 const teacherDropdown = ref();
 
 const onTeacherFocus = () => {
-	teacherDropdown.value.$data.overlayVisible = true;
+	teacherDropdown.value.$data.overlayVisible = !teacherDropdown.value.$data.overlayVisible;
 };
 </script>
 
@@ -282,12 +138,25 @@ const onTeacherFocus = () => {
 		:value="summaries?.result"
 	>
 		<template #empty>
-			<div class="w-full flex flex-col items-center justify-center py-20">
+			<div
+				v-if="summaries?.result?.length === 0 && !pending"
+				class="w-full flex flex-col items-center justify-center py-20"
+			>
 				<img
 					class="h-90px w-90px text-slate-400"
 					src="~/assets/images/empty.svg"
 				/>
-				<div class="mt-4 text-2xl text-slate-400">Конспекты не найдены</div>
+				<div class="mt-4 text-2xl text-slate-400">Конспекты не найдены :(</div>
+			</div>
+
+			<div
+				v-else
+				class="w-full flex flex-col items-center justify-center py-20"
+			>
+				<ProgressSpinner
+					style="width: 50px; height: 50px"
+					animation-duration="1s"
+				/>
 			</div>
 		</template>
 		<Column
@@ -300,7 +169,7 @@ const onTeacherFocus = () => {
 		>
 			<template #body="slotProps">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 
@@ -310,7 +179,7 @@ const onTeacherFocus = () => {
 				<i
 					class="pi pi-filter-slash"
 					:class="[
-						university?.id || subject?.id || teacher?.id || summarySearchFilter.name
+						university?.id || subject?.id || teacher?.id || searchName
 							? 'text-[var(--primary-color)] cursor-pointer'
 							: '	text-slate-400 cursor-not-allowed',
 					]"
@@ -328,7 +197,7 @@ const onTeacherFocus = () => {
 		>
 			<template #body="{ data }: { data: ISummary }">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 				<div
@@ -367,7 +236,7 @@ const onTeacherFocus = () => {
 						<i class="pi pi-search" />
 					</InputIcon>
 					<InputText
-						v-model="summarySearchFilter.name"
+						v-model="searchName"
 						placeholder="Название конспекта"
 					/>
 				</IconField>
@@ -383,7 +252,7 @@ const onTeacherFocus = () => {
 		>
 			<template #body="slotProps">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 
@@ -396,7 +265,7 @@ const onTeacherFocus = () => {
 					ref="universityDropdown"
 					v-model="university"
 					option-label="short_name"
-					:loading="isUniversitiesLoading"
+					:loading="universitiesPending"
 					:options="universities?.result"
 					show-clear
 					editable
@@ -404,21 +273,18 @@ const onTeacherFocus = () => {
 					empty-message="Ничего не найдено"
 					:virtual-scroller-options="{
 						lazy: true,
-						loading: isUniversitiesLoading,
+						loading: universitiesPending,
 						onLazyLoad: onUniversitiesLazyScrollLoad,
 						itemSize: 25,
 						showLoader: true,
 					}"
 					@input="onUniversityInput($event)"
-					@change="onUniversityChange($event)"
-					@focus="onUniversityFocus()"
+					@click="onUniversityFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
 							class="pi pi-times p-dropdown-clear-icon"
-							@click="
-								clearCallback($event), universityQueryFilter.setFilter('name', ''), getUniversities()
-							"
+							@click="clearCallback($event), (universityName = '')"
 					/></template>
 					<template #option="{ option }: { option: IUniversity }">
 						{{ option.short_name }} - {{ option.name }}
@@ -436,7 +302,7 @@ const onTeacherFocus = () => {
 		>
 			<template #body="slotProps">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 				<div v-else>
@@ -448,20 +314,19 @@ const onTeacherFocus = () => {
 					ref="subjectDropdown"
 					v-model="subject"
 					option-label="name"
-					:loading="isSubjectsLoading"
 					:options="subjects?.result"
 					editable
 					show-clear
+					:loading="subjectsPending"
 					placeholder="Введите название предмета..."
 					empty-message="Ничего не найдено"
 					@input="onSubjectInput($event)"
-					@change="onSubjectChange($event)"
-					@focus="onSubjectFocus()"
+					@click="onSubjectFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
 							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), subjectQueryFilter.setFilter('name', ''), getSubjects()"
+							@click="clearCallback($event), (subjectName = '')"
 						/>
 					</template>
 					<template #option="{ option }: { option: ISubject }">
@@ -481,7 +346,7 @@ const onTeacherFocus = () => {
 		>
 			<template #body="slotProps">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 				<div v-else>
@@ -493,20 +358,19 @@ const onTeacherFocus = () => {
 					ref="teacherDropdown"
 					v-model="teacher"
 					option-label="full_name"
-					:loading="isSummariesLoading"
+					:loading="teachersPending"
 					:options="teachers?.result"
 					editable
 					show-clear
 					placeholder="Введите имя преподователя..."
 					empty-message="Ничего не найдено"
+					@click="onTeacherFocus()"
 					@input="onTeacherInput($event)"
-					@change="onTeacherChange($event)"
-					@focus="onTeacherFocus()"
 				>
 					<template #clearicon="{ clearCallback }">
 						<i
 							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), teacherQueryFilter.setFilter('full_name', ''), getTeachers()"
+							@click="clearCallback($event), (teacherName = '')"
 						/>
 					</template>
 					<template #option="{ option }: { option: ITeacher }">
@@ -527,11 +391,17 @@ const onTeacherFocus = () => {
 		>
 			<template #body="{ data }: { data: ISummary }">
 				<Skeleton
-					v-if="isSummariesLoading"
+					v-if="pending"
 					height="35px"
 				/>
 				<div v-else>
 					<div class="flex items-center gap-2">
+						<img
+							v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url"
+							class="w-10 rounded-full text-center"
+							:src="users?.result.find((user: IUser) => user.id === data.user_id)?.image_url || ''"
+							alt=""
+						/>
 						<nuxt-link
 							v-if="users?.result.find((user: IUser) => user.id === data.user_id)?.nickname"
 							:to="`/profile/${users?.result.find((user: IUser) => user.id === data.user_id)?.id}`"
@@ -541,40 +411,16 @@ const onTeacherFocus = () => {
 					</div>
 				</div>
 			</template>
-			<!-- <template #filter>
-				<Dropdown
-					v-model="teacher"
-					option-label="full_name"
-					:loading="isSummariesLoading"
-					:options="teachers?.result"
-					editable
-					show-clear
-					placeholder="Введите имя преподователя..."
-					empty-message="Ничего не найдено"
-					@input="onTeacherInput($event)"
-					@change="onTeacherChange($event)"
-				>
-					<template #clearicon="{ clearCallback }">
-						<i
-							class="pi pi-times p-dropdown-clear-icon"
-							@click="clearCallback($event), teacherQueryFilter.setFilter('full_name', ''), getTeachers()"
-						/>
-					</template>
-					<template #option="{ option }: { option: ITeacher }">
-						{{ option.full_name }}
-					</template>
-				</Dropdown>
-			</template> -->
 		</Column>
 	</DataTable>
 
 	<Paginator
 		v-if="summaries?.pages"
-		:rows="summaryFilter.page_size"
+		:rows="pageSize"
 		:total-records="summaries?.count"
 		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="summaryFilter.page_size = $event"
-		@page="summaryFilter.page = $event.page + 1"
+		@update:rows="pageSize = $event"
+		@page="page = $event.page + 1"
 	>
 	</Paginator>
 </template>
@@ -582,5 +428,9 @@ const onTeacherFocus = () => {
 <style lang="scss">
 .p-component-overlay {
 	@apply bg-white;
+}
+
+.p-progress-spinner-circle {
+	stroke: var(--primary-color) !important;
 }
 </style>

@@ -36,8 +36,8 @@ export default class SummaryApi extends BaseApi {
 		});
 	}
 
-	public async getPublicSummaries(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<ISummary[]>>) {
-		const url = `main/public/summaries${filterQuery}`;
+	public async getPublicSummaries(options?: UseFetchOptions<IPaginatedResult<ISummary[]>>) {
+		const url = `main/public/summaries`;
 		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url, {
 			...options,
 		});
@@ -48,9 +48,11 @@ export default class SummaryApi extends BaseApi {
 		return await this.sendRequest<ISummary>(HttpMethod.GET, url);
 	}
 
-	public async getPrivateSummaries(filterQuery = '') {
-		const url = `main/private/summaries${filterQuery}`;
-		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url);
+	public async getPrivateSummaries(options?: UseFetchOptions<IPaginatedResult<ISummary[]>>) {
+		const url = `main/private/summaries`;
+		return await this.sendRequest<IPaginatedResult<ISummary[]>>(HttpMethod.GET, url, {
+			...options,
+		});
 	}
 
 	public async getPrivateSummaryById(id: string, options?: UseFetchOptions<ISummary>) {
