@@ -10,6 +10,9 @@ const sortType = ref<'asc' | 'desc'>('asc');
 const universitySearch = ref<string>();
 const debouncedUniversitySearch = debouncedRef(universitySearch, 500);
 
+const showSkeleton = ref<boolean>(false);
+let skeletonTimeout: ReturnType<typeof setTimeout>;
+
 const {
 	data: universities,
 	pending,
@@ -29,9 +32,26 @@ const updateSortBy = (event: string | null) => {
 	sortBy.value = event || undefined;
 };
 
-if (error.value) {
-	throw new Error(error.value.message);
-}
+watch(
+	() => error.value,
+	() => {
+		if (error.value) throw new Error(error.value.message);
+	},
+);
+
+watch(
+	() => pending.value,
+	newPending => {
+		if (newPending) {
+			skeletonTimeout = setTimeout(() => {
+				showSkeleton.value = true;
+			}, 200);
+		} else {
+			clearTimeout(skeletonTimeout);
+			showSkeleton.value = false;
+		}
+	},
+);
 </script>
 
 <template>
@@ -65,7 +85,7 @@ if (error.value) {
 			style="width: 2%"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="pending" />
+				<Skeleton v-if="showSkeleton" />
 				<div v-else>{{ slotProps.index + 1 }}</div>
 			</template>
 		</Column>
@@ -76,7 +96,7 @@ if (error.value) {
 			style="width: 95%"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="pending" />
+				<Skeleton v-if="showSkeleton" />
 				<div v-else>{{ slotProps.data.short_name }} - {{ slotProps.data.name }}</div>
 			</template>
 		</Column>
