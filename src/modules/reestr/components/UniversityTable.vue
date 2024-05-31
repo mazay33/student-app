@@ -7,7 +7,9 @@ const page = ref<number>(1);
 const pageSize = ref<number>(25);
 const sortBy = ref<string>();
 const sortType = ref<'asc' | 'desc'>('asc');
+
 const universitySearch = ref<string>();
+
 const debouncedUniversitySearch = debouncedRef(universitySearch, 500);
 
 const {

@@ -1,84 +1,52 @@
 <script setup lang="ts">
-import type { ISubject } from '../@types';
-import QueryBuilder from '~/utils/QueryBuilder';
-import type { IPaginatedResult } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
 
-const filter = ref<{ [key: string]: any }>({
-	page: 1,
-	page_size: 25,
-	sort_by: '',
-	sort_type: 'asc',
+const page = ref<number>(1);
+const pageSize = ref<number>(25);
+const sortBy = ref<string>();
+const sortType = ref<'asc' | 'desc'>('asc');
+
+const subjectSearch = ref<string>();
+
+const debouncedSubjectSearch = debouncedRef(subjectSearch, 500);
+
+const {
+	data: subjects,
+	pending,
+	error,
+} = await apiService.subject.getSubjectList({
+	lazy: true,
+	query: {
+		page,
+		page_size: pageSize,
+		sort_by: sortBy,
+		sort_type: sortType,
+		name: debouncedSubjectSearch,
+	},
 });
 
-const searchFilter = ref({
-	name: '',
-});
-
-const filterUrl = computed(() =>
-	new QueryBuilder()
-		.setPage(filter.value.page)
-		.setPageSize(filter.value.page_size)
-		.setSortBy(filter.value.sort_by)
-		.setSortType(filter.value.sort_type)
-		.setFilter('name', searchFilter.value.name)
-		.buildUrl(),
-);
-
-const subject = ref<IPaginatedResult<ISubject>>();
-const isLoading = ref<boolean>(false);
-
-const getSubjects = async () => {
-	isLoading.value = true;
-	const { data, error, pending } = await apiService.subject.getSubjectList(filterUrl.value);
-	if (data.value) {
-		subject.value = data.value;
-	}
-
-	if (error.value) {
-		throw new Error(error.value.message);
-	}
-
-	isLoading.value = pending.value;
+const updateSortBy = (event: string | null) => {
+	sortBy.value = event || undefined;
 };
 
-await getSubjects();
-
-const debounceFetch = useDebounceFn(async () => {
-	await getSubjects();
-}, 500);
-
-watch(
-	() => filter.value,
-	async () => {
-		await getSubjects();
-	},
-	{ deep: true },
-);
-
-watch(
-	() => searchFilter.value,
-	async () => {
-		await debounceFetch();
-	},
-	{ deep: true },
-);
+if (error.value) {
+	throw new Error(error.value.message);
+}
 </script>
 
 <template>
 	<DataTable
 		scroll-height="60vh"
 		scrollable
-		:loading="isLoading"
 		show-gridlines
-		:value="subject?.result"
+		:value="subjects?.result"
 		removable-sort
 		lazy
 		@sort="() => {}"
-		@update:sort-field="filter.sort_by = $event"
-		@update:sort-order="filter.sort_type = $event === 1 ? 'asc' : 'desc'"
+		@update:sort-field="updateSortBy($event)"
+		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
 	>
 		<template #header>
 			<div>
@@ -87,8 +55,8 @@ watch(
 						<i class="pi pi-search" />
 					</InputIcon>
 					<InputText
-						v-model="searchFilter.name"
-						placeholder="Поиск пользователя"
+						v-model="subjectSearch"
+						placeholder="Поиск предмета"
 					/>
 				</IconField>
 			</div>
@@ -117,11 +85,11 @@ watch(
 	</DataTable>
 
 	<Paginator
-		:rows="filter.page_size"
-		:total-records="subject?.count"
+		:rows="pageSize"
+		:total-records="subjects?.count"
 		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="filter.page_size = $event"
-		@page="filter.page = $event.page + 1"
+		@update:rows="pageSize = $event"
+		@page="page = $event.page + 1"
 	/>
 </template>
 

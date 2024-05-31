@@ -1,79 +1,52 @@
 <script setup lang="ts">
-import type { IPaginatedResult, IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
-import QueryBuilder from '~/utils/QueryBuilder';
-import type { ISummary } from '../@types';
 
 const apiService = useApiService();
 
-const filter = ref<{ [key: string]: any }>({
-	page: 1,
-	page_size: 25,
-	sort_by: '',
-	sort_type: 'asc',
+const page = ref<number>(1);
+const pageSize = ref<number>(25);
+const sortBy = ref<string>();
+const sortType = ref<'asc' | 'desc'>('asc');
+
+const userSearch = ref<string>();
+
+const debouncedUserSearch = debouncedRef(userSearch, 500);
+
+const {
+	data: user,
+	pending,
+	error,
+} = await apiService.subject.getSubjectList({
+	lazy: true,
+	query: {
+		page,
+		page_size: pageSize,
+		sort_by: sortBy,
+		sort_type: sortType,
+		name: debouncedUserSearch,
+	},
 });
 
-const searchFilter = ref({
-	nickname: '',
-});
-
-const filterUrl = computed(() =>
-	new QueryBuilder()
-		.setPage(filter.value.page)
-		.setPageSize(filter.value.page_size)
-		.setSortBy(filter.value.sort_by)
-		.setSortType(filter.value.sort_type)
-		.setFilter('nickname', searchFilter.value.nickname)
-		.buildUrl(),
-);
-
-const users = ref<IPaginatedResult<IUser>>();
-const isLoading = ref<boolean>(false);
-
-const getUsers = async () => {
-	isLoading.value = true;
-	const { data, error, pending } = await apiService.user.getUserList(filterUrl.value);
-	if (data.value) {
-		users.value = data.value;
-	}
-
-	if (error.value) {
-		throw new Error(error.value.message);
-	}
-
-	isLoading.value = pending.value;
+const updateSortBy = (event: string | null) => {
+	sortBy.value = event || undefined;
 };
 
-await getUsers();
-
-const debounceFetch = useDebounceFn(async () => {
-	await getUsers();
-}, 500);
-
-watch(
-	() => filter.value,
-	async () => {
-		await getUsers();
-	},
-	{ deep: true },
-);
-
-watch(
-	() => searchFilter.value,
-	async () => {
-		await debounceFetch();
-	},
-	{ deep: true },
-);
+if (error.value) {
+	throw new Error(error.value.message);
+}
 </script>
 
 <template>
 	<DataTable
 		scroll-height="60vh"
 		scrollable
-		:loading="isLoading"
 		show-gridlines
-		:value="users?.result"
+		:value="user?.result"
+		removable-sort
+		lazy
+		@sort="() => {}"
+		@update:sort-field="updateSortBy($event)"
+		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
 	>
 		<template #header>
 			<div>
@@ -82,7 +55,7 @@ watch(
 						<i class="pi pi-search" />
 					</InputIcon>
 					<InputText
-						v-model="searchFilter.nickname"
+						v-model="userSearch"
 						placeholder="Поиск пользователя"
 					/>
 				</IconField>
@@ -100,6 +73,7 @@ watch(
 		</Column>
 
 		<Column
+			sortable
 			field="full_name"
 			header="Название"
 			style="width: 95%"
@@ -113,11 +87,11 @@ watch(
 	</DataTable>
 
 	<Paginator
-		:rows="filter.page_size"
-		:total-records="users?.count"
+		:rows="pageSize"
+		:total-records="user?.count"
 		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="filter.page_size = $event"
-		@page="filter.page = $event.page + 1"
+		@update:rows="pageSize = $event"
+		@page="page = $event.page + 1"
 	/>
 </template>
 

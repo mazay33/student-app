@@ -16,8 +16,8 @@ export default class SubjectApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getSubjectList(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<ISubject>>) {
-		const url = `main/public/subjects${filterQuery}`;
+	public async getSubjectList(options?: UseFetchOptions<IPaginatedResult<ISubject>>) {
+		const url = `main/public/subjects`;
 		return await this.sendRequest<IPaginatedResult<ISubject>>(HttpMethod.GET, url, {
 			...options,
 		});
