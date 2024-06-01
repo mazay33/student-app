@@ -1,8 +1,8 @@
 import { string } from 'yup';
+import type { UseFetchOptions } from '#app';
 import type HttpService from '../httpService';
 import { HttpMethod } from '../httpService';
 import BaseApi from './base';
-import type { UseFetchOptions } from '#app';
 import type { IUser } from '~/@types/@types';
 
 interface IAuthLoginResponse {

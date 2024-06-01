@@ -1,5 +1,4 @@
 import type { UseFetchOptions } from '#app';
-
 import HttpService, { HttpMethod, type HttpReturnType } from '../httpService';
 import BaseApi from './base';
 import type { IPaginatedResult } from '~/@types/@types';

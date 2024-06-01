@@ -16,15 +16,17 @@ export default class TeacherApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getTeacherList(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<ITeacher>>) {
-		const url = `main/public/teachers${filterQuery}`;
+	public async getTeacherList(options?: UseFetchOptions<IPaginatedResult<ITeacher>>) {
+		const url = `main/public/teachers`;
 		return await this.sendRequest<IPaginatedResult<ITeacher>>(HttpMethod.GET, url, {
 			...options,
 		});
 	}
 
-	public async createTeacher(teacherData: ITeacherCreate) {
+	public async createTeacher(teacherName: string) {
 		const url = 'main/private/teachers';
-		return await this.sendRequest<string, ITeacherCreate>(HttpMethod.POST, url, teacherData);
+		return await this.sendRequest<string, ITeacherCreate>(HttpMethod.POST, url, {
+			full_name: teacherName,
+		});
 	}
 }

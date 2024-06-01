@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { IUser } from '~/@types/@types';
-import useApiService from '~/services/apiService';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '~/modules/auth/stores/auth';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
+import type { IUser } from '~/@types/@types';
+import useApiService from '~/services/apiService';
+import { useAuthStore } from '~/modules/auth/stores/auth';
 
 const router = useRouter();
 
@@ -253,13 +253,13 @@ watch(
 				header="Обновление пароля"
 				:style="{ width: '25rem' }"
 			>
-				<span class="p-text-secondary block mb-5">Пожалуйста введите новый пароль</span>
-				<div class="flex flex-col align-items-center gap-3 mb-3">
-					<label class="font-semibold w-9rem">Старый пароль</label>
+				<span class="p-text-secondary mb-5 block">Пожалуйста введите новый пароль</span>
+				<div class="align-items-center mb-3 flex flex-col gap-3">
+					<label class="w-9rem font-semibold">Старый пароль</label>
 					<InputText
+						v-model="passwords.old_password"
 						class="flex-auto"
 						autocomplete="off"
-						v-model="passwords.old_password"
 						placeholder="Старый пароль"
 					/>
 				</div>
@@ -314,7 +314,7 @@ watch(
 					<span class="absolute left-1 w-full text-xs text-red-500 -bottom-[6px]">{{ errors.password }}</span>
 				</div>
 
-				<div class="flex justify-content-end gap-2">
+				<div class="justify-content-end flex gap-2">
 					<Button
 						type="button"
 						label="Отменить"
@@ -336,11 +336,11 @@ watch(
 				header="Удаление аккаунта"
 				:style="{ width: '25rem' }"
 			>
-				<span class="p-text-secondary block mb-5"
+				<span class="p-text-secondary mb-5 block"
 					>После удаления аккаунта вы сможете восстановить его. Пожалуйста подтвердите данное действие</span
 				>
 
-				<div class="flex justify-content-end gap-2">
+				<div class="justify-content-end flex gap-2">
 					<Button
 						type="button"
 						label="Отменить"
@@ -365,9 +365,9 @@ watch(
 			<Button
 				v-if="isOwnerUser"
 				id="change_button"
-				@click="isDisabled = !isDisabled"
 				:class="[isDisabled ? 'hidden' : '']"
-				class="bg-gray border-gray"
+				class="border-gray bg-gray"
+				@click="isDisabled = !isDisabled"
 				>Отменить</Button
 			>
 			<Button
@@ -420,7 +420,7 @@ watch(
 
 	<OverlayPanel
 		ref="MenuOverlayPanel"
-		class="sm-ml-7 ml-0"
+		class="ml-0 sm-ml-7"
 		append-to="div"
 	>
 		<div

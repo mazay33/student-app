@@ -232,19 +232,19 @@ const isSignUpButtonDisabled = computed(() => {
 			:closable="false"
 			class="w-28rem"
 		>
-			<div class="flex justify-content-center">
-				<div class="flex flex-col align-items-center">
-					<div class="font-bold text-xl mb-2 text-center">Подтвердите ваш аккаунт</div>
-					<p class="text-color-secondary text-coolGray mb-3 text-center">
+			<div class="justify-content-center flex">
+				<div class="align-items-center flex flex-col">
+					<div class="mb-2 text-center text-xl font-bold">Подтвердите ваш аккаунт</div>
+					<p class="text-color-secondary mb-3 text-center text-coolGray">
 						Пожалуйста, введите код, отправленный на вашу электронную почту.
 					</p>
-					<p class="mb-5 text-coolGray text-center">{{ email }}</p>
+					<p class="mb-5 text-center text-coolGray">{{ email }}</p>
 					<InputOtp
+						v-model="codeConfirmationValue"
 						:length="6"
 						class="justify-center"
-						v-model="codeConfirmationValue"
 					/>
-					<div class="flex mt-7">
+					<div class="mt-7 flex">
 						<Button
 							v-if="timerValue == 0"
 							label="Отправить код еще раз"
@@ -253,7 +253,7 @@ const isSignUpButtonDisabled = computed(() => {
 						></Button>
 						<div
 							v-else
-							class="text-gray-500 flex-1 mt-2"
+							class="mt-2 flex-1 text-gray-500"
 						>
 							{{ timerValue }} Секунд осталось
 						</div>

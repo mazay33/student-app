@@ -7,7 +7,10 @@ const { navigationMenu } = useNavigationMenu();
 </script>
 
 <template>
-	<ul class="layout-menu">
+	<ul
+		v-if="navigationMenu"
+		class="layout-menu"
+	>
 		<template
 			v-for="(item, i) in navigationMenu"
 			:key="item"

@@ -15,14 +15,14 @@ import { ref, watchEffect } from 'vue';
 
 const props = defineProps<{
 	error: string;
-	customMessage: string;
+	customMessage?: string;
 }>();
 
 const errorMessage = ref('');
 
 watchEffect(() => {
 	if (props.error) {
-		errorMessage.value = props.customMessage || (props.error as string) || 'An unknown error occurred';
+		errorMessage.value = props.customMessage || props.error || 'An unknown error occurred';
 	}
 });
 </script>

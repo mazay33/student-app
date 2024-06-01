@@ -1,6 +1,7 @@
 const authStore = useAuthStore();
 
 export function useNavigationMenu() {
+	if (!authStore) return;
 	const navigationMenu = computed(() => [
 		{
 			label: 'Конспект',

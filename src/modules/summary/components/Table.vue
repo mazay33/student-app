@@ -72,7 +72,7 @@ const teacher = ref<ITeacher | null>(null);
 const teacherName = ref<string>();
 const debouncedTeacherName = debouncedRef(teacherName, 500);
 
-const { data: teachers, pending: teachersPending } = await apiService.teacher.getTeacherList('', {
+const { data: teachers, pending: teachersPending } = await apiService.teacher.getTeacherList({
 	lazy: true,
 	query: {
 		full_name: debouncedTeacherName,
@@ -129,7 +129,8 @@ const updatePage = (newPage: PageState) => {
 
 <template>
 	<UiTableWrapper
-		scroll-height="64vh"
+		class="min-h-[calc(90vh-11rem)]"
+		scroll-height="calc(90vh - 15rem)"
 		scrollable
 		show-gridlines
 		filter-display="row"
@@ -141,28 +142,6 @@ const updatePage = (newPage: PageState) => {
 		@update:rows="updatePageSize"
 		@update:page="updatePage"
 	>
-		<template #empty>
-			<div
-				v-if="summaries?.result?.length === 0 && !pending"
-				class="w-full flex flex-col items-center justify-center py-20"
-			>
-				<img
-					class="h-90px w-90px text-slate-400"
-					src="~/assets/images/empty.svg"
-				/>
-				<div class="mt-4 text-2xl text-slate-400">Конспекты не найдены :(</div>
-			</div>
-
-			<div
-				v-else
-				class="w-full flex flex-col items-center justify-center py-20"
-			>
-				<ProgressSpinner
-					style="width: 50px; height: 50px"
-					animation-duration="1s"
-				/>
-			</div>
-		</template>
 		<Column
 			class="text-center"
 			header="№"

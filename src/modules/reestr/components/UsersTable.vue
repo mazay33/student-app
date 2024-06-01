@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PageState } from 'primevue/paginator';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
@@ -9,44 +10,62 @@ const sortBy = ref<string>();
 const sortType = ref<'asc' | 'desc'>('asc');
 
 const userSearch = ref<string>();
-
 const debouncedUserSearch = debouncedRef(userSearch, 500);
 
 const {
 	data: user,
 	pending,
 	error,
-} = await apiService.subject.getSubjectList({
+} = await apiService.user.getUserList({
 	lazy: true,
 	query: {
 		page,
 		page_size: pageSize,
 		sort_by: sortBy,
 		sort_type: sortType,
-		name: debouncedUserSearch,
+		nickname: debouncedUserSearch,
 	},
 });
 
-const updateSortBy = (event: string | null) => {
+const updateSortBy = (event: string | undefined) => {
 	sortBy.value = event || undefined;
 };
 
-if (error.value) {
-	throw new Error(error.value.message);
-}
+const updateSortOrder = (order: 'asc' | 'desc') => {
+	sortType.value = order;
+};
+
+const updatePageSize = (newSize: number) => {
+	pageSize.value = newSize;
+};
+
+const updatePage = (newPage: PageState) => {
+	page.value = newPage.page + 1;
+};
+
+watch(
+	() => error.value,
+	() => {
+		throw new Error(error.value?.message);
+	},
+);
 </script>
 
 <template>
-	<DataTable
-		scroll-height="60vh"
-		scrollable
-		show-gridlines
+	<UiTableWrapper
+		class="min-h-[calc(90vh-11rem)]"
+		scroll-height="calc(90vh - 15rem)"
+		:pending="pending"
 		:value="user?.result"
 		removable-sort
-		lazy
+		:pages="user?.pages"
+		:page-size="pageSize"
+		:total-records="user?.count"
 		@sort="() => {}"
 		@update:sort-field="updateSortBy($event)"
-		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
+		@update:sort-order="updateSortOrder($event)"
+		@update:rows="updatePageSize"
+		@update:page="updatePage"
 	>
 		<template #header>
 			<div>
@@ -68,31 +87,28 @@ if (error.value) {
 			style="width: 2%"
 		>
 			<template #body="slotProps">
-				{{ slotProps.index + 1 }}
+				<Skeleton v-if="pending" />
+				<span v-else>{{ slotProps.index + 1 }}</span>
 			</template>
 		</Column>
 
 		<Column
 			sortable
-			field="full_name"
+			field="nickname"
 			header="Название"
 			style="width: 95%"
 		>
 			<template #body="slotProps">
-				<nuxt-link :to="`/profile/${slotProps.data.id}`">
+				<Skeleton v-if="pending" />
+				<nuxt-link
+					v-else
+					:to="`/profile/${slotProps.data.id}`"
+				>
 					{{ slotProps.data.nickname }}
 				</nuxt-link>
 			</template>
 		</Column>
-	</DataTable>
-
-	<Paginator
-		:rows="pageSize"
-		:total-records="user?.count"
-		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="pageSize = $event"
-		@page="page = $event.page + 1"
-	/>
+	</UiTableWrapper>
 </template>
 
 <style scoped></style>

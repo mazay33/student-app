@@ -57,7 +57,6 @@ interface ISubjectCreate {
 
 interface ITeacherCreate {
 	full_name: string;
-	date_birth: string;
 }
 interface IDeleteLecture {
 	lecture_id: string;

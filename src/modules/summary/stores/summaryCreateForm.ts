@@ -23,6 +23,8 @@ export const useSummaryCreateFormStore = defineStore(
 			id: null,
 		});
 
+		const summaryResponseId = ref<string>();
+
 		const clearSummaryCreateForm = () => {
 			summaryCreateForm.name = null;
 			summaryCreateForm.university = null;
@@ -36,7 +38,8 @@ export const useSummaryCreateFormStore = defineStore(
 
 			if (data.value) {
 				clearSummaryCreateForm();
-				await navigateTo(`/summary/private/${data.value}`);
+				summaryResponseId.value = data.value;
+				// await navigateTo(`/summary/private/${data.value}`);
 			}
 
 			isLoading.value = pending.value;
@@ -54,7 +57,7 @@ export const useSummaryCreateFormStore = defineStore(
 			createSummary,
 			summaryEditForm,
 			editSummary,
-
+			summaryResponseId,
 			isLoading: computed(() => isLoading.value),
 		};
 	},

@@ -194,8 +194,8 @@ const confirmUser = async () => {
 
 					<div class="my-4 flex flex-col sm-flex-row">
 						<a
+							class="mb-5 flex-1 cursor-pointer text-blue-500 font-medium no-underline sm-mb-0"
 							@click="isForgot = !isForgot"
-							class="flex-1 mb-5 sm-mb-0 cursor-pointer text-blue-500 font-medium no-underline"
 						>
 							Забыли пароль?
 						</a>
@@ -206,22 +206,22 @@ const confirmUser = async () => {
 							header="Сброс пароля"
 							:style="{ width: '27rem' }"
 						>
-							<span class="p-text-secondary block mb-5"
+							<span class="p-text-secondary mb-5 block"
 								>После сброса пароля на ваш email придёт письмо с инструкцией</span
 							>
 
-							<div class="flex align-items-center gap-3 mb-5">
+							<div class="align-items-center mb-5 flex gap-3">
 								<label
 									for="email"
-									class="font-semibold w-6rem mt-2"
+									class="mt-2 w-6rem font-semibold"
 									>Ваш Email</label
 								>
 								<InputText
-									class="flex-auto"
 									v-model="forgotEmail"
+									class="flex-auto"
 								/>
 							</div>
-							<div class="flex justify-content-end gap-2">
+							<div class="justify-content-end flex gap-2">
 								<Button
 									type="button"
 									label="Закрыть"
@@ -246,20 +246,20 @@ const confirmUser = async () => {
 							header="Активация аккаунта"
 							:style="{ width: '27rem' }"
 						>
-							<span class="p-text-secondary block mb-5"
+							<span class="p-text-secondary mb-5 block"
 								>Для восстановления аккаунта пожалуйста укажите Email, туда придёт письмо с
 								инструкцией</span
 							>
 
-							<div class="flex align-items-center gap-3 mb-5">
-								<label class="font-semibold w-4rem mt-2">Email</label>
+							<div class="align-items-center mb-5 flex gap-3">
+								<label class="mt-2 w-4rem font-semibold">Email</label>
 								<InputText
-									class="flex-auto"
 									v-model="activateEmail"
+									class="flex-auto"
 								/>
 							</div>
 
-							<div class="flex justify-content-end gap-2">
+							<div class="justify-content-end flex gap-2">
 								<Button
 									type="button"
 									label="Закрыть"
@@ -279,19 +279,19 @@ const confirmUser = async () => {
 							:closable="false"
 							class="w-28rem"
 						>
-							<div class="flex justify-content-center">
-								<div class="flex flex-col align-items-center">
-									<div class="font-bold text-xl mb-2 text-center">Подтверждение аккаунта</div>
-									<p class="text-color-secondary text-coolGray mb-3 text-center">
+							<div class="justify-content-center flex">
+								<div class="align-items-center flex flex-col">
+									<div class="mb-2 text-center text-xl font-bold">Подтверждение аккаунта</div>
+									<p class="text-color-secondary mb-3 text-center text-coolGray">
 										Пожалуйста, введите код, отправленный на вашу электронную почту.
 									</p>
-									<p class="mb-5 text-coolGray text-center">{{ email }}</p>
+									<p class="mb-5 text-center text-coolGray">{{ email }}</p>
 									<InputOtp
+										v-model="code"
 										:length="6"
 										class="justify-center"
-										v-model="code"
 									/>
-									<div class="flex mt-7">
+									<div class="mt-7 flex">
 										<Button
 											v-if="timer == 0"
 											label="Отправить код еще раз"
@@ -300,7 +300,7 @@ const confirmUser = async () => {
 										></Button>
 										<div
 											v-else
-											class="text-gray-500 flex-1 mt-2"
+											class="mt-2 flex-1 text-gray-500"
 										>
 											{{ timer }} Секунд осталось
 										</div>

@@ -318,8 +318,8 @@ const showComment = event => {
 						<div class="m-auto sm-ml-2">
 							<Button
 								severity="info"
-								@click="showComment($event)"
 								class="pi pi-angle-down w-12"
+								@click="showComment($event)"
 							></Button>
 							<ConfirmPopup group="headless">
 								<template #container="{}">
@@ -583,7 +583,7 @@ const showComment = event => {
 			class="mt-8"
 		>
 			<template #header>
-				<div class="pl-6 pt-4 text-xl text-indigo-500 font-semibold text-center">Лекции</div>
+				<div class="pl-6 pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>
 			</template>
 			<template #content>
 				<SummaryViewLecture

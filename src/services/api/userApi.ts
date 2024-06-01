@@ -13,8 +13,8 @@ export default class UserApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getUserList(filterQuery = '', options?: UseFetchOptions<IPaginatedResult<IUser>>) {
-		const url = `/public/users${filterQuery}`;
+	public async getUserList(options?: UseFetchOptions<IPaginatedResult<IUser>>) {
+		const url = `/public/users`;
 		return await this.sendRequest<IPaginatedResult<IUser>>(HttpMethod.GET, url, {
 			...options,
 		});
