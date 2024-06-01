@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VirtualScrollerLazyEvent } from 'primevue/virtualscroller';
+import type { PageState } from 'primevue/paginator';
 import type { ISummary } from '../@types';
 import type { IUser } from '~/@types/@types';
 import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
@@ -14,7 +15,7 @@ const isPrivateSummary = ref(route.path === '/summary/private');
 
 const apiService = useApiService();
 
-const { data: users } = await apiService.user.getUserList('', { lazy: true });
+const { data: users } = await apiService.user.getUserList({ lazy: true });
 
 // university
 // Логика фильтрации по университетам
@@ -53,7 +54,7 @@ const subject = ref<ISubject | null>(null);
 const subjectName = ref<string>();
 const debouncedSubjectName = debouncedRef(subjectName, 500);
 
-const { data: subjects, pending: subjectsPending } = await apiService.subject.getSubjectList('', {
+const { data: subjects, pending: subjectsPending } = await apiService.subject.getSubjectList({
 	lazy: true,
 	query: {
 		name: debouncedSubjectName,
@@ -116,15 +117,29 @@ const clearFilters = () => {
 
 	searchName.value = '';
 };
+
+const updatePageSize = (newSize: number) => {
+	pageSize.value = newSize;
+};
+
+const updatePage = (newPage: PageState) => {
+	page.value = newPage.page + 1;
+};
 </script>
 
 <template>
-	<DataTable
+	<UiTableWrapper
 		scroll-height="64vh"
 		scrollable
 		show-gridlines
 		filter-display="row"
 		:value="summaries?.result"
+		:pending="pending"
+		:pages="summaries?.pages"
+		:page-size="pageSize"
+		:total-records="summaries?.count"
+		@update:rows="updatePageSize"
+		@update:page="updatePage"
 	>
 		<template #empty>
 			<div
@@ -359,17 +374,7 @@ const clearFilters = () => {
 				</div>
 			</template>
 		</Column>
-	</DataTable>
-
-	<Paginator
-		v-if="summaries?.pages"
-		:rows="pageSize"
-		:total-records="summaries?.count"
-		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="pageSize = $event"
-		@page="page = $event.page + 1"
-	>
-	</Paginator>
+	</UiTableWrapper>
 </template>
 
 <style lang="scss">
