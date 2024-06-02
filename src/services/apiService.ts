@@ -1,21 +1,23 @@
 import HttpService from './httpService';
-import UniversityApi from './api/universityApi';
-import SubjectApi from './api/subjectApi';
-import TeacherApi from './api/teacherApi';
-import UserApi from './api/userApi';
-import AuthApi from './api/auth';
-import SummaryApi from './api/summary';
-import LectureApi from './api/lectureApi';
-import AdminApi from './api/admin';
+import UniversityApi from './api/university/universityApi';
+import SubjectApi from './api/subject/subjectApi';
+import TeacherApi from './api/teacher/teacherApi';
+import UserApi from './api/user/userApi';
+import AuthApi from './api/auth/authApi';
+import SummaryApi from './api/summary/summaryApi';
+import LectureApi from './api/lecture/lectureApi';
+import AdminApi from './api/admin/adminApi';
+import FileApi from './api/file/fileApi';
 
-export * from './api/universityApi';
-export * from './api/subjectApi';
-export * from './api/teacherApi';
-export * from './api/userApi';
-export * from './api/auth';
-export * from './api/summary';
-export * from './api/lectureApi';
-export * from './api/admin';
+export * from './api/university/universityApi';
+export * from './api/subject/subjectApi';
+export * from './api/teacher/teacherApi';
+export * from './api/user/userApi';
+export * from './api/auth/authApi';
+export * from './api/summary/summaryApi';
+export * from './api/lecture/lectureApi';
+export * from './api/admin/adminApi';
+export * from './api/file/fileApi';
 
 class ApiService {
 	readonly university: UniversityApi;
@@ -26,6 +28,7 @@ class ApiService {
 	readonly summary: SummaryApi;
 	readonly lecture: LectureApi;
 	readonly admin: AdminApi;
+	readonly file: FileApi;
 
 	constructor(httpService: HttpService) {
 		this.university = new UniversityApi(httpService);
@@ -36,6 +39,7 @@ class ApiService {
 		this.summary = new SummaryApi(httpService);
 		this.lecture = new LectureApi(httpService);
 		this.admin = new AdminApi(httpService);
+		this.file = new FileApi(httpService);
 	}
 }
 

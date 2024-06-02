@@ -1,10 +1,11 @@
 import type { UseFetchOptions } from '#app';
-import HttpService, { HttpMethod, type HttpReturnType } from '../httpService';
-import BaseApi from './base';
+import BaseApi from '../base';
+import type { IUniversity, IUniversityApi } from './universityApi.types';
 import type { IPaginatedResult } from '~/@types/@types';
-import type { IUniversity } from '~/modules/reestr/@types';
+import type HttpService from '~/services/httpService';
+import { HttpMethod, type HttpReturnType } from '~/services/httpService';
 
-export default class UniversityApi extends BaseApi {
+export default class UniversityApi extends BaseApi implements IUniversityApi {
 	constructor(private httpService: HttpService) {
 		super();
 	}
@@ -15,7 +16,7 @@ export default class UniversityApi extends BaseApi {
 
 	public async getUniversityList(
 		options?: UseFetchOptions<IPaginatedResult<IUniversity>>,
-	): HttpReturnType<IPaginatedResult<IUniversity>> {
+	): Promise<HttpReturnType<IPaginatedResult<IUniversity>>> {
 		const url = `main/public/universities`;
 		return await this.sendRequest<IPaginatedResult<IUniversity>>(HttpMethod.GET, url, {
 			...options,

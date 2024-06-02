@@ -1,35 +1,17 @@
-import { string } from 'yup';
 import type { UseFetchOptions } from '#app';
-import type HttpService from '../httpService';
-import { HttpMethod } from '../httpService';
-import BaseApi from './base';
-import type { IUser } from '~/@types/@types';
+import type HttpService from '../../httpService';
+import { HttpMethod, type HttpReturnType } from '../../httpService';
+import BaseApi from '../base';
+import type {
+	IAuthApi,
+	IAuthLoginResponse,
+	IRegistrationRequestData,
+	IRegistrationResponseData,
+	IUpdatePasswordRequestBody,
+} from './authApi.types';
+import type { IUser } from '~/@types/user.types';
 
-interface IAuthLoginResponse {
-	access_token: string;
-	refresh_token: string;
-	token_type: string;
-}
-
-interface IRegistrationResponseData {
-	email: string;
-	id: string;
-	is_active: boolean;
-	is_superuser: boolean;
-	is_verified: boolean;
-	nickname: string;
-}
-interface IRegistrationRequestData {
-	email: string;
-	password: string;
-}
-
-interface IUpdatePassword {
-	old_password: string;
-	new_password: string;
-}
-
-export default class AuthApi extends BaseApi {
+export default class AuthApi extends BaseApi implements IAuthApi {
 	constructor(private httpService: HttpService) {
 		super();
 	}
@@ -38,14 +20,18 @@ export default class AuthApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getMe(options?: UseFetchOptions<IUser>) {
+	public async getMe(options?: UseFetchOptions<IUser>): Promise<HttpReturnType<IUser>> {
 		const url = 'private/users/me';
 		return await this.sendRequest<IUser>(HttpMethod.GET, url, {
 			...options,
 		});
 	}
 
-	public async login(email: string, password: string, options?: UseFetchOptions<IAuthLoginResponse>) {
+	public async login(
+		email: string,
+		password: string,
+		options?: UseFetchOptions<IAuthLoginResponse>,
+	): Promise<HttpReturnType<IAuthLoginResponse>> {
 		const url = 'public/auth/login';
 		return await this.sendRequest<IAuthLoginResponse, URLSearchParams>(
 			HttpMethod.POST,
@@ -63,7 +49,11 @@ export default class AuthApi extends BaseApi {
 		);
 	}
 
-	public async registration(email: string, password: string, options?: UseFetchOptions<IRegistrationResponseData>) {
+	public async registration(
+		email: string,
+		password: string,
+		options?: UseFetchOptions<IRegistrationResponseData>,
+	): Promise<HttpReturnType<IRegistrationResponseData>> {
 		const url = 'public/users/registration';
 		return await this.sendRequest<IRegistrationResponseData, IRegistrationRequestData>(
 			HttpMethod.POST,
@@ -78,14 +68,14 @@ export default class AuthApi extends BaseApi {
 		);
 	}
 
-	public async confirmRegistration(code: string) {
+	public async confirmRegistration(code: string): Promise<HttpReturnType<boolean>> {
 		const url = 'public/users/registration/confirm';
 		return await this.sendRequest<boolean, { code: string }>(HttpMethod.PATCH, url, {
 			code,
 		});
 	}
 
-	public async resendCode(id: string, email: string) {
+	public async resendCode(id: string, email: string): Promise<HttpReturnType<boolean>> {
 		const url = 'public/users/resending';
 		return await this.sendRequest<boolean, { id: string; email: string }>(HttpMethod.POST, url, {
 			id,
@@ -93,37 +83,37 @@ export default class AuthApi extends BaseApi {
 		});
 	}
 
-	public async refresh() {
+	public async refresh(): Promise<HttpReturnType<IAuthLoginResponse>> {
 		const url = 'public/auth/refresh';
 		return await this.sendRequest<IAuthLoginResponse, Record<string, never>>(HttpMethod.POST, url, {});
 	}
 
-	public async logout() {
+	public async logout(): Promise<HttpReturnType<{ message: string }>> {
 		const url = 'private/auth/logout';
 		return await this.sendRequest<{ message: string }, Record<string, never>>(HttpMethod.POST, url, {});
 	}
 
-	public async resetPassword(email: string) {
+	public async resetPassword(email: string): Promise<HttpReturnType<boolean>> {
 		const url = `public/users/password/reset`;
 		return await this.sendRequest<boolean, { email: string }>(HttpMethod.PATCH, url, { email });
 	}
 
-	public async updatePassword(updatePassword: IUpdatePassword) {
+	public async updatePassword(passwords: IUpdatePasswordRequestBody): Promise<HttpReturnType<boolean>> {
 		const url = 'private/users/update/password';
-		return await this.sendRequest<boolean, IUpdatePassword>(HttpMethod.PATCH, url, updatePassword);
+		return await this.sendRequest<boolean, IUpdatePasswordRequestBody>(HttpMethod.PATCH, url, passwords);
 	}
 
-	public async deactivateUser(email: string) {
+	public async deactivateUser(email: string): Promise<HttpReturnType<boolean>> {
 		const url = 'private/users/deactivate';
 		return await this.sendRequest<boolean, { email: string }>(HttpMethod.POST, url, { email });
 	}
 
-	public async activateUser(email: string) {
+	public async activateUser(email: string): Promise<HttpReturnType<boolean>> {
 		const url = 'public/users/activate';
 		return await this.sendRequest<boolean, { emai: string }>(HttpMethod.POST, url, { email });
 	}
 
-	public async confirmUser(code: string) {
+	public async confirmUser(code: string): Promise<HttpReturnType<boolean>> {
 		const url = 'public/users/activate/confirm';
 		return await this.sendRequest<boolean, { code: string }>(HttpMethod.PATCH, url, { code });
 	}

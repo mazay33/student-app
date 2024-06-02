@@ -44,7 +44,7 @@ const openDeleteLectureModal = (lectureData: ILecture) => {
 };
 const deleteLecture = async () => {
 	if (!lecture.value) return;
-	const { data } = await apiService.lecture.deleteLection(lecture.value.id);
+	const { data } = await apiService.lecture.deleteLecture(lecture.value.id);
 
 	if (data.value) {
 		emit('@updateSummary');

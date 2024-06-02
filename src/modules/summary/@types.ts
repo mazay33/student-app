@@ -1,4 +1,6 @@
-import type { ISubject, ITeacher, IUniversity } from '../reestr/@types';
+import type { ISubject } from '~/services/api/subject/subjectApi.types';
+import type { ITeacher } from '~/services/api/teacher/teacherApi.types';
+import type { IUniversity } from '~/services/api/university/universityApi.types';
 
 interface ISummaryCreateForm {
 	name: string | null;
@@ -15,72 +17,4 @@ interface ISummaryEditForm {
 	id: string | null;
 }
 
-interface ILecture {
-	name: string;
-	description: string;
-	pdf_file_url: string;
-	video_url: string;
-	id: string;
-	date: string;
-}
-interface ICreateLectureForm extends Omit<ILecture, 'id'> {
-	summary_id: string;
-	date: string;
-}
-
-interface ISummary {
-	id: string;
-	name: string;
-	user_id: string;
-	university?: IUniversity;
-	subject?: ISubject;
-	teacher?: ITeacher;
-	status?: string;
-	lectures?: ILecture[];
-	lectures_count: number;
-	moderation_comment?: string;
-}
-
-interface IUpload {
-	id: string;
-	name: string;
-	file_url: string;
-}
-
-interface IUploadCsv {
-	count_added_universities: number;
-}
-
-interface ISubjectCreate {
-	name: string;
-}
-
-interface ITeacherCreate {
-	full_name: string;
-}
-interface IDeleteLecture {
-	lecture_id: string;
-}
-
-interface IEditLecture {
-	name: string;
-	description: string;
-	pdf_file_url: string;
-	video_url: string;
-	id: string;
-	date: string;
-}
-
-export type {
-	ICreateLectureForm,
-	ISummaryCreateForm,
-	ISummary,
-	IUpload,
-	ILecture,
-	ISubjectCreate,
-	ITeacherCreate,
-	IDeleteLecture,
-	IUploadCsv,
-	IEditLecture,
-	ISummaryEditForm,
-};
+export type { ISummaryCreateForm, ISummaryEditForm };
