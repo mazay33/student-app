@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ICreateLectureForm } from '../@types';
+import type { ICreateLectureForm } from '~/services/api/lecture/lectureApi.types';
 import useApiService from '~/services/apiService';
 
 const props = defineProps<{ summaryId: string }>();
@@ -77,7 +77,7 @@ const uploadPdf = async (event: Event) => {
 	}
 	formData.append('file', target.files[0]);
 
-	const { data } = await apiService.lecture.uploadPdfFile(formData);
+	const { data } = await apiService.file.uploadPdfFile(formData);
 
 	if (data.value) {
 		lectureCreateForm.value.pdf_file_url = data.value.file_url;

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { VirtualScrollerLazyEvent } from 'primevue/virtualscroller';
 import type { PageState } from 'primevue/paginator';
-import type { ISummary } from '../@types';
-import type { IUser } from '~/@types/@types';
-import type { ISubject, ITeacher, IUniversity } from '~/modules/reestr/@types';
 import useApiService from '~/services/apiService';
+import type { IUniversity } from '~/services/api/university/universityApi.types';
+import type { ISubject } from '~/services/api/subject/subjectApi.types';
+import type { ITeacher } from '~/services/api/teacher/teacherApi.types';
+import type { ISummary } from '~/services/api/summary/summaryApi.types';
+import type { IUser } from '~/@types/user.types';
 
 const route = useRoute();
 

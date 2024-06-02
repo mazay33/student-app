@@ -1,4 +1,4 @@
-import type { IUser } from '~/@types/@types';
+import type { IUser } from '~/@types/user.types';
 import { processErrors } from '~/helpers';
 import useApiService from '~/services/apiService';
 
@@ -30,6 +30,7 @@ export const useAuthStore = defineStore(
 		};
 
 		const login = async (email: string, password: string) => {
+			isLoading.value = true;
 			const { data, error, pending } = await apiService.auth.login(email, password);
 
 			if (data.value) {
@@ -41,6 +42,8 @@ export const useAuthStore = defineStore(
 			if (error.value) {
 				loginErrorMessage.value = processErrors(error.value.data.detail);
 			}
+
+			isLoading.value = pending.value;
 		};
 
 		const refresh = async () => {

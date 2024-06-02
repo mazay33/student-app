@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import useApiService from '~/services/apiService';
 
-import type { IPaginatedResult, IUser } from '~/@types/@types';
+import type { IPaginatedResult } from '~/@types/@types';
+import type { IUser } from '~/@types/user.types';
 
 definePageMeta({
 	middleware: ['admin-middleware', 'auth-middleware'],

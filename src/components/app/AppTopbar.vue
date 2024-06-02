@@ -127,7 +127,9 @@ const items = computed(() => {
 			class="layout-topbar-logo"
 		>
 			<img
-class="mt--1" src="~/assets/images/logo.png"
+				class="mt--1"
+				src="~/assets/images/logo.png"
+			/>
 		</NuxtLink>
 
 		<button

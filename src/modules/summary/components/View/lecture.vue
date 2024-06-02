@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ILecture } from '../../@types';
 import useApiService from '~/services/apiService';
 import { getYoutubeId } from '~/helpers';
+import type { ILecture } from '~/services/api/lecture/lectureApi.types';
 
 const apiService = useApiService();
 

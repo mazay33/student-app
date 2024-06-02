@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
-import type { IUser } from '~/@types/@types';
 import useApiService from '~/services/apiService';
 import { useAuthStore } from '~/modules/auth/stores/auth';
-
-const router = useRouter();
+import type { IUser } from '~/@types/user.types';
 
 const props = defineProps<{ user: IUser | null | undefined; isOwnerUser: boolean }>();
 
@@ -89,14 +86,17 @@ const toggle = (event: Event) => {
 	avatarOverlayPanel.value.toggle(event);
 };
 
-const passwords = ref({
-	old_password: null,
-	new_password: null,
+const passwords = ref<{ old_password: string; new_password: string }>({
+	old_password: '',
+	new_password: '',
 });
 
 const updatePasswords = ref(false);
 
 const updatePassword = async () => {
+	if (!passwords.value.old_password || !passwords.value.new_password) {
+		return;
+	}
 	const { data } = await apiService.auth.updatePassword(passwords.value);
 
 	if (data.value) {
@@ -118,6 +118,7 @@ const updatePassword = async () => {
 const deactivateUser = ref(false);
 
 const deleteUser = async () => {
+	if (!user.value?.email) return;
 	const { data } = await apiService.auth.deactivateUser(user.value?.email);
 	if (data.value) {
 		toast.add({

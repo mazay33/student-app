@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IUser } from '~/@types/@types';
+import type { IUser } from '~/@types/user.types';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();

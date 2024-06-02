@@ -14,7 +14,7 @@ const debouncedSubjectSearch = debouncedRef(subjectSearch, 500);
 
 const {
 	data: subjects,
-	pending,
+	pending: subjectsPending,
 	error,
 } = await apiService.subject.getSubjectList({
 	lazy: true,
@@ -31,9 +31,9 @@ const updateSortBy = (event: string | null) => {
 	sortBy.value = event || undefined;
 };
 
-if (error.value) {
-	throw new Error(error.value.message);
-}
+watch(error, () => {
+	if (error.value) throw new Error(error.value.message);
+});
 </script>
 
 <template>
@@ -44,6 +44,7 @@ if (error.value) {
 		:value="subjects?.result"
 		removable-sort
 		lazy
+		:loading="subjectsPending"
 		@sort="() => {}"
 		@update:sort-field="updateSortBy($event)"
 		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
