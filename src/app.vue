@@ -1,6 +1,6 @@
 <script setup>
 useHead({
-	title: 'Student App',
+	title: 'Konspect',
 });
 const route = useRoute();
 const authStore = useAuthStore();

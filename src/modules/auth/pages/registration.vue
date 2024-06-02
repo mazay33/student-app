@@ -221,10 +221,10 @@ const isSignUpButtonDisabled = computed(() => {
 			</div>
 		</div>
 
-		<Button
+		<!--<Button
 			label="Показать"
 			@click="codeConfirmDialog = true"
-		/>
+		/>-->
 
 		<Dialog
 			v-model:visible="codeConfirmDialog"
