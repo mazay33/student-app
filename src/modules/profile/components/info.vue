@@ -200,7 +200,7 @@ watch(
 						v-model="user.nickname"
 						type="text"
 						:disabled="isDisabled"
-						class="w-60 border-1 bg-white dark:bg-zinc-900 text-center text-black dark:text-white font-bold shadow-none"
+						class="w-60 border-1 bg-white text-center text-black font-bold shadow-none dark:bg-zinc-900 dark:text-white"
 						:class="[isDisabled ? 'border-transparent' : 'border-blue']"
 					/>
 				</div>
@@ -208,11 +208,7 @@ watch(
 					<img
 						class="mt-5 h-200px w-200px rounded-full"
 						:class="isOwnerUser ? 'cursor-pointer' : ''"
-						:src="
-							user.image_url
-								? `${user.image_url.replace('localhost', 'la-parole.ru/api')}`
-								: 'https://pinia.vuejs.org/logo.svg'
-						"
+						:src="user.image_url ? user.image_url : 'https://pinia.vuejs.org/logo.svg'"
 						@click="isOwnerUser ? toggle($event) : () => {}"
 					/>
 				</div>
@@ -241,7 +237,7 @@ watch(
 						<InputText
 							v-model="user.description"
 							type="text"
-							class="h-10 w-60 border-1 rounded shadow-none bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-slate-200"
+							class="h-10 w-60 border-1 rounded bg-slate-200 text-slate-700 shadow-none dark:bg-zinc-700 dark:text-slate-200"
 							:class="[isDisabled ? 'border-transparent' : 'border-blue']"
 							placeholder="Some info about..."
 							:disabled="isDisabled"

@@ -2,9 +2,10 @@ import { fetchWithCookie } from '~/composables/useFetchCookie';
 
 export default defineNuxtPlugin(() => {
 	let isRefreshing = false;
+	const config = useRuntimeConfig();
 
 	const $api = $fetch.create({
-		baseURL: 'https://auth.24konspect.ru/api/',
+		baseURL: config.public.api,
 		retry: 1,
 		retryStatusCodes: [401],
 		credentials: 'include',
@@ -25,7 +26,7 @@ export default defineNuxtPlugin(() => {
 					const event = useRequestEvent();
 
 					const { status } = await useAsyncData(
-						async () => await fetchWithCookie(event!, 'https://auth.24konspect.ru/api/public/auth/refresh'),
+						async () => await fetchWithCookie(event!, `${config.public.api}public/auth/refresh`),
 					);
 
 					if (status.value === 'success') {

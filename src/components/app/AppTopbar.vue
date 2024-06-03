@@ -161,7 +161,7 @@ const items = computed(() => {
 				<img
 					v-else
 					class="h-40px w-40px cursor-pointer rounded-full"
-					:src="`${userImg.replace('localhost', 'la-parole.ru/api')}`"
+					:src="userImg"
 				/>
 				<span>Profile</span>
 			</button>
