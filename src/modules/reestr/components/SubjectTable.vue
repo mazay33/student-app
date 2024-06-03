@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PageState } from 'primevue/paginator';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
@@ -27,9 +28,38 @@ const {
 	},
 });
 
-const updateSortBy = (event: string | null) => {
+const updateSortBy = (event: string | undefined) => {
 	sortBy.value = event || undefined;
 };
+
+const updateSortOrder = (order: 'asc' | 'desc') => {
+	sortType.value = order;
+};
+
+const updatePageSize = (newSize: number) => {
+	pageSize.value = newSize;
+};
+
+const updatePage = (newPage: PageState) => {
+	page.value = newPage.page + 1;
+};
+
+const showSkeleton = ref<boolean>(false);
+let skeletonTimeout: ReturnType<typeof setTimeout>;
+
+watch(
+	() => subjectsPending.value,
+	newPending => {
+		if (newPending) {
+			skeletonTimeout = setTimeout(() => {
+				showSkeleton.value = true;
+			}, 200);
+		} else {
+			clearTimeout(skeletonTimeout);
+			showSkeleton.value = false;
+		}
+	},
+);
 
 watch(error, () => {
 	if (error.value) throw new Error(error.value.message);
@@ -37,17 +67,20 @@ watch(error, () => {
 </script>
 
 <template>
-	<DataTable
-		scroll-height="60vh"
-		scrollable
-		show-gridlines
+	<UiTableWrapper
+		class="min-h-[calc(90vh-11rem)]"
+		scroll-height="calc(90vh - 16rem)"
+		:pending="subjectsPending"
 		:value="subjects?.result"
 		removable-sort
-		lazy
-		:loading="subjectsPending"
+		:pages="subjects?.pages"
+		:page-size="pageSize"
+		:total-records="subjects?.count"
 		@sort="() => {}"
 		@update:sort-field="updateSortBy($event)"
-		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
+		@update:sort-order="updateSortOrder($event)"
+		@update:rows="updatePageSize"
+		@update:page="updatePage"
 	>
 		<template #header>
 			<div>
@@ -69,7 +102,10 @@ watch(error, () => {
 			style="width: 2%"
 		>
 			<template #body="slotProps">
-				{{ slotProps.index + 1 }}
+				<Skeleton v-if="showSkeleton" />
+				<span v-else>
+					{{ slotProps.index + 1 }}
+				</span>
 			</template>
 		</Column>
 
@@ -80,18 +116,13 @@ watch(error, () => {
 			style="width: 95%"
 		>
 			<template #body="slotProps">
-				{{ slotProps.data.name }}
+				<Skeleton v-if="showSkeleton" />
+				<span v-else>
+					{{ slotProps.data.name }}
+				</span>
 			</template>
 		</Column>
-	</DataTable>
-
-	<Paginator
-		:rows="pageSize"
-		:total-records="subjects?.count"
-		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="pageSize = $event"
-		@page="page = $event.page + 1"
-	/>
+	</UiTableWrapper>
 </template>
 
 <style scoped></style>

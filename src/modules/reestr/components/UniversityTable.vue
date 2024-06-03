@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PageState } from 'primevue/paginator';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
@@ -11,9 +12,6 @@ const sortType = ref<'asc' | 'desc'>('asc');
 const universitySearch = ref<string>();
 
 const debouncedUniversitySearch = debouncedRef(universitySearch, 500);
-
-const showSkeleton = ref<boolean>(false);
-let skeletonTimeout: ReturnType<typeof setTimeout>;
 
 const {
 	data: universities,
@@ -30,16 +28,24 @@ const {
 	},
 });
 
-const updateSortBy = (event: string | null) => {
+const updateSortBy = (event: string | undefined) => {
 	sortBy.value = event || undefined;
 };
 
-watch(
-	() => error.value,
-	() => {
-		if (error.value) throw new Error(error.value.message);
-	},
-);
+const updateSortOrder = (order: 'asc' | 'desc') => {
+	sortType.value = order;
+};
+
+const updatePageSize = (newSize: number) => {
+	pageSize.value = newSize;
+};
+
+const updatePage = (newPage: PageState) => {
+	page.value = newPage.page + 1;
+};
+
+const showSkeleton = ref<boolean>(false);
+let skeletonTimeout: ReturnType<typeof setTimeout>;
 
 watch(
 	() => pending.value,
@@ -54,19 +60,30 @@ watch(
 		}
 	},
 );
+
+watch(
+	() => error.value,
+	() => {
+		if (error.value) throw new Error(error.value.message);
+	},
+);
 </script>
 
 <template>
-	<DataTable
-		scroll-height="60vh"
-		scrollable
-		show-gridlines
+	<UiTableWrapper
+		class="min-h-[calc(90vh-11rem)]"
+		scroll-height="calc(90vh - 16rem)"
+		:pending="pending"
 		:value="universities?.result"
 		removable-sort
-		lazy
+		:pages="universities?.pages"
+		:page-size="pageSize"
+		:total-records="universities?.count"
 		@sort="() => {}"
 		@update:sort-field="updateSortBy($event)"
-		@update:sort-order="sortType = $event === 1 ? 'asc' : 'desc'"
+		@update:sort-order="updateSortOrder($event)"
+		@update:rows="updatePageSize"
+		@update:page="updatePage"
 	>
 		<template #header>
 			<div>
@@ -102,15 +119,7 @@ watch(
 				<div v-else>{{ slotProps.data.short_name }} - {{ slotProps.data.name }}</div>
 			</template>
 		</Column>
-	</DataTable>
-
-	<Paginator
-		:rows="pageSize"
-		:total-records="universities?.count"
-		:rows-per-page-options="[10, 25, 50, 100]"
-		@update:rows="pageSize = $event"
-		@page="page = $event.page + 1"
-	/>
+	</UiTableWrapper>
 </template>
 
 <style scoped></style>

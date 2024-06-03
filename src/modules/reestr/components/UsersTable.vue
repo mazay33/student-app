@@ -43,6 +43,23 @@ const updatePage = (newPage: PageState) => {
 	page.value = newPage.page + 1;
 };
 
+const showSkeleton = ref<boolean>(false);
+let skeletonTimeout: ReturnType<typeof setTimeout>;
+
+watch(
+	() => pending.value,
+	newPending => {
+		if (newPending) {
+			skeletonTimeout = setTimeout(() => {
+				showSkeleton.value = true;
+			}, 200);
+		} else {
+			clearTimeout(skeletonTimeout);
+			showSkeleton.value = false;
+		}
+	},
+);
+
 watch(
 	() => error.value,
 	() => {
@@ -54,7 +71,7 @@ watch(
 <template>
 	<UiTableWrapper
 		class="min-h-[calc(90vh-11rem)]"
-		scroll-height="calc(90vh - 15rem)"
+		scroll-height="calc(90vh - 16rem)"
 		:pending="pending"
 		:value="user?.result"
 		removable-sort
@@ -87,7 +104,7 @@ watch(
 			style="width: 2%"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="pending" />
+				<Skeleton v-if="showSkeleton" />
 				<span v-else>{{ slotProps.index + 1 }}</span>
 			</template>
 		</Column>
@@ -99,7 +116,7 @@ watch(
 			style="width: 95%"
 		>
 			<template #body="slotProps">
-				<Skeleton v-if="pending" />
+				<Skeleton v-if="showSkeleton" />
 				<nuxt-link
 					v-else
 					:to="`/profile/${slotProps.data.id}`"
