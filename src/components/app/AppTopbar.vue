@@ -128,7 +128,7 @@ const items = computed(() => {
 		>
 			<img
 				class="mt--1"
-				src="~/assets/images/logo.png"
+				src="~/assets/images/konspect.png"
 			/>
 		</NuxtLink>
 

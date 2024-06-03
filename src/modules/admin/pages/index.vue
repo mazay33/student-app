@@ -121,12 +121,13 @@ const uploadCsv = async (event: Event) => {
 	<div>
 		<Toast />
 
-		<div class="rounded-lg bg-white p-5 shadow-lg">
-			<div class="mb-5 flex">
+		<div class="rounded-lg bg-white dark:bg-zinc-900 p-5 shadow-lg">
+			<div class="mb-5 flex flex-col sm-flex-row">
 				<h2 class="flex-1">Администратор: {{ user?.nickname }}</h2>
 				<Button
 					severity="info"
 					@click="openFileDialog"
+					class="w-53"
 					>загрузить справочник</Button
 				>
 			</div>

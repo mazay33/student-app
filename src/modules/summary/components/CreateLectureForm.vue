@@ -102,15 +102,13 @@ const clearLectureCreateForm = () => {
 	<form>
 		<div>
 			<div>
-				<p class="text-sm text-gray-600 leading-6">Пожалуйста заполните данные о вашей лекции ниже</p>
-				<p class="mt--3 text-sm text-gray-600">
-					Помните что другие пользователи также смогут увидеть данную лекцию
-				</p>
+				<p class="text-sm leading-6">Пожалуйста заполните данные о вашей лекции ниже</p>
+				<p class="mt--3 text-sm">Помните что другие пользователи также смогут увидеть данную лекцию</p>
 
 				<div>
 					<div class="grid grid-cols-1 mt-5 gap-x-6 gap-y-3 sm:grid-cols-6">
 						<div class="sm:col-span-3">
-							<label class="block text-sm text-gray-900 font-medium leading-6">Название лекции</label>
+							<label class="block text-sm font-medium leading-6">Название лекции</label>
 							<div>
 								<InputText
 									v-model="lectureCreateForm.name"
@@ -121,7 +119,7 @@ const clearLectureCreateForm = () => {
 						</div>
 
 						<div class="sm:col-span-3">
-							<label class="block text-sm text-gray-900 font-medium leading-6">Описание</label>
+							<label class="block text-sm font-medium leading-6">Описание</label>
 							<div>
 								<InputText
 									v-model="lectureCreateForm.description"
@@ -135,7 +133,7 @@ const clearLectureCreateForm = () => {
 
 				<div class="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-6">
 					<div class="sm:col-span-3">
-						<label class="block text-sm text-gray-900 font-medium leading-8">Дата проведения лекции</label>
+						<label class="block text-sm font-medium leading-8">Дата проведения лекции</label>
 						<Calendar
 							v-model="lectureCreateForm.date"
 							show-icon
@@ -144,7 +142,7 @@ const clearLectureCreateForm = () => {
 						/>
 					</div>
 					<div class="sm:col-span-3">
-						<label class="block text-sm text-gray-900 font-medium leading-8">Ссылка на youtube видео</label>
+						<label class="block text-sm font-medium leading-8">Ссылка на youtube видео</label>
 						<InputText
 							v-model="lectureCreateForm.video_url"
 							type="text"
@@ -155,8 +153,8 @@ const clearLectureCreateForm = () => {
 
 				<div class="mt-10 flex-auto gap-x-6 gap-y-8 sm:grid-cols-6">
 					<div>
-						<label class="text-sm text-gray-900 font-medium leading-6">Добавить файл</label>
-						<div class="mt-5 border border-gray-900/25 rounded-lg border-dashed">
+						<label class="text-sm font-medium leading-6">Добавить файл</label>
+						<div class="mt-5 border rounded-lg border-dashed">
 							<div
 								v-if="lectureCreateForm.pdf_file_url"
 								class="mb-5"

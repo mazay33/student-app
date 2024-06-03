@@ -4,6 +4,10 @@ import * as yup from 'yup';
 import useApiService from '~/services/apiService';
 import { useAuthStore } from '~/modules/auth/stores/auth';
 import type { IUser } from '~/@types/user.types';
+import { useThemeStore } from '#imports';
+
+const themeStore = useThemeStore();
+const { isDarkMode } = themeStore;
 
 const props = defineProps<{ user: IUser | null | undefined; isOwnerUser: boolean }>();
 
@@ -191,13 +195,13 @@ watch(
 			sm:flex-row
 		>
 			<div class="mt--10 text-center">
-				<div class="w-5/10 text-black">
+				<div class="w-5/10">
 					<InputText
 						v-model="user.nickname"
 						type="text"
 						:disabled="isDisabled"
-						class="w-60 border-1 bg-white text-center text-black font-bold shadow-none"
-						:class="[isDisabled ? 'border-white' : 'border-blue']"
+						class="w-60 border-1 bg-white dark:bg-zinc-900 text-center text-black dark:text-white font-bold shadow-none"
+						:class="[isDisabled ? 'border-transparent' : 'border-blue']"
 					/>
 				</div>
 				<div>
@@ -218,7 +222,7 @@ watch(
 				<div class="flex">
 					<div class="flex flex flex-col flex-col gap-2">
 						<label>Email</label>
-						<div class="h-10 w-60 rounded bg-slate-200">
+						<div class="h-10 w-60 rounded bg-slate-200 dark:bg-zinc-700">
 							<p class="pl-3 pt-2">{{ user.email }}</p>
 						</div>
 					</div>
@@ -226,7 +230,7 @@ watch(
 				<div class="mt-6 flex">
 					<div class="flex flex flex-col flex-col gap-2">
 						<label>Дата создания аккаунта</label>
-						<div class="h-10 w-60 rounded bg-slate-200">
+						<div class="h-10 w-60 rounded bg-slate-200 dark:bg-zinc-700">
 							<p class="pl-3 pt-2">{{ useDateFormat(user.created_at, 'DD.MM.YYYY').value }}</p>
 						</div>
 					</div>
@@ -237,8 +241,8 @@ watch(
 						<InputText
 							v-model="user.description"
 							type="text"
-							class="h-10 w-60 border-1 rounded shadow-none placeholder:text-slate-700"
-							:class="[isDisabled ? 'border-white' : 'border-blue']"
+							class="h-10 w-60 border-1 rounded shadow-none bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-slate-200"
+							:class="[isDisabled ? 'border-transparent' : 'border-blue']"
 							placeholder="Some info about..."
 							:disabled="isDisabled"
 						/>

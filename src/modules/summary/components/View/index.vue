@@ -248,7 +248,7 @@ const showComment = event => {
 			</div>
 			<div>
 				<div class="flex flex-col sm:flex-row">
-					<div class="pl-0 text-center text-base text-gray-900 font-bold leading-7 sm-pl-3">Автор:</div>
+					<div class="pl-0 text-center text-base font-bold leading-7 sm-pl-3">Автор:</div>
 
 					<div class="flex justify-center pl-0 text-lg sm-pl-5">
 						<div class="mt-1 flex sm-mt--2">
@@ -263,31 +263,31 @@ const showComment = event => {
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Вуз:</div>
-					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
+					<div class="text-center text-base font-bold leading-7">Вуз:</div>
+					<div class="text-md pl-0 text-center leading-7 sm-pl-5">
 						{{ summary?.university?.name }}
 					</div>
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Предмет:</div>
-					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
+					<div class="text-center text-base font-bold leading-7">Предмет:</div>
+					<div class="text-md pl-0 text-center leading-7 sm-pl-5">
 						{{ summary?.subject?.name }}
 					</div>
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
-					<div class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5">
+					<div class="text-center text-base font-bold leading-7">Преподаватель:</div>
+					<div class="text-md pl-0 text-center leading-7 sm-pl-5">
 						{{ summary?.teacher?.full_name }}
 					</div>
 				</div>
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Статус конспекта:</div>
+					<div class="text-center text-base font-bold leading-7">Статус конспекта:</div>
 					<div
 						v-if="summary?.status === 'approved'"
 						style="color: green"
-						class="text-md pl-0 text-center text-gray-600 leading-7 sm-pl-5"
+						class="text-md pl-0 text-center leading-7 sm-pl-5"
 					>
 						Одобрен
 					</div>
@@ -312,9 +312,7 @@ const showComment = event => {
 						v-if="isPrivateSummary"
 						class="flex flex-1 flex-col sm:flex-row"
 					>
-						<div class="mb-1 text-center text-base text-gray-900 font-bold leading-7 sm-mt-1">
-							Комментарии:
-						</div>
+						<div class="mb-1 text-center text-base font-bold leading-7 sm-mt-1">Комментарии:</div>
 						<div class="m-auto sm-ml-2">
 							<Button
 								severity="info"
@@ -363,7 +361,7 @@ const showComment = event => {
 				<i class="pi pi-bookmark text-3xl" />
 				<InputText
 					v-model="summaryEditForm.name"
-					class="w-full bg-white text-center text-3xl text-indigo-500 font-semibold shadow-none sm-w-4/10"
+					class="w-full bg-white dark:bg-zinc-900 text-center text-3xl text-indigo-500 font-semibold shadow-none sm-w-4/10"
 					:class="[isDisabled ? 'border-white' : 'border-blue']"
 					:disabled="isDisabled"
 				>
@@ -371,7 +369,7 @@ const showComment = event => {
 			</div>
 			<div>
 				<div class="flex flex-col sm:flex-row">
-					<div class="pl-0 text-center text-base text-gray-900 font-bold leading-7 sm-pl-3">Автор:</div>
+					<div class="pl-0 text-center text-base font-bold leading-7 sm-pl-3">Автор:</div>
 
 					<div class="flex justify-center pl-0 text-lg sm-pl-5">
 						<div class="mt-1 flex sm-mt--2">
@@ -386,7 +384,7 @@ const showComment = event => {
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Вуз:</div>
+					<div class="text-center text-base font-bold leading-7 mt-1">Вуз:</div>
 					<Dropdown
 						v-model="summaryEditForm.university"
 						option-label="name"
@@ -394,7 +392,7 @@ const showComment = event => {
 						:options="universities?.result"
 						editable
 						:show-clear="!isDisabled"
-						class="text-md ml-0 bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
+						class="text-md ml-0 bg-white dark:bg-zinc-900 pl-5 leading-7 shadow-none sm-ml-5"
 						:class="[isDisabled ? 'border-white' : 'border-blue']"
 						:disabled="isDisabled"
 						required
@@ -404,7 +402,7 @@ const showComment = event => {
 				</div>
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
-					<div class="text-center text-base text-gray-900 font-bold leading-7">Предмет:</div>
+					<div class="text-center text-base font-bold leading-7 mt-1">Предмет:</div>
 					<div class="flex">
 						<Dropdown
 							v-model="summaryEditForm.subject"
@@ -413,7 +411,7 @@ const showComment = event => {
 							:loading="isLoading"
 							editable
 							:show-clear="!isDisabled"
-							class="text-md ml-0 w-full bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
+							class="text-md ml-0 w-full bg-white dark:bg-zinc-900 pl-5 leading-7 shadow-none sm-ml-5"
 							:class="[isDisabled ? 'border-white' : 'border-blue']"
 							:disabled="isDisabled"
 							@change="onSubjectChange($event)"
@@ -469,7 +467,7 @@ const showComment = event => {
 
 				<div class="mt-3 flex flex-col pl-0 sm:flex-row sm-pl-3">
 					<div class="flex flex-1 flex-col sm:flex-row">
-						<div class="text-center text-base text-gray-900 font-bold leading-7">Преподаватель:</div>
+						<div class="text-center text-base font-bold leading-7 mt-1">Преподаватель:</div>
 						<div class="flex">
 							<Dropdown
 								v-model="summaryEditForm.teacher"
@@ -478,7 +476,7 @@ const showComment = event => {
 								option-label="full_name"
 								editable
 								:show-clear="!isDisabled"
-								class="text-md ml-0 w-full bg-white pl-5 text-gray-600 leading-7 shadow-none sm-ml-5"
+								class="text-md ml-0 w-full bg-white dark:bg-zinc-900 pl-5 leading-7 shadow-none sm-ml-5"
 								:class="[isDisabled ? 'border-white' : 'border-blue']"
 								:disabled="isDisabled"
 								@change="onTeacherChange($event)"
