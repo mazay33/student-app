@@ -3,7 +3,6 @@
 Build your VUE.js App with Nuxt3. First Class PrimeVUE support. Validation by Formkit.
 Based on [Nuxt-Sakai](https://github.com/primefaces/sakai-nuxt) Theme.
 
-[![CI](https://github.com/sfxcode/nuxt3-primevue-starter/actions/workflows/main.yml/badge.svg)](https://github.com/sfxcode/nuxt3-primevue-starter/actions/workflows/main.yml)
 
 THX to [antfu / Vitesse Nuxt3](https://github.com/antfu/vitesse-nuxt3) for starter code
 
