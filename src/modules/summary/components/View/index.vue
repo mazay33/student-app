@@ -241,8 +241,8 @@ const showComment = event => {
 
 		<div v-if="isEditing">
 			<div class="mb-10 flex items-center justify-center gap-4">
-				<i class="pi pi-bookmark pt-2 text-3xl" />
-				<h1 class="m-0 p-0 text-3xl text-indigo-500 font-semibold">
+				<!-- <i class="pi pi-bookmark pt-2 text-3xl" /> -->
+				<h1 class="m-0 p-0 text-3xl text-indigo-500 text-center font-semibold">
 					{{ summary?.name }}
 				</h1>
 			</div>
@@ -316,7 +316,7 @@ const showComment = event => {
 						<div class="m-auto sm-ml-2">
 							<Button
 								severity="info"
-								class="pi pi-angle-down w-12"
+								class="pi pi-angle-down w-8 pl-2"
 								@click="showComment($event)"
 							></Button>
 							<ConfirmPopup group="headless">
@@ -581,7 +581,7 @@ const showComment = event => {
 			class="mt-8"
 		>
 			<template #header>
-				<div class="pl-6 pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>
+				<div class="pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>
 			</template>
 			<template #content>
 				<SummaryViewLecture
