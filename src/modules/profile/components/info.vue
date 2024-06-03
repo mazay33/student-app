@@ -325,7 +325,7 @@ watch(
 					<Button
 						:disabled="isAgree"
 						type="button"
-						label="Сохранить1"
+						label="Сохранить"
 						@click="updatePassword"
 					></Button>
 				</div>
