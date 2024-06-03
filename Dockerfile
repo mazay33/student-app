@@ -1,13 +1,34 @@
+# Build stage
 FROM node:lts as build-stage
+
+# Set the working directory
 WORKDIR /nuxtapp
+
+# Copy all files to the working directory
 COPY . .
+
+# Set build arguments and environment variables
+ARG NUXT_PUBLIC_API
+ENV NUXT_PUBLIC_API=${NUXT_PUBLIC_API}
+
+# Install dependencies and build the application
 RUN npm install -g pnpm \
     && pnpm install \
     && pnpm build \
     && pnpm store prune \
     && rm -rf /root/.npm /root/.pnpm-store
 
+# Production stage
 FROM node:lts as prod-stage
+
+# Set the working directory
 WORKDIR /nuxtapp
-COPY --from=build-stage /nuxtapp/.output/  ./.output/
+
+# Copy the built output from the build stage
+COPY --from=build-stage /nuxtapp/.output/ ./.output/
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Command to run the application
 CMD [ "node", ".output/server/index.mjs" ]
