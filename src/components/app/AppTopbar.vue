@@ -73,15 +73,15 @@ const isOutsideClicked = event => {
 	);
 };
 
-// const emit = defineEmits(['menuToggle']);
+const emit = defineEmits(['menuToggle']);
 
-// const themeStore = useThemeStore();
-// const op = ref<any>(null);
+const themeStore = useThemeStore();
+const op = ref<any>(null);
 const isUserMenuActive = ref<any>(null);
 
-// function toggle(event: any) {
-// 	op.value.toggle(event);
-// }
+function toggle(event: any) {
+	op.value.toggle(event);
+}
 
 function toggleUserMenu(event: any) {
 	isUserMenuActive.value.toggle(event);
@@ -165,10 +165,14 @@ const items = computed(() => {
 				/>
 				<span>Profile</span>
 			</button>
-			<!-- <button class="p-link layout-topbar-button" @click="toggle">
-        <i class="pi pi-cog" />
-        <span>Settings</span>
-      </button> -->
+			<button
+				v-if="authStore.isAdmin"
+				class="p-link layout-topbar-button"
+				@click="toggle"
+			>
+				<i class="pi pi-cog" />
+				<span>Settings</span>
+			</button>
 		</div>
 		<client-only>
 			<OverlayPanel
@@ -184,85 +188,66 @@ const items = computed(() => {
 			</OverlayPanel>
 		</client-only>
 
-		<!-- <client-only>
-      <OverlayPanel
-        id="overlay_panel"
-        ref="op"
-        append-to="body"
-        style="width: 200px"
-      >
-        <h6>Theme</h6>
-        <div class="field-radiobutton">
-          <RadioButton
-            id="lara-dark"
-            v-model="themeStore.themeName"
-            name="layoutColorMode"
-            value="lara-dark"
-            @change="themeStore.setTheme('lara-dark')"
-          />
-          <label>Lara Dark</label>
-        </div>
-        <div class="field-radiobutton">
-          <RadioButton
-            id="lara-light"
-            v-model="themeStore.themeName"
-            name="layoutColorMode"
-            value="lara-light"
-            @change="themeStore.setTheme('lara-light')"
-          />
-          <label>Lara Light</label>
-        </div>
-        <div class="field-radiobutton">
-          <RadioButton
-            id="aura-dark"
-            v-model="themeStore.themeName"
-            name="layoutColorMode"
-            value="aura-dark"
-            @change="themeStore.setTheme('aura-dark')"
-          />
-          <label>Aura Dark</label>
-        </div>
-        <div class="field-radiobutton">
-          <RadioButton
-            id="aura-light"
-            v-model="themeStore.themeName"
-            name="layoutColorMode"
-            value="aura-light"
-            @change="themeStore.setTheme('aura-light')"
-          />
-          <label>Aura Light</label>
-        </div>
+		<client-only>
+			<OverlayPanel
+				id="overlay_panel"
+				ref="op"
+				append-to="body"
+				style="width: 200px"
+			>
+				<h6>Theme</h6>
 
-        <h6>Primary Color</h6>
-        <div class="flex">
-          <div
-            style="width: 2rem; height: 2rem; border-radius: 6px"
-            class="bg-green-500 mr-3 cursor-pointer"
-            @click="themeStore.setColor('green')"
-          />
-          <div
-            style="width: 2rem; height: 2rem; border-radius: 6px"
-            class="bg-blue-500 mr-3 cursor-pointer"
-            @click="themeStore.setColor('blue')"
-          />
-          <div
-            style="width: 2rem; height: 2rem; border-radius: 6px"
-            class="bg-teal-500 mr-3 cursor-pointer"
-            @click="themeStore.setColor('teal')"
-          />
-          <div
-            style="width: 2rem; height: 2rem; border-radius: 6px"
-            class="bg-purple-500 mr-3 cursor-pointer"
-            @click="themeStore.setColor('purple')"
-          />
-          <div
-            style="width: 2rem; height: 2rem; border-radius: 6px"
-            class="bg-amber-500 mr-3 cursor-pointer text-8xl"
-            @click="themeStore.setColor('amber')"
-          />
-        </div>
-      </OverlayPanel>
-    </client-only>-->
+				<div class="field-radiobutton">
+					<RadioButton
+						id="aura-dark"
+						v-model="themeStore.themeName"
+						name="layoutColorMode"
+						value="aura-dark"
+						@change="themeStore.setTheme('aura-dark')"
+					/>
+					<label>Aura Dark</label>
+				</div>
+				<div class="field-radiobutton">
+					<RadioButton
+						id="aura-light"
+						v-model="themeStore.themeName"
+						name="layoutColorMode"
+						value="aura-light"
+						@change="themeStore.setTheme('aura-light')"
+					/>
+					<label>Aura Light</label>
+				</div>
+
+				<!-- <h6>Primary Color</h6>
+				<div class="flex">
+					<div
+						style="width: 2rem; height: 2rem; border-radius: 6px"
+						class="mr-3 cursor-pointer bg-green-500"
+						@click="themeStore.setColor('green')"
+					/>
+					<div
+						style="width: 2rem; height: 2rem; border-radius: 6px"
+						class="mr-3 cursor-pointer bg-blue-500"
+						@click="themeStore.setColor('blue')"
+					/>
+					<div
+						style="width: 2rem; height: 2rem; border-radius: 6px"
+						class="mr-3 cursor-pointer bg-teal-500"
+						@click="themeStore.setColor('teal')"
+					/>
+					<div
+						style="width: 2rem; height: 2rem; border-radius: 6px"
+						class="mr-3 cursor-pointer bg-purple-500"
+						@click="themeStore.setColor('purple')"
+					/>
+					<div
+						style="width: 2rem; height: 2rem; border-radius: 6px"
+						class="mr-3 cursor-pointer bg-amber-500 text-8xl"
+						@click="themeStore.setColor('amber')"
+					/>
+				</div> -->
+			</OverlayPanel>
+		</client-only>
 	</div>
 </template>
 

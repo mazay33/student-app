@@ -8,13 +8,13 @@ export const useThemeStore = defineStore('theme', {
 	// a function that returns a fresh state
 	state: () => ({
 		themeName: 'aura-light',
-		themeColor: 'blue',
-		link: '/themes/aura-light-indigo/theme.css',
+		themeColor: 'indigo',
+		link: `/themes/aura-light-indigo/theme.css`,
 	}),
 	// optional getters
 	getters: {
 		theme: state => `${state.themeName}-${state.themeColor}`,
-		isDarkMode: state => state.themeName === 'lara-dark',
+		isDarkMode: state => state.themeName === 'aura-dark',
 	},
 	// optional actions
 	actions: {
