@@ -1,6 +1,5 @@
 {
   "globals": {
-    "useSummaryStore": "readonly",
     "useSummaryCreateFormStore": "readonly",
     "useAuthStore": "readonly",
     "useLayout": "readonly",

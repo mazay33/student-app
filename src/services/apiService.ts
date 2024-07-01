@@ -8,6 +8,7 @@ import SummaryApi from './api/summary/summaryApi';
 import LectureApi from './api/lecture/lectureApi';
 import AdminApi from './api/admin/adminApi';
 import FileApi from './api/file/fileApi';
+import CommentsApi from './api/comments/commentsApi';
 
 export * from './api/university/universityApi';
 export * from './api/subject/subjectApi';
@@ -18,6 +19,7 @@ export * from './api/summary/summaryApi';
 export * from './api/lecture/lectureApi';
 export * from './api/admin/adminApi';
 export * from './api/file/fileApi';
+export * from './api/comments/commentsApi';
 
 class ApiService {
 	readonly university: UniversityApi;
@@ -29,6 +31,7 @@ class ApiService {
 	readonly lecture: LectureApi;
 	readonly admin: AdminApi;
 	readonly file: FileApi;
+	readonly comments: CommentsApi;
 
 	constructor(httpService: HttpService) {
 		this.university = new UniversityApi(httpService);
@@ -40,6 +43,7 @@ class ApiService {
 		this.lecture = new LectureApi(httpService);
 		this.admin = new AdminApi(httpService);
 		this.file = new FileApi(httpService);
+		this.comments = new CommentsApi(httpService);
 	}
 }
 

@@ -230,6 +230,8 @@ const showComment = event => {
 		group: 'headless',
 	});
 };
+
+const comments = ref();
 </script>
 
 <template>
@@ -316,7 +318,8 @@ const showComment = event => {
 						<div class="m-auto sm-ml-2">
 							<Button
 								severity="info"
-								class="pi pi-angle-down w-8 pl-2"
+								class="w-8"
+								icon="pi pi-angle-down"
 								@click="showComment($event)"
 							></Button>
 							<ConfirmPopup group="headless">
@@ -358,7 +361,7 @@ const showComment = event => {
 		<div v-else>
 			<div class="mb-10 flex items-center justify-center gap-4">
 				<Toast />
-				<i class="pi pi-bookmark text-3xl" />
+				<!-- <i class="pi pi-bookmark text-3xl" /> -->
 				<InputText
 					v-model="summaryEditForm.name"
 					class="w-full bg-white dark:bg-zinc-900 text-center text-3xl text-indigo-500 font-semibold shadow-none sm-w-4/10"
@@ -578,7 +581,7 @@ const showComment = event => {
 		<!--  Аккардеон с лекциями -->
 		<Card
 			v-if="summary?.lectures && summary.lectures.length > 0"
-			class="mt-8"
+			class="mt-8 mb-8"
 		>
 			<template #header>
 				<div class="pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>
@@ -598,11 +601,28 @@ const showComment = event => {
 		>
 			<p>Лекций пока нет, но вы можете их добавить</p>
 		</div>
+		<Comment
+			:summary_id="summary.id"
+			:user_img="authStore.user?.image_url"
+			:isAuth="authStore.authinticated"
+			:user_id="authStore.user?.id"
+		/>
 	</div>
 </template>
 
 <style scoped>
 .p-accordion-header:hover {
 	transform: none !important;
+}
+
+.p-rating-option {
+	display: none;
+}
+.p-rating-on-icon {
+	display: none;
+}
+
+.p-rating.no-clear-button .p-rating-cancel {
+	display: none;
 }
 </style>

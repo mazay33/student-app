@@ -166,7 +166,6 @@ const items = computed(() => {
 				<span>Profile</span>
 			</button>
 			<button
-				v-if="authStore.isAdmin"
 				class="p-link layout-topbar-button"
 				@click="toggle"
 			>
@@ -195,7 +194,7 @@ const items = computed(() => {
 				append-to="body"
 				style="width: 200px"
 			>
-				<h6>Theme</h6>
+				<h6>Тема</h6>
 
 				<div class="field-radiobutton">
 					<RadioButton
@@ -205,7 +204,7 @@ const items = computed(() => {
 						value="aura-dark"
 						@change="themeStore.setTheme('aura-dark')"
 					/>
-					<label>Aura Dark</label>
+					<label>Тёмная тема</label>
 				</div>
 				<div class="field-radiobutton">
 					<RadioButton
@@ -215,7 +214,7 @@ const items = computed(() => {
 						value="aura-light"
 						@change="themeStore.setTheme('aura-light')"
 					/>
-					<label>Aura Light</label>
+					<label>Светлая тема</label>
 				</div>
 
 				<!-- <h6>Primary Color</h6>
