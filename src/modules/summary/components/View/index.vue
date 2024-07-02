@@ -581,7 +581,7 @@ const comments = ref();
 		<!--  Аккардеон с лекциями -->
 		<Card
 			v-if="summary?.lectures && summary.lectures.length > 0"
-			class="mt-8 mb-8"
+			class="mt-8 mb-8 border border-indigo-100 border-solid"
 		>
 			<template #header>
 				<div class="pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>

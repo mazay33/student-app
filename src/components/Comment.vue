@@ -47,9 +47,15 @@ watch(commentValue, newValue => {
 const addComment = async () => {
 	if (authStore.authinticated) {
 		const { data } = await apiService.comments.addComment(commentForm.value);
+
 		if (data.value) {
-			commentValue.value = '';
+			toast.add({
+				severity: 'success',
+				summary: 'Комментарий добавлен',
+				life: 3500,
+			});
 			await apiService.comments.getComments(props.summary_id);
+			commentValue.value = '';
 		}
 	} else {
 		isAuthDialogVisible.value = true;
@@ -57,11 +63,18 @@ const addComment = async () => {
 };
 
 const MenuOverlayPanel = ref();
+const DeleteOverlayPanel = ref();
+
 const toggleMenu = (event: Event) => {
 	MenuOverlayPanel.value.toggle(event);
 };
 
+const toggleDelete = (event: Event) => {
+	DeleteOverlayPanel.value.toggle(event);
+};
+
 const isComplain = ref(false);
+const isDelete = ref(false);
 
 const selectedComplainComment = ref('');
 
@@ -99,11 +112,30 @@ const complainComments = async () => {
 		});
 	}
 };
+
+const commentToDelete = ref();
+const deleteComment = async () => {
+	const { data } = await apiService.comments.deleteComment(commentToDelete.value);
+	if (data.value) {
+		toast.add({
+			severity: 'success',
+			summary: 'Комментарий успешно удален',
+			life: 3500,
+		});
+		isDelete.value = false;
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Не удалось удалить комментарий',
+			life: 3500,
+		});
+	}
+};
 </script>
 
 <template>
 	<Toast />
-	<div class="shadow-md rounded-xl">
+	<div class="shadow-md rounded-xl border border-indigo-100 border-solid">
 		<accordion
 			expand-icon="pi pi-plus"
 			collapse-icon="pi pi-minus"
@@ -113,7 +145,7 @@ const complainComments = async () => {
 				<template #header>
 					<div>Комментарии</div>
 				</template>
-				<div class="flex flex-col shadow-md p-5 rounded-lg">
+				<div class="flex flex-col shadow-md p-5 rounded-lg border border-indigo-100 border-solid">
 					<div class="flex">
 						<img
 							:src="[props.isAuth ? props.user_img : 'https://pinia.vuejs.org/logo.svg']"
@@ -129,10 +161,10 @@ const complainComments = async () => {
 					</div>
 					<div class="flex mt-3">
 						<div class="flex-1">
-							<Rating
+							<!-- <Rating
 								v-model="ratingValue"
 								class="mt-3 ml-3"
-							/>
+							/> -->
 						</div>
 						<Button
 							class="ml-5 bg-gray border-gray"
@@ -178,10 +210,10 @@ const complainComments = async () => {
 						v-for="comment in comments.result"
 						:key="comment.id"
 					>
-						<div class="mt-5 shadow-md p-5 rounded-lg">
+						<div class="mt-5 shadow-md p-5 rounded-lg border border-indigo-100 border-solid">
 							<div class="flex">
 								<img
-									src="https://24konspect.ru/api/public/users/image?file_id=AgACAgIAAxkDAAOXZl3iez3rGcgAAQWlGhEz0qFcCGyrAAIB2TEbc9LxSpNFo4CEyCZDAQADAgADbQADNQQ"
+									:src="users?.result.find((user: IUser) => user.id === comment.user_id)?.image_url"
 									class="w-10 rounded-full"
 								/>
 								<div class="p-2">
@@ -191,6 +223,16 @@ const complainComments = async () => {
 							<div class="flex">
 								<p class="mt-4 flex-1">{{ comment.text }}</p>
 								<i
+									v-if="user?.id === comment.user_id"
+									@click="
+										commentToDelete = comment.id;
+										toggleDelete($event);
+									"
+									class="pi pi-ellipsis-v cursor-pointer"
+								>
+								</i>
+								<i
+									v-else
 									@click="
 										toggleMenu($event);
 										selectedComplainComment = comment.id;
@@ -245,6 +287,27 @@ const complainComments = async () => {
 							@click="complainComments()"
 						></Button></div
 				></Dialog>
+				<Dialog
+					v-model:visible="isDelete"
+					modal
+					header="Подтвердите действие"
+					:style="{ width: '27rem' }"
+				>
+					<div>Удалить комментарий?</div>
+					<div class="flex justify-end gap-2 mt-6">
+						<Button
+							type="button"
+							label="Отмена"
+							severity="secondary"
+							@click="isDelete = false"
+						></Button>
+						<Button
+							type="button"
+							class="bg-red border-red"
+							label="Удалить"
+							@click="deleteComment()"
+						></Button></div
+				></Dialog>
 			</accordion-tab>
 		</accordion>
 		<OverlayPanel
@@ -262,6 +325,24 @@ const complainComments = async () => {
 					class="m-0 w-full cursor-pointer"
 				>
 					Пожаловаться
+				</p>
+			</div>
+		</OverlayPanel>
+		<OverlayPanel
+			ref="DeleteOverlayPanel"
+			class="ml-7 sm-ml-7"
+			append-to="div"
+		>
+			<div class="w-185px flex">
+				<i
+					class="pi pi-eraser mt-1 mr-3 text-red"
+					style="font-size: 1rem"
+				/>
+				<p
+					@click="isDelete = !isDelete"
+					class="m-0 w-full cursor-pointer text-red"
+				>
+					Удалить комментарий
 				</p>
 			</div>
 		</OverlayPanel>

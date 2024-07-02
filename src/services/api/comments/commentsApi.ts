@@ -28,4 +28,9 @@ export default class CommentsApi extends BaseApi {
 		const url = 'main/private/comments/complain';
 		return await this.sendRequest<boolean, ICommentComplain>(HttpMethod.PATCH, url, commentComplain);
 	}
+
+	public async deleteComment(commentId: string): Promise<HttpReturnType<string>> {
+		const url = `main/private/comments/${commentId}`;
+		return await this.sendRequest<string>(HttpMethod.DELETE, url);
+	}
 }
