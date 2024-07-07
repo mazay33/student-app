@@ -231,7 +231,14 @@ const showComment = event => {
 	});
 };
 
-const comments = ref();
+const props = {
+	summary_id: summary.value.id,
+	user_img: authStore.user?.image_url,
+	isAuth: authStore.authinticated,
+	user_id: authStore.user?.id,
+};
+
+provide('propsComment', props);
 </script>
 
 <template>
@@ -581,7 +588,7 @@ const comments = ref();
 		<!--  Аккардеон с лекциями -->
 		<Card
 			v-if="summary?.lectures && summary.lectures.length > 0"
-			class="mt-8 mb-8 border border-indigo-100 border-solid"
+			class="mt-8 mb-8 border border-gray-100 border-solid dark:border-zinc-400"
 		>
 			<template #header>
 				<div class="pt-4 text-center text-xl text-indigo-500 font-semibold">Лекции</div>
@@ -601,12 +608,7 @@ const comments = ref();
 		>
 			<p>Лекций пока нет, но вы можете их добавить</p>
 		</div>
-		<Comment
-			:summary_id="summary.id"
-			:user_img="authStore.user?.image_url"
-			:isAuth="authStore.authinticated"
-			:user_id="authStore.user?.id"
-		/>
+		<Comment />
 	</div>
 </template>
 

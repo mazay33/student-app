@@ -44,6 +44,11 @@ export function useNavigationMenu() {
 					to: '/admin',
 					icon: 'pi pi-fw pi-key',
 				},
+				// {
+				// 	label: 'Жалобы на комментарии',
+				// 	to: '/adminComments',
+				// 	icon: 'pi pi-fw pi-globe',
+				// },
 			],
 		},
 

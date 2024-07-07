@@ -2,6 +2,8 @@
 import useApiService from '~/services/apiService';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { IUser } from '~/@types/user.types';
+import { string } from 'yup';
+import CreateComment from './CreateComment.vue';
 
 const apiService = useApiService();
 const router = useRouter();
@@ -10,19 +12,10 @@ const authStore = useAuthStore();
 const { user } = storeToRefs(authStore);
 const toast = useToast();
 
-const props = defineProps<{ summary_id: String; user_img: String; isAuth: Boolean; user_id: String }>();
-
-const isAuthDialogVisible = ref(false);
-// const commentContent = useLocalStorage('commentContent');
-// если сделаем регу в модалке тогда можно сохранить комент незареганного юзера ну или в lc закинуть
-
-const goToLogin = () => {
-	router.push('/auth/login');
-};
-
-const ratingValue = ref();
+const props = inject('propsComment');
 
 const { data: comments, pending } = await apiService.comments.getComments(props.summary_id);
+comments.value.result.reverse();
 
 const users = ref<IPaginatedResult<IUser>>();
 const getUsers = async () => {
@@ -32,35 +25,6 @@ const getUsers = async () => {
 	}
 };
 await getUsers();
-
-const commentValue = ref('');
-
-const commentForm = ref({
-	summary_id: props.summary_id,
-	text: commentValue.value,
-});
-
-watch(commentValue, newValue => {
-	commentForm.value.text = newValue;
-});
-
-const addComment = async () => {
-	if (authStore.authinticated) {
-		const { data } = await apiService.comments.addComment(commentForm.value);
-
-		if (data.value) {
-			toast.add({
-				severity: 'success',
-				summary: 'Комментарий добавлен',
-				life: 3500,
-			});
-			await apiService.comments.getComments(props.summary_id);
-			commentValue.value = '';
-		}
-	} else {
-		isAuthDialogVisible.value = true;
-	}
-};
 
 const MenuOverlayPanel = ref();
 const DeleteOverlayPanel = ref();
@@ -123,6 +87,8 @@ const deleteComment = async () => {
 			life: 3500,
 		});
 		isDelete.value = false;
+		const { data: comments, pending } = await apiService.comments.getComments(props.summary_id);
+		comments.value.result.reverse();
 	} else {
 		toast.add({
 			severity: 'error',
@@ -135,82 +101,27 @@ const deleteComment = async () => {
 
 <template>
 	<Toast />
-	<div class="shadow-md rounded-xl border border-indigo-100 border-solid">
+	<div class="shadow-md rounded-xl border border-gray-100 border-solid dark:border-zinc-400">
 		<accordion
 			expand-icon="pi pi-plus"
 			collapse-icon="pi pi-minus"
-			class="pl-6 pr-6 pt-3 pb-3 rounded-xl"
+			class="pl-1 pr-1 sm-pr- sm-pl-4 pt-3 pb-3 rounded-xl"
 			>Комментарии
 			<accordion-tab>
 				<template #header>
 					<div>Комментарии</div>
 				</template>
-				<div class="flex flex-col shadow-md p-5 rounded-lg border border-indigo-100 border-solid">
-					<div class="flex">
-						<img
-							:src="[props.isAuth ? props.user_img : 'https://pinia.vuejs.org/logo.svg']"
-							:class="[props.isAuth ? 'w-10' : 'w-7']"
-							class="rounded-full mr-4"
-						/>
 
-						<InputText
-							class="w-full"
-							v-model="commentValue"
-							placeholder="Введите комментарий"
-						/>
-					</div>
-					<div class="flex mt-3">
-						<div class="flex-1">
-							<!-- <Rating
-								v-model="ratingValue"
-								class="mt-3 ml-3"
-							/> -->
-						</div>
-						<Button
-							class="ml-5 bg-gray border-gray"
-							@click="commentValue = ''"
-							>Отмена</Button
-						>
-						<Button
-							class="ml-5"
-							:disabled="!commentValue"
-							@click="addComment()"
-							>Оставить комментарий</Button
-						>
-					</div>
-				</div>
-				<Dialog
-					v-model:visible="isAuthDialogVisible"
-					modal
-					header="Ошибка авторизации"
-					:closable="true"
-					:style="{ width: '25rem' }"
-				>
-					<span class="p-text-secondary mb-5 block"
-						>Чтобы оставить комментарий необходимо войти в свой аккаунт</span
-					>
-					<div class="align-items-center mb-3 flex gap-3"></div>
+				<CreateComment />
 
-					<div class="justify-content-end flex gap-2">
-						<Button
-							type="button"
-							label="Закрыть"
-							severity="secondary"
-							@click="isAuthDialogVisible = false"
-						></Button>
-						<Button
-							type="button"
-							label="Войти"
-							@click="goToLogin()"
-						></Button>
-					</div>
-				</Dialog>
 				<div v-if="comments">
 					<div
 						v-for="comment in comments.result"
 						:key="comment.id"
 					>
-						<div class="mt-5 shadow-md p-5 rounded-lg border border-indigo-100 border-solid">
+						<div
+							class="mt-5 shadow-md p-5 rounded-lg border border-gray-100 border-solid dark:border-zinc-400"
+						>
 							<div class="flex">
 								<img
 									:src="users?.result.find((user: IUser) => user.id === comment.user_id)?.image_url"
@@ -245,6 +156,7 @@ const deleteComment = async () => {
 				</div>
 				<div
 					class="text-center mt-5"
+					@click="console.log(props)"
 					v-else
 				>
 					Комментариев пока нет, но вы можете оставить его первым
@@ -348,4 +260,3 @@ const deleteComment = async () => {
 		</OverlayPanel>
 	</div>
 </template>
-<!-- border border-indigo-500 border-solid -->

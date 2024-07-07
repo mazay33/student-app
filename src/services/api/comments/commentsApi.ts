@@ -1,5 +1,5 @@
 import BaseApi from '../base';
-import type { IComments, ICommentForm, ICommentComplain } from './commentApi.types';
+import type { IComments, ICommentForm, ICommentComplain, IApproveComment } from './commentApi.types';
 import type { UseFetchOptions } from '#app';
 import type { IPaginatedResult } from '~/@types/@types';
 import type HttpService from '~/services/httpService';
@@ -32,5 +32,19 @@ export default class CommentsApi extends BaseApi {
 	public async deleteComment(commentId: string): Promise<HttpReturnType<string>> {
 		const url = `main/private/comments/${commentId}`;
 		return await this.sendRequest<string>(HttpMethod.DELETE, url);
+	}
+
+	public async approveComment(approvedComment: IApproveComment) {
+		const url = 'main/service/comments';
+		return await this.sendRequest<boolean, IApproveComment>(HttpMethod.PATCH, url, approvedComment);
+	}
+
+	public async getComplainComments(
+		options?: UseFetchOptions<IPaginatedResult<IComments>>,
+	): Promise<HttpReturnType<IPaginatedResult<IComments>>> {
+		const url = `main/service/comments`;
+		return await this.sendRequest<IPaginatedResult<IComments>>(HttpMethod.GET, url, {
+			...options,
+		});
 	}
 }

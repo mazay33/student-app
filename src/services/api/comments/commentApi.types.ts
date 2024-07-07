@@ -16,3 +16,7 @@ export interface ICommentComplain {
 	comment_id: String;
 	user_from: String;
 }
+
+export interface IApproveComment {
+	comment_id: String;
+}
