@@ -41,7 +41,7 @@ const addComment = async () => {
 watch(
 	() => commentForm.value.text,
 	newValue => {
-		if (newValue.length > 99) {
+		if (newValue && newValue.length > 99) {
 			toast.add({
 				severity: 'info',
 				summary: 'Количество символов в комментарии должно быть не более 100',
@@ -62,8 +62,8 @@ watch(
 				class="rounded-full mr-4"
 			/>
 
-			<InputText
-				class="w-full"
+			<textarea
+				class="w-full resize-none"
 				v-model="commentForm.text"
 				:disabled="!bockComment"
 				placeholder="Введите комментарий"

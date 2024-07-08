@@ -41,14 +41,14 @@ export function useNavigationMenu() {
 			items: [
 				{
 					label: 'Страничка админа',
-					to: '/admin',
+					to: '/admin/admin',
 					icon: 'pi pi-fw pi-key',
 				},
-				// {
-				// 	label: 'Жалобы на комментарии',
-				// 	to: '/adminComments',
-				// 	icon: 'pi pi-fw pi-globe',
-				// },
+				{
+					label: 'Жалобы на комментарии',
+					to: '/admin/CheckComment',
+					icon: 'pi pi-fw pi-globe',
+				},
 			],
 		},
 
