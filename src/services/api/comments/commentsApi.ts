@@ -1,7 +1,7 @@
 import BaseApi from '../base';
 import type { IComments, ICommentForm, ICommentComplain, IApproveComment } from './commentApi.types';
 import type { UseFetchOptions } from '#app';
-import type { IPaginatedResult } from '~/@types/@types';
+import type { IPaginatedResult, IPaginatedResultComment } from '~/@types/@types';
 import type HttpService from '~/services/httpService';
 import { HttpMethod, type HttpReturnType, HttpMethod, type HttpReturnType } from '~/services/httpService';
 
@@ -14,9 +14,15 @@ export default class CommentsApi extends BaseApi {
 		return this.httpService;
 	}
 
-	public async getComments(id: string): Promise<HttpReturnType<IComments>> {
+	public async getComments(
+		id: string,
+		options?: UseFetchOptions<IPaginatedResult<IComments>>,
+	): Promise<HttpReturnType<IPaginatedResult<IComments>>> {
 		const url = `main/public/comments/${id}`;
-		return await this.sendRequest<IComments>(HttpMethod.GET, url);
+		return await this.sendRequest<IPaginatedResult<IComments>>(HttpMethod.GET, url, {
+			server: false,
+			...options,
+		});
 	}
 
 	public async addComment(commentForm: ICommentForm) {
@@ -34,9 +40,24 @@ export default class CommentsApi extends BaseApi {
 		return await this.sendRequest<string>(HttpMethod.DELETE, url);
 	}
 
-	public async approveComment(approvedComment: IApproveComment) {
+	// public async approveComment(approvedComment: IApproveComment) {
+	// 	const url = 'main/service/comments';
+	// 	return await this.sendRequest<boolean, IApproveComment>(HttpMethod.PATCH, url, approvedComment);
+	// }
+
+	public async approveCommentT(
+		approvedComment: IApproveComment,
+		options?: UseFetchOptions<IPaginatedResultComment<IApproveComment>>,
+	): Promise<HttpReturnType<IPaginatedResultComment<IApproveComment>>> {
 		const url = 'main/service/comments';
-		return await this.sendRequest<boolean, IApproveComment>(HttpMethod.PATCH, url, approvedComment);
+		return await this.sendRequest<boolean, IPaginatedResultComment<IApproveComment>>(
+			HttpMethod.PATCH,
+			url,
+			approvedComment,
+			{
+				...options,
+			},
+		);
 	}
 
 	public async getComplainComments(

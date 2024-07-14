@@ -2,7 +2,6 @@
 import useApiService from '~/services/apiService';
 import type { IPaginatedResult } from '~/@types/@types';
 import type { IUser } from '~/@types/user.types';
-import { string } from 'yup';
 import CreateComment from './CreateComment.vue';
 
 const apiService = useApiService();
@@ -14,8 +13,32 @@ const toast = useToast();
 
 const props = inject('propsComment');
 
-const { data: comments, pending } = await apiService.comments.getComments(props.summary_id);
-comments.value.result.reverse();
+let comments = ref([]);
+let pending = ref(false);
+
+const loadSize = ref<Number>(25);
+const loadMore = async () => {
+	loadSize.value += 25;
+	await fetchComments();
+};
+
+const fetchComments = async () => {
+	pending.value = true;
+	const { data } = await apiService.comments.getComments(props.summary_id, {
+		query: {
+			page: '1',
+			page_size: loadSize.value,
+			sort_by: 'created_at',
+			sort_type: 'desc',
+		},
+	});
+	pending.value = false;
+	if (data.value) {
+		comments.value = data.value.result;
+	}
+};
+
+await fetchComments();
 
 const users = ref<IPaginatedResult<IUser>>();
 const getUsers = async () => {
@@ -42,10 +65,10 @@ const isDelete = ref(false);
 
 const selectedComplainComment = ref('');
 
-const selectedCategory = ref('Нежелательная реклама или спам'); //филлерная штука, чтобы пользователь типо выбирал причину жалобы
+const selectedCategory = ref('Нежелательная реклама или спам');
 const categories = ref([
 	{ name: 'Нежелательная реклама или спам', key: '1' },
-	{ name: 'Дискриминационные высказывания ', key: '2' },
+	{ name: 'Дискриминационные высказывания', key: '2' },
 	{ name: 'Ложная информация', key: '3' },
 	{ name: 'Домогательства или издевательства', key: '4' },
 ]);
@@ -64,8 +87,9 @@ const complainComments = async () => {
 	if (data.value) {
 		toast.add({
 			severity: 'success',
-			summary: 'Ваша жалоба будет рассмотренна',
-			life: 3500,
+			summary:
+				'Ваша жалоба принята и будет рассмотрена в ближайшее время. Если мы обнаружим, что контент не соответствует нашим правилам, то удалим его.',
+			life: 4000,
 		});
 		isComplain.value = false;
 	} else {
@@ -87,8 +111,7 @@ const deleteComment = async () => {
 			life: 3500,
 		});
 		isDelete.value = false;
-		const { data: comments, pending } = await apiService.comments.getComments(props.summary_id);
-		comments.value.result.reverse();
+		await fetchComments();
 	} else {
 		toast.add({
 			severity: 'error',
@@ -97,6 +120,73 @@ const deleteComment = async () => {
 		});
 	}
 };
+
+// // // // // //это все есть в CreateComment
+
+const timer = ref<number>(0);
+
+const startTimer = () => {
+	timer.value = 150;
+	const interval = setInterval(() => {
+		if (timer.value > 0) {
+			timer.value -= 1;
+		} else {
+			clearInterval(interval);
+			bockComment.value = true;
+		}
+	}, 1000);
+};
+
+const bockComment = ref(true);
+const isAuthDialogVisible = ref(false);
+
+const goToLogin = () => {
+	router.push('/auth/login');
+};
+
+const commentForm = ref({
+	summary_id: props.summary_id,
+	text: null,
+});
+
+const addComment = async () => {
+	if (authStore.authinticated) {
+		const { data } = await apiService.comments.addComment(commentForm.value);
+
+		if (data.value) {
+			toast.add({
+				severity: 'success',
+				summary: 'Комментарий опубликован, вы сможете повторно добавить комментарий через 3 минуты',
+				life: 4000,
+			});
+			startTimer();
+			commentForm.value.text = null;
+			bockComment.value = false;
+			await fetchComments();
+		}
+	} else {
+		isAuthDialogVisible.value = true;
+	}
+};
+
+watch(
+	() => commentForm.value.text,
+	newValue => {
+		if (newValue && newValue.length > 254) {
+			toast.add({
+				severity: 'info',
+				summary: 'Количество символов в комментарии должно быть не более 255',
+				life: 3000,
+			});
+		}
+	},
+);
+
+const formatCommentText = text => {
+	return text.replace(/\n/g, '<br>');
+};
+
+// // // // // // пдф ридер
 </script>
 
 <template>
@@ -106,17 +196,82 @@ const deleteComment = async () => {
 			expand-icon="pi pi-plus"
 			collapse-icon="pi pi-minus"
 			class="pl-1 pr-1 sm-pr- sm-pl-4 pt-3 pb-3 rounded-xl"
-			>Комментарии
+		>
+			Комментарии
 			<accordion-tab>
 				<template #header>
 					<div>Комментарии</div>
 				</template>
 
-				<CreateComment />
+				<!-- костыльнул, не получилось обновлять комментарии в CreateComment при добавлении нового -->
 
-				<div v-if="comments">
+				<div
+					class="flex flex-col shadow-md p-5 rounded-lg border border-gray-100 border-solid dark:border-zinc-400"
+				>
+					<div class="flex">
+						<img
+							:src="[props.isAuth ? props.user_img : 'https://pinia.vuejs.org/logo.svg']"
+							:class="[props.isAuth ? 'w-10' : 'w-7']"
+							class="rounded-full mr-4"
+						/>
+
+						<Textarea
+							class="w-full resize-none h-10"
+							v-model="commentForm.text"
+							:disabled="!bockComment"
+							placeholder="Введите комментарий"
+							maxlength="100"
+						/>
+					</div>
+					<div class="flex flex-col mt-3 sm-flex-row items-center justify-center">
+						<div class="flex-1"></div>
+						<Button
+							class="ml-0 sm-ml-5 bg-gray border-gray w-24 text-center mb-3 sm-mb-0"
+							:disabled="!bockComment"
+							@click="commentForm.text = ''"
+							>Отмена</Button
+						>
+						<Button
+							class="ml-0 sm-ml-5 w-55"
+							:disabled="!commentForm.text || !bockComment"
+							@click="addComment"
+							>Оставить комментарий</Button
+						>
+					</div>
+				</div>
+
+				<Dialog
+					v-model:visible="isAuthDialogVisible"
+					modal
+					header="Ошибка авторизации"
+					:closable="true"
+					:style="{ width: '25rem' }"
+				>
+					<span class="p-text-secondary mb-5 block"
+						>Чтобы оставить комментарий необходимо войти в свой аккаунт</span
+					>
+					<div class="align-items-center mb-3 flex gap-3"></div>
+
+					<div class="justify-content-end flex gap-2">
+						<Button
+							type="button"
+							label="Закрыть"
+							severity="secondary"
+							@click="isAuthDialogVisible = false"
+						></Button>
+						<Button
+							type="button"
+							label="Войти"
+							@click="goToLogin()"
+						></Button>
+					</div>
+				</Dialog>
+
+				<!--  -->
+
+				<div v-if="comments.length">
 					<div
-						v-for="comment in comments.result"
+						v-for="comment in comments"
 						:key="comment.id"
 					>
 						<div
@@ -132,7 +287,10 @@ const deleteComment = async () => {
 								</div>
 							</div>
 							<div class="flex">
-								<p class="mt-4 flex-1">{{ comment.text }}</p>
+								<p
+									class="mt-4 flex-1"
+									v-html="formatCommentText(comment.text)"
+								></p>
 								<i
 									v-if="user?.id === comment.user_id"
 									@click="
@@ -197,8 +355,9 @@ const deleteComment = async () => {
 							type="button"
 							label="Пожаловаться"
 							@click="complainComments()"
-						></Button></div
-				></Dialog>
+						></Button>
+					</div>
+				</Dialog>
 				<Dialog
 					v-model:visible="isDelete"
 					modal
@@ -218,8 +377,18 @@ const deleteComment = async () => {
 							class="bg-red border-red"
 							label="Удалить"
 							@click="deleteComment()"
-						></Button></div
-				></Dialog>
+						></Button>
+					</div>
+				</Dialog>
+				<div class="text-center mt-8 mb-3">
+					<Button
+						v-if="comments.length >= loadSize"
+						label="Загрузить ещё"
+						severity="secondary"
+						text
+						@click="loadMore"
+					></Button>
+				</div>
 			</accordion-tab>
 		</accordion>
 		<OverlayPanel

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { number } from 'yup';
 import useApiService from '~/services/apiService';
 
 const apiService = useApiService();
@@ -8,6 +9,12 @@ const toast = useToast();
 const bockComment = ref(true);
 
 const props = inject('propsComment');
+
+let comments = ref([]);
+let pending = ref(false);
+const popop = defineProps({
+	loadSize: number,
+});
 
 const goToLogin = () => {
 	router.push('/auth/login');
@@ -29,8 +36,15 @@ const addComment = async () => {
 				life: 4000,
 			});
 			commentForm.value.text = null;
-			const { data: comments, pending } = await apiService.comments.getComments(props.summary_id);
-			comments.value.result.reverse();
+			const { data } = await apiService.comments.getComments(props.summary_id, {
+				query: {
+					page: '1',
+					page_size: popop.loadSize,
+					sort_by: 'created_at',
+					sort_type: 'asc',
+				},
+			});
+
 			bockComment.value = false;
 		}
 	} else {
@@ -62,8 +76,8 @@ watch(
 				class="rounded-full mr-4"
 			/>
 
-			<textarea
-				class="w-full resize-none"
+			<Textarea
+				class="w-full resize-none h-10"
 				v-model="commentForm.text"
 				:disabled="!bockComment"
 				placeholder="Введите комментарий"
